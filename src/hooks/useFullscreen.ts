@@ -1,11 +1,12 @@
 import { RefObject, useLayoutEffect, useState } from "react";
+
 import { getFullscreenInfo } from "../utils/getFullscreenInfo";
 import logger from "../utils/logger";
 
-export type UseFullscreenResult = {
+export interface UseFullscreenResult {
   isFullscreen: boolean;
   toggleFullscreen: null | (() => Promise<void>);
-};
+}
 
 /**
  * Hook that expose methods in order to use the Fullscreen API
@@ -18,8 +19,12 @@ export type UseFullscreenResult = {
  *
  * @param ref
  */
-export const useFullscreen = (ref?: RefObject<Element | null>): UseFullscreenResult => {
-  const [isFullscreen, setIsFullscreen] = useState(!!getFullscreenInfo(ref)?.fullscreenElement);
+export const useFullscreen = (
+  ref?: RefObject<Element | null>,
+): UseFullscreenResult => {
+  const [isFullscreen, setIsFullscreen] = useState(
+    !!getFullscreenInfo(ref)?.fullscreenElement,
+  );
 
   const toggleFullscreen = async () => {
     // Skip if no reference
@@ -58,9 +63,9 @@ export const useFullscreen = (ref?: RefObject<Element | null>): UseFullscreenRes
     }
 
     // Add listener
-    getFullscreenInfo(ref)?.onFullscreenChange(() =>
-      setIsFullscreen(!!getFullscreenInfo(ref)?.fullscreenElement),
-    );
+    getFullscreenInfo(ref)?.onFullscreenChange(() => {
+      setIsFullscreen(!!getFullscreenInfo(ref)?.fullscreenElement);
+    });
 
     // Remove the listener on unmount
     return () => {

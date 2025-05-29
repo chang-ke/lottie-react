@@ -5,19 +5,23 @@ import React, {
   HTMLAttributes,
   useEffect,
 } from "react";
+
 import logger from "../../utils/logger";
 
-export type PlayerDisplayProps = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
+export type PlayerDisplayProps = DetailedHTMLProps<
+  HTMLAttributes<HTMLDivElement>,
+  HTMLDivElement
+>;
 
 /**
  * Container for displaying the animation
  * @param props
  * @param ref
  */
-const _PlayerDisplay: ForwardRefRenderFunction<HTMLDivElement, PlayerDisplayProps> = (
-  props,
-  ref,
-) => {
+const _PlayerDisplay: ForwardRefRenderFunction<
+  HTMLDivElement,
+  PlayerDisplayProps
+> = (props, ref) => {
   const { children, ...rest } = props;
 
   // Warn about missing `ref` property

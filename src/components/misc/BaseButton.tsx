@@ -1,17 +1,22 @@
 import React, { FC, JSX, useEffect, useRef, useState } from "react";
+
 import config from "../../config";
 
-export type BaseButtonProps = {
+export interface BaseButtonProps {
   children: JSX.Element;
   onClick?: () => void;
   DropdownContent?: (setIsMenuOpen: (state: boolean) => void) => JSX.Element;
-};
+}
 
 /**
  * Component that wraps a button and provides a menu
  * TODO: add tooltips
  */
-export const BaseButton: FC<BaseButtonProps> = ({ children, onClick, DropdownContent }) => {
+export const BaseButton: FC<BaseButtonProps> = ({
+  children,
+  onClick,
+  DropdownContent,
+}) => {
   const ref = useRef<HTMLDivElement>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 

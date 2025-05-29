@@ -1,14 +1,19 @@
 import React, { FC } from "react";
+
 import config from "../../../config";
 import { BaseButton } from "../../misc/BaseButton";
 
-export type SpeedButtonProps = {
+export interface SpeedButtonProps {
   speed: number;
   speeds?: number[]; // TODO: add levels to also set labels like: Slow (0.5), Normal (1), Fast (2) etc.
   onClick: (speed: number) => void;
-};
+}
 
-export const SpeedButton: FC<SpeedButtonProps> = ({ speed, speeds = [0.5, 1, 2], onClick }) => (
+export const SpeedButton: FC<SpeedButtonProps> = ({
+  speed,
+  speeds = [0.5, 1, 2],
+  onClick,
+}) => (
   <BaseButton
     DropdownContent={(setShowDropdown) => (
       <>
@@ -30,7 +35,8 @@ export const SpeedButton: FC<SpeedButtonProps> = ({ speed, speeds = [0.5, 1, 2],
             key={newSpeed}
             style={{
               backgroundColor: config.transparentColor,
-              color: speed === newSpeed ? config.accentColor : config.whiteColor,
+              color:
+                speed === newSpeed ? config.accentColor : config.whiteColor,
               padding: 5,
               textDecoration: "none",
               display: "block",

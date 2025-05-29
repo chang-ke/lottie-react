@@ -30,14 +30,20 @@ export class SubscriptionManager<Subscriptions> {
     this.subscriptionManager.on(String(type), action as unknown as () => void);
 
     // Return a function to unsubscribe
-    return () => this.subscriptionManager.off(String(type), action as unknown as () => void);
+    return () =>
+      this.subscriptionManager.off(
+        String(type),
+        action as unknown as () => void,
+      );
   };
 
   /**
    * Subscribe to multiple notification types using an object
    * @param subscriptions
    */
-  public addSubscriptions = (subscriptions?: Partial<Subscriptions>): (() => void) => {
+  public addSubscriptions = (
+    subscriptions?: Partial<Subscriptions>,
+  ): (() => void) => {
     const eventListenerRemovers: (() => void)[] = [];
 
     if (subscriptions) {
@@ -49,7 +55,11 @@ export class SubscriptionManager<Subscriptions> {
     }
 
     // Return a function to unregister all the listeners
-    return () => eventListenerRemovers.forEach((deregister) => deregister());
+    return () => {
+      eventListenerRemovers.forEach((deregister) => {
+        deregister();
+      });
+    };
   };
 
   /**

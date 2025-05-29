@@ -8,7 +8,9 @@ import {
   SVGRendererConfig,
 } from "lottie-web";
 import { JSX, RefCallback, RefObject } from "react";
+
 import { SubscriptionManager } from "../utils/SubscriptionManager";
+
 import {
   Direction,
   LottieRenderer,
@@ -21,10 +23,10 @@ import {
 /**
  * Shape of the internal listener
  */
-export type InternalListener = {
+export interface InternalListener {
   name: AnimationEventName;
   handler: AnimationEventCallback;
-};
+}
 
 /**
  * The generic type for the subscription's action
@@ -34,8 +36,10 @@ export type LottieSubscriptionAction<T = unknown> = (event: T) => void;
 /**
  * Describing the action to take for each subscription type
  */
-export type LottieSubscriptions = {
-  [LottieSubscription.Frame]: LottieSubscriptionAction<{ currentFrame: number }>;
+export interface LottieSubscriptions {
+  [LottieSubscription.Frame]: LottieSubscriptionAction<{
+    currentFrame: number;
+  }>;
   [LottieSubscription.Complete]: LottieSubscriptionAction;
   [LottieSubscription.LoopCompleted]: LottieSubscriptionAction;
   [LottieSubscription.Ready]: LottieSubscriptionAction;
@@ -43,8 +47,10 @@ export type LottieSubscriptions = {
   [LottieSubscription.Pause]: LottieSubscriptionAction;
   [LottieSubscription.Stop]: LottieSubscriptionAction;
   [LottieSubscription.Failure]: LottieSubscriptionAction;
-  [LottieSubscription.NewState]: LottieSubscriptionAction<{ state: LottieState }>;
-};
+  [LottieSubscription.NewState]: LottieSubscriptionAction<{
+    state: LottieState;
+  }>;
+}
 
 /**
  * Options for the `useLottieFactory()` hook
@@ -52,7 +58,9 @@ export type LottieSubscriptions = {
  * These options are wrapping Lottie's config properties and ads
  * additional ones in order to have a better control over the animation
  */
-export type UseLottieFactoryOptions<Version extends LottieVersion = LottieVersion.Full> = {
+export type UseLottieFactoryOptions<
+  Version extends LottieVersion = LottieVersion.Full,
+> = {
   src: string | Record<string | number | symbol, unknown>;
   initialValues?: {
     loop?: boolean | number;
@@ -95,7 +103,7 @@ export type UseLottieFactoryOptions<Version extends LottieVersion = LottieVersio
 /**
  * Object returned by `useLottieFactory()`
  */
-export type UseLottieFactoryResult = {
+export interface UseLottieFactoryResult {
   containerRef: RefObject<HTMLDivElement | null>;
   setContainerRef: RefCallback<HTMLDivElement>;
   animationItem: AnimationItem | null;
@@ -112,15 +120,18 @@ export type UseLottieFactoryResult = {
   subscribe: SubscriptionManager<LottieSubscriptions>["subscribe"];
   totalFrames: number;
   direction: Direction;
-};
+}
 
 /**
  * Options for the `useLottieState()` hook
  */
-export type UseLottieStateOptions = {
+export interface UseLottieStateOptions {
   initialState: LottieState;
-  onChange?: (previousState: undefined | LottieState, newState: LottieState) => void;
-};
+  onChange?: (
+    previousState: undefined | LottieState,
+    newState: LottieState,
+  ) => void;
+}
 
 /**
  * Type for Lottie's `ref` property

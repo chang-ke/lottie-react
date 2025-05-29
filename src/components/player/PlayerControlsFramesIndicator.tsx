@@ -1,4 +1,12 @@
-import React, { CSSProperties, FC, useCallback, useEffect, useMemo, useRef } from "react";
+import React, {
+  CSSProperties,
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+} from "react";
+
 import { UseLottieFactoryResult, LottieSubscription } from "../../@types";
 import config from "../../config";
 
@@ -46,7 +54,10 @@ export const PlayerControlsFramesIndicator: FC<PlayerFramesIndicatorProps> = ({
 }) => {
   const containerRef = useRef<HTMLSpanElement>(null);
   const _decimals = useMemo(() => decimals ?? 0, [decimals]);
-  const getFrameSpanMinWidth = useCallback((numberLength: number) => 15 + numberLength * 7, []);
+  const getFrameSpanMinWidth = useCallback(
+    (numberLength: number) => 15 + numberLength * 7,
+    [],
+  );
 
   /**
    * Listen for event regarding the `currentFrame`

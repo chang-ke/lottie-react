@@ -1,8 +1,8 @@
 import React, { FC } from "react";
 
-type SpaceBetweenProps = {
+interface SpaceBetweenProps {
   size: number;
-};
+}
 
 /**
  * Add a div with padding to the left and right of `size` / 2

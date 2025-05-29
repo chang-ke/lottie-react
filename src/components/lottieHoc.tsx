@@ -1,7 +1,14 @@
 import { LottiePlayer } from "lottie-web";
-import React, { forwardRef, ForwardRefRenderFunction, useImperativeHandle, useRef } from "react";
+import {
+  forwardRef,
+  ForwardRefRenderFunction,
+  useImperativeHandle,
+  useRef,
+} from "react";
+
 import { LottieProps, LottieRef, LottieState, LottieVersion } from "../@types";
 import { useLottieFactory } from "../hooks/useLottieFactory";
+
 import {
   PlayerFailure,
   PlayerLoading,
@@ -16,8 +23,13 @@ import {
  *
  * @param lottie
  */
-export const lottieHoc = <Version extends LottieVersion>(lottie: LottiePlayer) => {
-  const Lottie: ForwardRefRenderFunction<LottieRef, LottieProps<Version>> = (props, ref) => {
+export const lottieHoc = <Version extends LottieVersion>(
+  lottie: LottiePlayer,
+) => {
+  const Lottie: ForwardRefRenderFunction<LottieRef, LottieProps<Version>> = (
+    props,
+    ref,
+  ) => {
     const {
       controls,
       LoadingOverlay,
@@ -32,9 +44,10 @@ export const lottieHoc = <Version extends LottieVersion>(lottie: LottiePlayer) =
     } = props;
 
     // Initialise Lottie
-    const { setContainerRef, ...lottieFactoryResult } = useLottieFactory<Version>(lottie, {
-      ...hookOptions,
-    });
+    const { setContainerRef, ...lottieFactoryResult } =
+      useLottieFactory<Version>(lottie, {
+        ...hookOptions,
+      });
 
     /**
      * Make the hook variables/methods available through the provided 'lottieRef'
@@ -82,7 +95,11 @@ export const lottieHoc = <Version extends LottieVersion>(lottie: LottiePlayer) =
 
         <PlayerControls
           fullscreenElementRef={fullscreenElementRef}
-          show={state !== LottieState.Loading && state !== LottieState.Failure && !!controls}
+          show={
+            state !== LottieState.Loading &&
+            state !== LottieState.Failure &&
+            !!controls
+          }
           elements={Array.isArray(controls) ? controls : undefined}
           state={state}
           totalFrames={totalFrames}

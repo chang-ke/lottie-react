@@ -1,6 +1,12 @@
-import { AnimationConfig, AnimationItem, AnimationSegment, LottiePlayer } from "lottie-web";
+import {
+  AnimationConfig,
+  AnimationItem,
+  AnimationSegment,
+  LottiePlayer,
+} from "lottie-web";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import isEqual from "react-fast-compare";
+
 import {
   InternalListener,
   LottieSubscriptions,
@@ -12,10 +18,11 @@ import {
   LottieSubscription,
   LottieVersion,
 } from "../@types";
-import { SubscriptionManager } from "../utils/SubscriptionManager";
 import getNumberFromNumberOrPercentage from "../utils/getNumberFromNumberOrPercentage";
 import logger from "../utils/logger";
 import normalizeAnimationSource from "../utils/normalizeAnimationSource";
+import { SubscriptionManager } from "../utils/SubscriptionManager";
+
 import useCallbackRef from "./useCallbackRef";
 import useStateWithPrevious from "./useStateWithPrevious";
 
@@ -24,9 +31,15 @@ import useStateWithPrevious from "./useStateWithPrevious";
  * @param options
  * @param lottie
  */
-export const useLottieFactory = <Version extends LottieVersion = LottieVersion.Full>(
+export const useLottieFactory = <
+  Version extends LottieVersion = LottieVersion.Full,
+>(
   lottie: LottiePlayer,
-  { src, enableReinitialize = false, ...rest }: UseLottieFactoryOptions<Version>,
+  {
+    src,
+    enableReinitialize = false,
+    ...rest
+  }: UseLottieFactoryOptions<Version>,
 ): UseLottieFactoryResult => {
   const options = {
     enableReinitialize,
@@ -38,42 +51,57 @@ export const useLottieFactory = <Version extends LottieVersion = LottieVersion.F
   // this way the consumer have the option to set the container, and we know
   // when, and if, the animation should be (re)loaded
   // TODO: can't we just use `useState()`?
-  const { ref: containerRef, setRef: setContainerRef } = useCallbackRef<HTMLDivElement>();
+  const { ref: containerRef, setRef: setContainerRef } =
+    useCallbackRef<HTMLDivElement>();
 
   // (State) Animation instance
-  const [animationItem, setAnimationItem] = useState<AnimationItem | null>(null);
+  const [animationItem, setAnimationItem] = useState<AnimationItem | null>(
+    null,
+  );
 
   // (State) Subscription manager
-  const subscriptionManager = useMemo(() => new SubscriptionManager<LottieSubscriptions>(), []);
+  const subscriptionManager = useMemo(
+    () => new SubscriptionManager<LottieSubscriptions>(),
+    [],
+  );
 
   // (State) Animation's state
   const { state, setState } = useStateWithPrevious<LottieState>({
     initialState: LottieState.Loading,
     onChange: (previousPlayerState, newPlayerState) => {
       // Let the subscribers know about the new state
-      subscriptionManager.notify(LottieSubscription.NewState, { state: newPlayerState });
+      subscriptionManager.notify(LottieSubscription.NewState, {
+        state: newPlayerState,
+      });
     },
   });
 
   // (Ref) Initial values provided by the consumer
   const _initialValues = useRef(options.initialValues);
-  const _subscriptions = useRef<Partial<LottieSubscriptions> | undefined>(undefined);
+  const _subscriptions = useRef<Partial<LottieSubscriptions> | undefined>(
+    undefined,
+  );
 
   // (State) Initial states converted to local states
-  const [loop, setLoop] = useState<boolean | number>(options.initialValues?.loop || false);
-  const [autoplay, setAutoplay] = useState<boolean>(options.initialValues?.autoplay || false);
+  const [loop, setLoop] = useState<boolean | number>(
+    options.initialValues?.loop || false,
+  );
+  const [autoplay, setAutoplay] = useState<boolean>(
+    options.initialValues?.autoplay || false,
+  );
   const [direction, setDirection] = useState<Direction>(
     options.initialValues?.direction || Direction.Right,
   );
   const [speed, setSpeed] = useState<number>(options.initialValues?.speed || 1);
-  const [initialSegment, setInitialSegment] = useState<AnimationSegment | undefined>(
-    options.initialValues?.segment || undefined,
-  );
+  const [initialSegment, setInitialSegment] = useState<
+    AnimationSegment | undefined
+  >(options.initialValues?.segment || undefined);
 
   // (State) Animation's state before seeking
   // By keeping this we can pause the animation while the seeking action is
   // happening and return to it immediately, offering a smooth experience
-  const [stateBeforeSeeking, setStateBeforeSeeking] = useState<LottieState | null>(null);
+  const [stateBeforeSeeking, setStateBeforeSeeking] =
+    useState<LottieState | null>(null);
 
   /**
    * (Re)initialize the animation when the container and/or source change
@@ -148,13 +176,19 @@ export const useLottieFactory = <Version extends LottieVersion = LottieVersion.F
               _animationItem.goToAndStop(0);
 
               setState(LottieState.Stopped);
-              subscriptionManager.notify(LottieSubscription.Complete, undefined);
+              subscriptionManager.notify(
+                LottieSubscription.Complete,
+                undefined,
+              );
             },
           },
           {
             name: "loopComplete",
             handler: () => {
-              subscriptionManager.notify(LottieSubscription.LoopCompleted, undefined);
+              subscriptionManager.notify(
+                LottieSubscription.LoopCompleted,
+                undefined,
+              );
             },
           },
           {
@@ -185,7 +219,11 @@ export const useLottieFactory = <Version extends LottieVersion = LottieVersion.F
           {
             name: "DOMLoaded",
             handler: () => {
-              setState(_animationItem?.autoplay ? LottieState.Playing : LottieState.Stopped);
+              setState(
+                _animationItem?.autoplay
+                  ? LottieState.Playing
+                  : LottieState.Stopped,
+              );
             },
           },
           { name: "destroy", handler: () => undefined },
@@ -203,7 +241,10 @@ export const useLottieFactory = <Version extends LottieVersion = LottieVersion.F
           // Return a function to deregister this listener
           return () => {
             try {
-              _animationItem?.removeEventListener(listener.name, listener.handler);
+              _animationItem?.removeEventListener(
+                listener.name,
+                listener.handler,
+              );
             } catch (e) {
               // * There might be cases in which the `animationItem` exists but
               // * it was destroyed, and in that case `removeEventListener` will
@@ -216,7 +257,9 @@ export const useLottieFactory = <Version extends LottieVersion = LottieVersion.F
 
         // Return a function to unregister all the listeners
         return () => {
-          internalListenerRemovers.forEach((deregister) => deregister());
+          internalListenerRemovers.forEach((deregister) => {
+            deregister();
+          });
         };
       };
 
@@ -288,7 +331,9 @@ export const useLottieFactory = <Version extends LottieVersion = LottieVersion.F
         return prevState;
       }
 
-      animationItem.setDirection(_initialValues.current?.direction === Direction.Right ? 1 : -1);
+      animationItem.setDirection(
+        _initialValues.current?.direction === Direction.Right ? 1 : -1,
+      );
       return _initialValues.current?.direction === Direction.Right
         ? _initialValues.current?.direction
         : Direction.Left;
@@ -349,7 +394,10 @@ export const useLottieFactory = <Version extends LottieVersion = LottieVersion.F
   useEffect(() => {
     // Skip update if there is no subscription manager
     // or the new subscriptions are the same with the previous ones
-    if (!subscriptionManager || isEqual(_subscriptions.current, options.subscriptions)) {
+    if (
+      !subscriptionManager ||
+      isEqual(_subscriptions.current, options.subscriptions)
+    ) {
       return;
     }
 
@@ -357,9 +405,8 @@ export const useLottieFactory = <Version extends LottieVersion = LottieVersion.F
     _subscriptions.current = options.subscriptions;
 
     // Register consumer's subscriptions
-    const unregisterConsumerSubscriptions = subscriptionManager.addSubscriptions(
-      options.subscriptions,
-    );
+    const unregisterConsumerSubscriptions =
+      subscriptionManager.addSubscriptions(options.subscriptions);
 
     logger.log("👂 Consumer's subscriptions were registered");
 
@@ -466,7 +513,8 @@ export const useLottieFactory = <Version extends LottieVersion = LottieVersion.F
 
         const shouldPlayAfter =
           isSeekingEnded &&
-          (prevState === LottieState.Playing || stateBeforeSeeking === LottieState.Playing);
+          (prevState === LottieState.Playing ||
+            stateBeforeSeeking === LottieState.Playing);
 
         if (shouldPlayAfter) {
           animationItem?.goToAndPlay(frame, true);

@@ -1,4 +1,5 @@
 import React, { FC, RefObject, useCallback } from "react";
+
 import {
   UseLottieFactoryResult,
   Direction,
@@ -8,8 +9,7 @@ import {
 import config from "../../config";
 import { useFullscreen } from "../../hooks/useFullscreen";
 import Spacer from "../misc/Spacer";
-import { PlayerControlsFramesIndicator } from "./PlayerControlsFramesIndicator";
-import { PlayerControlsProgressBar } from "./PlayerControlsProgressBar/PlayerControlsProgressBar";
+
 import { DirectionButton } from "./buttons/DirectionButton";
 import { FullscreenButton } from "./buttons/FullscreenButton";
 import { LoopButton } from "./buttons/LoopButton";
@@ -17,6 +17,8 @@ import { PauseButton } from "./buttons/PauseButton";
 import { PlayButton } from "./buttons/PlayButton";
 import { SpeedButton } from "./buttons/SpeedButton";
 import { StopButton } from "./buttons/StopButton";
+import { PlayerControlsFramesIndicator } from "./PlayerControlsFramesIndicator";
+import { PlayerControlsProgressBar } from "./PlayerControlsProgressBar/PlayerControlsProgressBar";
 
 export type PlayerControlsProps = Pick<
   UseLottieFactoryResult,
@@ -60,7 +62,8 @@ export const PlayerControls: FC<PlayerControlsProps> = (props) => {
   } = props;
 
   // Initialise the hook for using the Fullscreen API
-  const { isFullscreen, toggleFullscreen } = useFullscreen(fullscreenElementRef);
+  const { isFullscreen, toggleFullscreen } =
+    useFullscreen(fullscreenElementRef);
 
   /**
    * Checks if the consumer have any preference on what elements we should display
@@ -95,26 +98,29 @@ export const PlayerControls: FC<PlayerControlsProps> = (props) => {
         backgroundColor: config.darkTransparentBackgroundColor,
       }}
     >
-      {shouldShowElement(PlayerControlsElement.Play) && state !== LottieState.Playing && (
-        <>
-          <PlayButton onClick={play} />
-          <Spacer size={10} />
-        </>
-      )}
+      {shouldShowElement(PlayerControlsElement.Play) &&
+        state !== LottieState.Playing && (
+          <>
+            <PlayButton onClick={play} />
+            <Spacer size={10} />
+          </>
+        )}
 
-      {shouldShowElement(PlayerControlsElement.Pause) && state === LottieState.Playing && (
-        <>
-          <PauseButton onClick={pause} />
-          <Spacer size={10} />
-        </>
-      )}
+      {shouldShowElement(PlayerControlsElement.Pause) &&
+        state === LottieState.Playing && (
+          <>
+            <PauseButton onClick={pause} />
+            <Spacer size={10} />
+          </>
+        )}
 
-      {shouldShowElement(PlayerControlsElement.Stop) && state !== LottieState.Stopped && (
-        <>
-          <StopButton onClick={stop} />
-          <Spacer size={10} />
-        </>
-      )}
+      {shouldShowElement(PlayerControlsElement.Stop) &&
+        state !== LottieState.Stopped && (
+          <>
+            <StopButton onClick={stop} />
+            <Spacer size={10} />
+          </>
+        )}
 
       {shouldShowElement(PlayerControlsElement.FramesIndicator) && (
         <>
@@ -151,9 +157,13 @@ export const PlayerControls: FC<PlayerControlsProps> = (props) => {
         <>
           <DirectionButton
             direction={direction}
-            onClick={() =>
-              changeDirection(direction === Direction.Right ? Direction.Left : Direction.Right)
-            }
+            onClick={() => {
+              changeDirection(
+                direction === Direction.Right
+                  ? Direction.Left
+                  : Direction.Right,
+              );
+            }}
           />
           <Spacer size={10} />
         </>
@@ -171,7 +181,10 @@ export const PlayerControls: FC<PlayerControlsProps> = (props) => {
       )}
 
       {shouldShowElement(PlayerControlsElement.Fullscreen) && (
-        <FullscreenButton isFullscreen={isFullscreen} onClick={() => toggleFullscreen?.()} />
+        <FullscreenButton
+          isFullscreen={isFullscreen}
+          onClick={() => toggleFullscreen?.()}
+        />
       )}
     </div>
   );

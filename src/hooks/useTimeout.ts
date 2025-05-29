@@ -6,14 +6,16 @@ export enum TimeoutState {
   InProgress = "in-progress",
 }
 
-export type UseTimeoutFnReturn = {
+export interface UseTimeoutFnReturn {
   status: TimeoutState;
   set: () => void;
   clear: () => void;
-};
+}
 
 export const useTimeout = (ms: number, fn?: () => void): UseTimeoutFnReturn => {
-  const [status, setStatus] = useState<TimeoutState>(ms ? TimeoutState.Idle : TimeoutState.NotSet);
+  const [status, setStatus] = useState<TimeoutState>(
+    ms ? TimeoutState.Idle : TimeoutState.NotSet,
+  );
   const timeout = useRef<ReturnType<typeof setTimeout>>(undefined);
   const callback = useRef(fn);
 

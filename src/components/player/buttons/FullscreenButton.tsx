@@ -1,4 +1,5 @@
 import React, { FC } from "react";
+
 import config from "../../../config";
 import { BaseButton, BaseButtonProps } from "../../misc/BaseButton";
 
@@ -6,7 +7,10 @@ export type FullscreenButtonProps = Pick<BaseButtonProps, "onClick"> & {
   isFullscreen?: boolean;
 };
 
-export const FullscreenButton: FC<FullscreenButtonProps> = ({ isFullscreen, onClick }) => (
+export const FullscreenButton: FC<FullscreenButtonProps> = ({
+  isFullscreen,
+  onClick,
+}) => (
   <BaseButton onClick={onClick}>
     <svg width="100%" height="100%" viewBox="0 0 24 24">
       {isFullscreen ? (

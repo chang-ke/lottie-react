@@ -1,6 +1,6 @@
 import { Lottie } from "./components/Lottie";
-import { LottieLight } from "./components/LottieLight";
 import { lottieHoc } from "./components/lottieHoc";
+import { LottieLight } from "./components/LottieLight";
 import { useLottieFactory } from "./hooks/useLottieFactory";
 
 export * from "./components/player";

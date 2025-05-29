@@ -1,19 +1,24 @@
 import { CSSProperties, useEffect, useState } from "react";
+
 import useStateWithPrevious from "./useStateWithPrevious";
 import { TimeoutState, useTimeout } from "./useTimeout";
 
-type UseFadeProps = {
+interface UseFadeProps {
   shouldShow: boolean;
   fadeOutTime?: number | null;
   minimumDisplayTime?: number | null;
-};
+}
 
 // TODO: handle the case in which the `fadeOutTime` is `null`, `undefined` or `0`
 // TODO: handle the case in which the `minimumDisplayTime` is `null`, `undefined` or `0`
 // TODO: handle the fade in case
 // TODO: fade when switching from one to another
 // TODO: find a way to define the @keyframes from here
-export const useFade = ({ shouldShow, fadeOutTime, minimumDisplayTime }: UseFadeProps) => {
+export const useFade = ({
+  shouldShow,
+  fadeOutTime,
+  minimumDisplayTime,
+}: UseFadeProps) => {
   const animationName = "player-overlay-fade-out";
 
   /**
@@ -60,7 +65,12 @@ export const useFade = ({ shouldShow, fadeOutTime, minimumDisplayTime }: UseFade
         timeoutStatus !== TimeoutState.InProgress
       ) {
         set();
-      } else if (!show && isVisible && !fadeOutTime && timeoutStatus !== TimeoutState.InProgress) {
+      } else if (
+        !show &&
+        isVisible &&
+        !fadeOutTime &&
+        timeoutStatus !== TimeoutState.InProgress
+      ) {
         // TODO: check this use case
         onAnimationEnd({ animationName });
       }
