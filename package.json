@@ -79,9 +79,8 @@
     "typescript": "^4.9.5"
   },
   "peerDependencies": {
-    // TODO: Allow React v19 and remove the support for v16 and v17 in the next major release.
-    "react": "^16.8.0 || ^17.0.0 || ^18.0.0",
-    "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0"
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
   },
   "packageManager": "yarn@4.9.1"
 }
