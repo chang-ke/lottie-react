@@ -1,14 +1,16 @@
 {
-  // This file used by ESLint and Rollup.
+  // This file used by ESLint and Rollup, we don't build with it.
+  "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
     "target": "ESNext",
+    "module": "ESNext",
     "allowJs": true,
     "jsx": "react-jsx",
     "strict": true,
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
   },
   "include": ["./src/**/*"]
 }
