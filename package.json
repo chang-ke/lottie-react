@@ -29,13 +29,15 @@
   ],
   "exports": {
     "require": "./build/index.js",
-    "import": "./build/index.esm.js"
+    "import": "./build/index.esm.js",
+    "types": "./build/index.d.ts"
   },
   "workspaces": [
     ".",
     "example"
   ],
   "scripts": {
+    "typecheck": "tsc --noEmit",
     "build": "rollup -c",
     "build:watch": "rollup -c -w",
     "postbuild": "npm pack && tar -xvzf *.tgz && rm -rf package *.tgz",
