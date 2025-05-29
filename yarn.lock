@@ -3783,7 +3783,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"less@npm:^4.1.3":
+"less@npm:^4.3.0":
   version: 4.3.0
   resolution: "less@npm:4.3.0"
   dependencies:
@@ -3935,9 +3935,9 @@ __metadata:
     eslint-plugin-promise: "npm:^6.1.1"
     eslint-plugin-react: "npm:^7.32.2"
     eslint-plugin-react-hooks: "npm:^4.6.0"
-    less: "npm:^4.1.3"
+    less: "npm:^4.3.0"
     lottie-web: "npm:^5.13.0"
-    postcss: "npm:^8.4.21"
+    postcss: "npm:^8.5.4"
     prettier: "npm:^2.8.4"
     react-fast-compare: "npm:^3.2.0"
     rollup: "npm:^3.17.1"
@@ -5069,7 +5069,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.4.21":
+"postcss@npm:^8.5.4":
   version: 8.5.4
   resolution: "postcss@npm:8.5.4"
   dependencies:
