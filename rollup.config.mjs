@@ -1,5 +1,5 @@
 import commonjs from "@rollup/plugin-commonjs";
-import { nodeResolve } from "@rollup/plugin-node-resolve";
+import resolve from "@rollup/plugin-node-resolve";
 import typescript from "@rollup/plugin-typescript";
 import autoprefixer from "autoprefixer";
 import del from "rollup-plugin-delete";
@@ -29,7 +29,7 @@ const getMinifiedName = (pathToFile) => pathToFile.replace(/\.js$/, ".min.js");
 const reusablePluginList = [
   /**
    * Avoids bundling the peerDependencies (`react` and `react-dom` in our case)
-   * in the final bundle as these will be provided by consumers.
+   * in the final bundle as consumers will provide these.
    */
   peerDepsExternal(),
   /**
@@ -42,9 +42,9 @@ const reusablePluginList = [
     // modules: true, // TODO: should we use it?
   }),
   /**
-   * Includes the third-party external dependencies into the final bundle
+   * Includes the third-party external dependencies in the final bundle
    */
-  nodeResolve(),
+  resolve(),
   /**
    * Converts CommonJS modules (potentially used in `node_modules`) to ES6
    * (which is what Rollup understands) so they can be included in a Rollup bundle
@@ -58,7 +58,7 @@ const reusablePluginList = [
 
 /**
  * Packages that should not be in the bundle, instead they will be required
- * These packages are in the `dependencies` therefor, `require(package)` will work
+ * These packages are in the `dependencies` therefore, `require(package)` will work
  *
  * ! IMPORTANT: check if that is the case for UMD versions
  */
@@ -75,12 +75,17 @@ const externalPackages = [
 const options = [
   /**
    * CommonJS
-   * This module format is most commonly used with Node using the require function.
-   * Even though this is a React module (which will be consumed by an application
-   * generally written in ESM format, then bundled and compiled by tools like webpack),
-   * we need to consider that it might also be used within a Server side rendering environment,
-   * which generally uses Node and hence might require a CJS counterpart of the library
-   * (ESM modules are supported in Node environment as of v10).
+   * Module format primarily used in Node.js environments with the require() function.
+   *
+   * While this React module will mostly be consumed in ESM format applications
+   * (bundled by tools like webpack), we provide a CJS variant to support:
+   *
+   * - Server-side rendering environments (typically Node-based)
+   * - Older build systems that expect CommonJS modules
+   * - Projects that haven't fully migrated to ESM
+   *
+   * Note: Node.js has supported ESM modules since v10, but many Node
+   * environments still use CommonJS as their primary module system.
    */
   {
     input,
@@ -101,7 +106,7 @@ const options = [
     plugins: [
       /**
        * Clean `build` folders and files before bundling
-       * ! This should be run just ones
+       * (!) This should be run just ones
        */
       del({ targets: "build/*" }),
       ...reusablePluginList,
@@ -138,7 +143,7 @@ const options = [
    * UMD
    * Required when the consumer requires the library using a `<script/>` tag
    *
-   * ? The UMD bundle is disabled, if it's requested start delivering it
+   * (i) The UMD bundle is disabled, if it's requested, start delivering it
    */
   // {
   //   input,
@@ -171,7 +176,7 @@ const options = [
       format: "esm",
     },
     external: [/\.less$/u],
-    plugins: [dts()],
+    plugins: [resolve(), dts()],
   },
 ];
 
