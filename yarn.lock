@@ -730,14 +730,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/prop-types@npm:*":
-  version: 15.7.14
-  resolution: "@types/prop-types@npm:15.7.14"
-  checksum: 10c0/1ec775160bfab90b67a782d735952158c7e702ca4502968aa82565bd8e452c2de8601c8dfe349733073c31179116cf7340710160d3836aa8a1ef76d1532893b1
-  languageName: node
-  linkType: hard
-
-"@types/react-dom@npm:^19":
+"@types/react-dom@npm:^19, @types/react-dom@npm:^19.1.5":
   version: 19.1.5
   resolution: "@types/react-dom@npm:19.1.5"
   peerDependencies:
@@ -746,17 +739,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^18.0.28":
-  version: 18.3.23
-  resolution: "@types/react@npm:18.3.23"
-  dependencies:
-    "@types/prop-types": "npm:*"
-    csstype: "npm:^3.0.2"
-  checksum: 10c0/49331800b76572eb2992a5c44801dbf8c612a5f99c8f4e4200f06c7de6f3a6e9455c661784a6c5469df96fa45622cb4a9d0982c44e6a0d5719be5f2ef1f545ed
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:^19":
+"@types/react@npm:^19, @types/react@npm:^19.1.6":
   version: 19.1.6
   resolution: "@types/react@npm:19.1.6"
   dependencies:
@@ -3922,7 +3905,8 @@ __metadata:
     "@rollup/plugin-commonjs": "npm:^24.0.1"
     "@rollup/plugin-node-resolve": "npm:^15.0.1"
     "@rollup/plugin-typescript": "npm:^11.0.0"
-    "@types/react": "npm:^18.0.28"
+    "@types/react": "npm:^19.1.6"
+    "@types/react-dom": "npm:^19.1.5"
     "@typescript-eslint/eslint-plugin": "npm:^5.52.0"
     "@typescript-eslint/parser": "npm:^5.52.0"
     autoprefixer: "npm:^10.4.21"
@@ -3948,8 +3932,8 @@ __metadata:
     rollup-plugin-uglify: "npm:^6.0.4"
     typescript: "npm:^5.8.3"
   peerDependencies:
-    react: ^18.0.0 || ^19.0.0
-    react-dom: ^18.0.0 || ^19.0.0
+    react: ^18.2.0 || ^19.0.0
+    react-dom: ^18.2.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 

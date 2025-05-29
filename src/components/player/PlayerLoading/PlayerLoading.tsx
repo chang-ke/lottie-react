@@ -1,5 +1,5 @@
 import "./PlayerLoading.less";
-import React, { FC } from "react";
+import React, { FC, JSX } from "react";
 import config from "../../../config";
 import { PlayerOverlay } from "../PlayerOverlay";
 

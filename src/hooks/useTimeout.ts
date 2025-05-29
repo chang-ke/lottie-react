@@ -14,7 +14,7 @@ export type UseTimeoutFnReturn = {
 
 export const useTimeout = (ms: number, fn?: () => void): UseTimeoutFnReturn => {
   const [status, setStatus] = useState<TimeoutState>(ms ? TimeoutState.Idle : TimeoutState.NotSet);
-  const timeout = useRef<ReturnType<typeof setTimeout>>();
+  const timeout = useRef<ReturnType<typeof setTimeout>>(undefined);
   const callback = useRef(fn);
 
   const set = useCallback(() => {

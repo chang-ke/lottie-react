@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef, useState } from "react";
+import React, { FC, JSX, useEffect, useRef, useState } from "react";
 import config from "../../config";
 
 export type BaseButtonProps = {

@@ -18,7 +18,7 @@ export type UseFullscreenResult = {
  *
  * @param ref
  */
-export const useFullscreen = (ref?: RefObject<Element>): UseFullscreenResult => {
+export const useFullscreen = (ref?: RefObject<Element | null>): UseFullscreenResult => {
   const [isFullscreen, setIsFullscreen] = useState(!!getFullscreenInfo(ref)?.fullscreenElement);
 
   const toggleFullscreen = async () => {

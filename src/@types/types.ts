@@ -7,7 +7,7 @@ import {
   HTMLRendererConfig,
   SVGRendererConfig,
 } from "lottie-web";
-import { RefCallback, RefObject } from "react";
+import { JSX, RefCallback, RefObject } from "react";
 import { SubscriptionManager } from "../utils/SubscriptionManager";
 import {
   Direction,
@@ -17,14 +17,6 @@ import {
   LottieVersion,
   PlayerControlsElement,
 } from "./enums";
-
-/**
- * Object returned by `useCallbackRef()`
- */
-export type UseCallbackRefResult<T = unknown> = {
-  ref: RefObject<T>;
-  setRef: RefCallback<T>;
-};
 
 /**
  * Shape of the internal listener
@@ -104,7 +96,7 @@ export type UseLottieFactoryOptions<Version extends LottieVersion = LottieVersio
  * Object returned by `useLottieFactory()`
  */
 export type UseLottieFactoryResult = {
-  containerRef: RefObject<HTMLDivElement>;
+  containerRef: RefObject<HTMLDivElement | null>;
   setContainerRef: RefCallback<HTMLDivElement>;
   animationItem: AnimationItem | null;
   state: LottieState;

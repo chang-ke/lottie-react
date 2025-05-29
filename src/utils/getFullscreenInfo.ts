@@ -43,7 +43,7 @@ export const extendedDocument: ExtendedDocument = document;
  *
  * TODO: should we use the `extendedDocument` if `ref` is `undefined`
  */
-export const getFullscreenInfo = (ref?: RefObject<ExtendedElement>): FullscreenInfo => {
+export const getFullscreenInfo = (ref?: RefObject<ExtendedElement | null>): FullscreenInfo => {
   if (!ref?.current) {
     return null;
   }

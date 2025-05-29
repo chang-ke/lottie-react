@@ -35,7 +35,7 @@ export type PlayerControlsProps = Pick<
   | "subscribe"
 > & {
   show: boolean;
-  fullscreenElementRef?: RefObject<Element>;
+  fullscreenElementRef?: RefObject<HTMLDivElement | null>;
   elements?: PlayerControlsElement[];
 };
 

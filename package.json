@@ -51,11 +51,16 @@
     "lottie-web": "^5.13.0",
     "react-fast-compare": "^3.2.2"
   },
+  "peerDependencies": {
+    "react": "^18.2.0 || ^19.0.0",
+    "react-dom": "^18.2.0 || ^19.0.0"
+  },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^24.0.1",
     "@rollup/plugin-node-resolve": "^15.0.1",
     "@rollup/plugin-typescript": "^11.0.0",
-    "@types/react": "^18.0.28",
+    "@types/react": "^19.1.6",
+    "@types/react-dom": "^19.1.5",
     "@typescript-eslint/eslint-plugin": "^5.52.0",
     "@typescript-eslint/parser": "^5.52.0",
     "autoprefixer": "^10.4.21",
