@@ -18,14 +18,13 @@ type ExtendedDocument = Document & {
 
 /**
  * Extended version of the {@link Element} that includes the
- * prefixed full screen properties from all the vendors
+ * prefixed full-screen properties from all the vendors
  */
 type ExtendedElement = Element & {
   webkitRequestFullscreen?: () => Promise<void>;
 };
 
 type FullscreenInfo = null | {
-  isFullscreenEnabled: boolean;
   fullscreenElement: Element | null;
   requestFullscreen: () => Promise<void> | undefined;
   exitFullscreen: () => Promise<void>;
@@ -33,9 +32,14 @@ type FullscreenInfo = null | {
 };
 
 /**
- * Enrich `documents` type with property that are not yet defined
+ * Enrich the ` documents ` type with property that are not yet defined
  */
-export const extendedDocument: ExtendedDocument = document;
+export const getExtendedDocument = (): ExtendedDocument | null => {
+  if (typeof document === "undefined") {
+    return null;
+  }
+  return document;
+};
 
 /**
  * By getting the info through this method we increase the
@@ -48,11 +52,15 @@ export const getFullscreenInfo = (ref?: RefObject<ExtendedElement | null>): Full
     return null;
   }
 
+  const extendedDocument = getExtendedDocument();
+  if (!extendedDocument) {
+    return null;
+  }
+
   switch (true) {
     // Shared properties
     case extendedDocument.fullscreenEnabled:
       return {
-        isFullscreenEnabled: extendedDocument.fullscreenEnabled,
         fullscreenElement: extendedDocument.fullscreenElement,
         requestFullscreen: () => ref.current?.requestFullscreen(),
         exitFullscreen: () => extendedDocument.exitFullscreen(),
@@ -61,7 +69,6 @@ export const getFullscreenInfo = (ref?: RefObject<ExtendedElement | null>): Full
     // MOZ
     case extendedDocument.mozFullScreenEnabled:
       return {
-        isFullscreenEnabled: !!extendedDocument.mozFullScreenEnabled,
         fullscreenElement: extendedDocument.mozFullScreenElement ?? null,
         requestFullscreen: () => ref.current?.requestFullscreen(),
         exitFullscreen: () => extendedDocument.exitFullscreen(),
@@ -70,7 +77,6 @@ export const getFullscreenInfo = (ref?: RefObject<ExtendedElement | null>): Full
     // MS
     case extendedDocument.msFullscreenEnabled:
       return {
-        isFullscreenEnabled: !!extendedDocument.msFullscreenEnabled,
         fullscreenElement: extendedDocument.msFullscreenElement ?? null,
         requestFullscreen: () => ref.current?.requestFullscreen(),
         exitFullscreen: () => extendedDocument.exitFullscreen(),
@@ -79,7 +85,6 @@ export const getFullscreenInfo = (ref?: RefObject<ExtendedElement | null>): Full
     // WebKit
     case extendedDocument.webkitFullscreenEnabled:
       return {
-        isFullscreenEnabled: !!extendedDocument.webkitFullscreenEnabled,
         fullscreenElement: extendedDocument.webkitCurrentFullScreenElement ?? null,
         requestFullscreen: () => ref.current?.webkitRequestFullscreen?.(),
         exitFullscreen: async () => await extendedDocument.webkitExitFullscreen?.(),
