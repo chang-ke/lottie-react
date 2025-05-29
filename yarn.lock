@@ -3939,7 +3939,7 @@ __metadata:
     lottie-web: "npm:^5.13.0"
     postcss: "npm:^8.5.4"
     prettier: "npm:^2.8.4"
-    react-fast-compare: "npm:^3.2.0"
+    react-fast-compare: "npm:^3.2.2"
     rollup: "npm:^3.17.1"
     rollup-plugin-delete: "npm:^2.0.0"
     rollup-plugin-dts: "npm:^5.2.0"
@@ -5172,7 +5172,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-fast-compare@npm:^3.2.0":
+"react-fast-compare@npm:^3.2.2":
   version: 3.2.2
   resolution: "react-fast-compare@npm:3.2.2"
   checksum: 10c0/0bbd2f3eb41ab2ff7380daaa55105db698d965c396df73e6874831dbafec8c4b5b08ba36ff09df01526caa3c61595247e3269558c284e37646241cba2b90a367
