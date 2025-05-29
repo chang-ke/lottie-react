@@ -1,4 +1,5 @@
 import {
+  AnimationEventCallback,
   AnimationEventName,
   AnimationItem,
   AnimationSegment,
@@ -6,7 +7,7 @@ import {
   HTMLRendererConfig,
   SVGRendererConfig,
 } from "lottie-web";
-import { AnimationEventHandler, RefCallback, RefObject } from "react";
+import { RefCallback, RefObject } from "react";
 import { SubscriptionManager } from "../utils/SubscriptionManager";
 import {
   Direction,
@@ -30,7 +31,7 @@ export type UseCallbackRefResult<T = unknown> = {
  */
 export type InternalListener = {
   name: AnimationEventName;
-  handler: AnimationEventHandler;
+  handler: AnimationEventCallback;
 };
 
 /**
