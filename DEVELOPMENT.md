@@ -69,3 +69,8 @@ yarn dev
 ```
 
 ✨Done, we are ready to develop and test! 
+
+
+## TODO(s)
+
+- [ ] Check the `lottie-web` [CHANGELOG](https://github.com/airbnb/lottie-web/blob/master/CHANGELOG.md#v-5102) from `5.10.2` to `latest` and make sure we add support for all changes / features.

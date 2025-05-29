@@ -48,7 +48,7 @@
     "test": "echo TBI"
   },
   "dependencies": {
-    "lottie-web": "^5.10.2",
+    "lottie-web": "^5.13.0",
     "react-fast-compare": "^3.2.0"
   },
   "devDependencies": {

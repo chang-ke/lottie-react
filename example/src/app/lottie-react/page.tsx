@@ -92,10 +92,15 @@ export default function LottieReactPage() {
               src="/assets/groovyWalk.json"
               initialValues={{
                 autoplay: true,
+                // TODO: Should we allow changing loop dynamically? `setLoop` is not available
                 loop: loop,
                 speed: speed,
                 direction: direction
               }}
+              // Loading controls
+              // disableLoading={true}
+              LoadingOverlay={<>Something</>}
+              // Subscriptions
               subscriptions={{
                 complete: handleComplete,
                 loop_completed: handleLoopComplete
