@@ -1386,7 +1386,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"autoprefixer@npm:^10.4.13":
+"autoprefixer@npm:^10.4.21":
   version: 10.4.21
   resolution: "autoprefixer@npm:10.4.21"
   dependencies:
@@ -3925,7 +3925,7 @@ __metadata:
     "@types/react": "npm:^18.0.28"
     "@typescript-eslint/eslint-plugin": "npm:^5.52.0"
     "@typescript-eslint/parser": "npm:^5.52.0"
-    autoprefixer: "npm:^10.4.13"
+    autoprefixer: "npm:^10.4.21"
     concurrently: "npm:^9.1.2"
     eslint: "npm:^8.34.0"
     eslint-config-prettier: "npm:^8.6.0"
