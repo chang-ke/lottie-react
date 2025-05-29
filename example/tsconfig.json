@@ -8,7 +8,13 @@
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
-//    "moduleResolution": "bundler",
+    /**
+      * Usually the module resolution would be set to "bundler" for Next.js projects,
+      * but for our use case (using it as an example project), we set it to "node".
+      *
+      * If it is not set to "node", you might encounter issues with module resolution:
+      * Example: "TS2792: Cannot find module next or lottie-react. Did you mean to set the moduleResolution option to node, or to add aliases to the `paths` option?"
+      */
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
