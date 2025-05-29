@@ -31,6 +31,10 @@
     "require": "./build/index.js",
     "import": "./build/index.esm.js"
   },
+  "workspaces": [
+    ".",
+    "example"
+  ],
   "scripts": {
     "build": "rollup -c",
     "build:watch": "rollup -c -w",
