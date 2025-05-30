@@ -1,9 +1,4 @@
-import {
-  AnimationConfig,
-  AnimationItem,
-  AnimationSegment,
-  LottiePlayer,
-} from "lottie-web";
+import { AnimationItem, AnimationSegment, LottiePlayer } from "lottie-web";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import isEqual from "react-fast-compare";
 
@@ -68,7 +63,7 @@ export const useLottieFactory = <
   // (State) Animation's state
   const { state, setState } = useStateWithPrevious<LottieState>({
     initialState: LottieState.Loading,
-    onChange: (previousPlayerState, newPlayerState) => {
+    onChange: (_previousPlayerState, newPlayerState) => {
       // Let the subscribers know about the new state
       subscriptionManager.notify(LottieSubscription.NewState, {
         state: newPlayerState,
@@ -84,18 +79,18 @@ export const useLottieFactory = <
 
   // (State) Initial states converted to local states
   const [loop, setLoop] = useState<boolean | number>(
-    options.initialValues?.loop || false,
+    options.initialValues?.loop ?? false,
   );
   const [autoplay, setAutoplay] = useState<boolean>(
-    options.initialValues?.autoplay || false,
+    options.initialValues?.autoplay ?? false,
   );
   const [direction, setDirection] = useState<Direction>(
-    options.initialValues?.direction || Direction.Right,
+    options.initialValues?.direction ?? Direction.Right,
   );
-  const [speed, setSpeed] = useState<number>(options.initialValues?.speed || 1);
-  const [initialSegment, setInitialSegment] = useState<
+  const [speed, setSpeed] = useState<number>(options.initialValues?.speed ?? 1);
+  const [initialSegment, _setInitialSegment] = useState<
     AnimationSegment | undefined
-  >(options.initialValues?.segment || undefined);
+  >(options.initialValues?.segment ?? undefined);
 
   // (State) Animation's state before seeking
   // By keeping this we can pause the animation while the seeking action is
@@ -116,7 +111,7 @@ export const useLottieFactory = <
       );
 
       // Checks that the container is ready
-      if (!containerRef?.current) {
+      if (!containerRef.current) {
         logger.log("⌛️ The container is not ready yet");
         return;
       }
@@ -127,7 +122,7 @@ export const useLottieFactory = <
         animationItem.destroy();
       }
 
-      // Checks if the animation's source have the right format
+      // Checks if the animation's source has the right format
       const normalizedAnimationSource = normalizeAnimationSource(src);
 
       if (!normalizedAnimationSource) {
@@ -152,7 +147,7 @@ export const useLottieFactory = <
           autoplay,
           initialSegment,
           assetsPath: _initialValues.current?.assetsPath,
-        } as AnimationConfig); // TODO: remove the type annotation when `lottie-web` allow us to use generics
+        });
       } catch (e) {
         logger.warn("⚠️ Error while trying to load animation", e);
         subscriptionManager.notify(LottieSubscription.Failure, undefined);
@@ -194,11 +189,9 @@ export const useLottieFactory = <
           {
             name: "enterFrame",
             handler: () => {
-              if (_animationItem) {
-                subscriptionManager.notify(LottieSubscription.Frame, {
-                  currentFrame: _animationItem.currentFrame,
-                });
-              }
+              subscriptionManager.notify(LottieSubscription.Frame, {
+                currentFrame: _animationItem.currentFrame,
+              });
             },
           },
           { name: "segmentStart", handler: () => undefined },
@@ -220,7 +213,7 @@ export const useLottieFactory = <
             name: "DOMLoaded",
             handler: () => {
               setState(
-                _animationItem?.autoplay
+                _animationItem.autoplay
                   ? LottieState.Playing
                   : LottieState.Stopped,
               );
@@ -231,24 +224,32 @@ export const useLottieFactory = <
 
         const internalListenerRemovers = internalListeners.map((listener) => {
           try {
-            _animationItem?.addEventListener(listener.name, listener.handler);
+            _animationItem.addEventListener(listener.name, listener.handler);
           } catch (e) {
-            // * There might be cases in which the `animationItem` exists but
-            // * it's not ready yet, and in that case `addEventListener` will
-            // * throw an error. That's why we skip these errors.
+            // There might be cases in which the `animationItem` exists, but
+            // it's not ready yet, and in that case `addEventListener` will
+            // throw an error. That's why we skip these errors.
+            logger.warn(
+              `⚠️ Error while trying to register internal listener "${listener.name}"`,
+              e,
+            );
           }
 
           // Return a function to deregister this listener
           return () => {
             try {
-              _animationItem?.removeEventListener(
+              _animationItem.removeEventListener(
                 listener.name,
                 listener.handler,
               );
             } catch (e) {
-              // * There might be cases in which the `animationItem` exists but
-              // * it was destroyed, and in that case `removeEventListener` will
-              // * throw an error. That's why we skip these errors.
+              // There might be cases in which the `animationItem` exists, but
+              // it was destroyed, and in that case `removeEventListener` will
+              // throw an error. That's why we skip these errors.
+              logger.warn(
+                `⚠️ Error while trying to deregister internal listener "${listener.name}"`,
+                e,
+              );
             }
           };
         });
@@ -273,9 +274,10 @@ export const useLottieFactory = <
         setAnimationItem(null);
       };
     },
-    // * We are disabling the `exhaustive-deps` here because we want to
-    // * (re)initialise only when the container ref and/or the source change
-    // ! DON'T CHANGE because we will end up having the "Maximum update depth exceeded" error
+    // We are disabling the `exhaustive-deps` here because we want to
+    // (re)initialize only when the `containerRef` and/or the source change.
+    //
+    // (!) DON'T CHANGE because we will end up having the "Maximum update depth exceeded" error
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [containerRef.current, src],
   );
@@ -284,7 +286,7 @@ export const useLottieFactory = <
    * Process initial values changes and update any dependent state
    */
   useEffect(() => {
-    // Skip update if there is no animation item, reinitialization is not enabled
+    // Skip update if there is no animation item, reinitialization is not enabled,
     // or the initial values are the same with the previous ones
     if (
       !animationItem ||
@@ -305,9 +307,6 @@ export const useLottieFactory = <
       }
 
       const newState = _initialValues.current?.loop ?? false;
-      // * Typing is wrong in `lottie-web`; loop can accept boolean AND number
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       animationItem.loop = newState;
       return newState;
     });
@@ -335,7 +334,7 @@ export const useLottieFactory = <
         _initialValues.current?.direction === Direction.Right ? 1 : -1,
       );
       return _initialValues.current?.direction === Direction.Right
-        ? _initialValues.current?.direction
+        ? _initialValues.current.direction
         : Direction.Left;
     });
 
@@ -392,12 +391,8 @@ export const useLottieFactory = <
    * Checks for and (re)register the consumer's subscriptions
    */
   useEffect(() => {
-    // Skip update if there is no subscription manager
-    // or the new subscriptions are the same with the previous ones
-    if (
-      !subscriptionManager ||
-      isEqual(_subscriptions.current, options.subscriptions)
-    ) {
+    // Skip update if the new subscriptions are the same with the previous ones
+    if (isEqual(_subscriptions.current, options.subscriptions)) {
       return;
     }
 
@@ -422,7 +417,7 @@ export const useLottieFactory = <
   // Play
   const play = useCallback(() => {
     if (animationItem) {
-      // If direction is `Left` and the animation is completed, play from the
+      // If the direction is `Left` and the animation is completed, play from the
       if (animationItem.currentFrame <= 0 && direction === Direction.Left) {
         animationItem.goToAndPlay(animationItem.totalFrames, true);
       } else {
@@ -465,18 +460,18 @@ export const useLottieFactory = <
     (direction: Direction) => {
       if (animationItem) {
         setDirection(direction);
-        animationItem?.setDirection(direction === Direction.Right ? 1 : -1);
+        animationItem.setDirection(direction === Direction.Right ? 1 : -1);
       }
     },
     [animationItem],
   );
 
-  // Set player speed TODO: this
+  // Set player speed
   const changeSpeed = useCallback(
     (speed: number) => {
       if (animationItem) {
         setSpeed(speed);
-        animationItem?.setSpeed(speed);
+        animationItem.setSpeed(speed);
       }
     },
     [animationItem],
@@ -484,7 +479,7 @@ export const useLottieFactory = <
 
   /**
    * Change the current frame from the animation
-   * @param value Can be a frame number on a percentage (e.g. 12 or "14%")
+   * @param value Can be a frame number on a percentage (e.g., 12 or "14%")
    * @param isSeekingEnded Indicate if we should resume the player state from before seeking
    */
   const seek = useCallback(
@@ -517,10 +512,10 @@ export const useLottieFactory = <
             stateBeforeSeeking === LottieState.Playing);
 
         if (shouldPlayAfter) {
-          animationItem?.goToAndPlay(frame, true);
+          animationItem.goToAndPlay(frame, true);
           return LottieState.Playing;
         } else {
-          animationItem?.goToAndStop(frame, true);
+          animationItem.goToAndStop(frame, true);
 
           if (prevState !== LottieState.Stopped) {
             // If the seeking ended at frame `0` set the state to `Stopped`
