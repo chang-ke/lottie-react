@@ -11,9 +11,6 @@ import { configs as pluginReactHooksConfigs } from "eslint-plugin-react-hooks";
 import globals from "globals";
 import tseslint, { configs as tseslintConfigs } from "typescript-eslint";
 
-// List of config files that should be run through ESLint
-const configFiles = ["eslint.config.mts", "rollup.config.mjs"];
-
 /**
  * Configure ESLint rules for import order.
  */
@@ -93,10 +90,7 @@ export default tseslint.config([
     // @see https://typescript-eslint.io/getting-started/typed-linting/
     languageOptions: {
       parserOptions: {
-        projectService: {
-          // Files that should be linted but not included in the project
-          allowDefaultProject: configFiles,
-        },
+        projectService: true,
         tsconfigRootDir: import.meta.dirname,
       },
     },
