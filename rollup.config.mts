@@ -1,18 +1,20 @@
 import commonjs from "@rollup/plugin-commonjs";
 import resolve from "@rollup/plugin-node-resolve";
+import terser from "@rollup/plugin-terser";
 import typescript from "@rollup/plugin-typescript";
 import autoprefixer from "autoprefixer";
+import { RollupOptions } from "rollup";
+// (!) The type definitions for `rollup-plugin-delete` are available but not work properly
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
 import del from "rollup-plugin-delete";
-import dts from "rollup-plugin-dts";
-import peerDepsExternal from "rollup-plugin-peer-deps-external";
+import { dts } from "rollup-plugin-dts";
 import postcss from "rollup-plugin-postcss";
-import { uglify } from "rollup-plugin-uglify";
 
 import packageJson from "./package.json" with { type: "json" };
 
 /**
  * Entry point of our library
- * @type {string}
  */
 const input = "./src/index.ts";
 
@@ -21,17 +23,13 @@ const input = "./src/index.ts";
  * @param pathToFile
  * @return string
  */
-const getMinifiedName = (pathToFile) => pathToFile.replace(/\.js$/, ".min.js");
+const getMinifiedName = (pathToFile: string) =>
+  pathToFile.replace(/\.js$/, ".min.js");
 
 /**
  * Definition of the common plugins used in the rollup configurations
  */
 const reusablePluginList = [
-  /**
-   * Avoids bundling the peerDependencies (`react` and `react-dom` in our case)
-   * in the final bundle as consumers will provide these.
-   */
-  peerDepsExternal(),
   /**
    * Integrates with `postcss` for bundling styles
    */
@@ -60,19 +58,19 @@ const reusablePluginList = [
  * Packages that should not be in the bundle, instead they will be required
  * These packages are in the `dependencies` therefore, `require(package)` will work
  *
- * ! IMPORTANT: check if that is the case for UMD versions
+ * (!) IMPORTANT: check if that is the case for UMD versions
  */
 const externalPackages = [
-  ...Object.keys(packageJson.dependencies || {}),
-  ...Object.keys(packageJson.peerDependencies || {}),
+  ...Object.keys(packageJson.dependencies),
+  ...Object.keys(packageJson.peerDependencies),
+  "react/jsx-runtime",
   "lottie-web/build/player/lottie_light",
 ];
 
 /**
  * Definition of the rollup configurations
- * @type {import('rollup').RollupOptions[]}
  */
-const options = [
+const options: RollupOptions[] = [
   /**
    * CommonJS
    * Module format primarily used in Node.js environments with the require() function.
@@ -100,7 +98,7 @@ const options = [
         format: "cjs",
         exports: "named", // TODO: add description
         sourcemap: true,
-        plugins: [uglify()],
+        plugins: [terser()],
       },
     ],
     plugins: [
@@ -108,6 +106,8 @@ const options = [
        * Clean `build` folders and files before bundling
        * (!) This should be run just ones
        */
+      // (!) The type definitions for `rollup-plugin-delete` are available but not work properly
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       del({ targets: "build/*" }),
       ...reusablePluginList,
     ],
@@ -133,7 +133,7 @@ const options = [
         format: "esm",
         exports: "named", // TODO: add description
         sourcemap: true,
-        plugins: [uglify()],
+        plugins: [terser()],
       },
     ],
     plugins: reusablePluginList,
