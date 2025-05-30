@@ -1,5 +1,5 @@
 import "./PlayerLoading.less";
-import React, { FC, JSX } from "react";
+import { FC, JSX } from "react";
 
 import config from "../../../config";
 import { PlayerOverlay } from "../PlayerOverlay";
@@ -46,9 +46,7 @@ export const PlayerLoading: FC<PlayerLoadingProps> = ({
       minShowTime={minDisplayTime}
       fadeOutAnimationTime={fadeOutTime}
     >
-      {Content ? (
-        Content
-      ) : (
+      {Content ?? (
         <div
           className={"player-loading-spinner"}
           style={{ width: size, height: size }}

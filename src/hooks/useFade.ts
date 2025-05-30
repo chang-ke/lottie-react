@@ -96,7 +96,7 @@ export const useFade = ({
         }
       : {
           animationName,
-          animationDuration: `${fadeOutTime}ms`,
+          animationDuration: `${String(fadeOutTime)}ms`,
           opacity: 0,
         };
 

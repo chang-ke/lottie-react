@@ -1,4 +1,4 @@
-import React, { FC, JSX } from "react";
+import { FC, JSX } from "react";
 
 import { PlayerOverlay } from "./PlayerOverlay";
 
@@ -26,7 +26,7 @@ export const PlayerFailure: FC<PlayerErrorProps> = ({
 
   return (
     <PlayerOverlay show={show}>
-      {Content ? Content : "Couldn't load the animation"}
+      {Content ?? "Couldn't load the animation"}
     </PlayerOverlay>
   );
 };

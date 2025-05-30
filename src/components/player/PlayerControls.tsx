@@ -1,4 +1,4 @@
-import React, { FC, RefObject, useCallback } from "react";
+import { FC, RefObject, useCallback } from "react";
 
 import {
   UseLottieFactoryResult,
@@ -66,7 +66,7 @@ export const PlayerControls: FC<PlayerControlsProps> = (props) => {
     useFullscreen(fullscreenElementRef);
 
   /**
-   * Checks if the consumer have any preference on what elements we should display
+   * Checks if the consumer has any preference on what elements we should display
    */
   const shouldShowElement = useCallback(
     (element: PlayerControlsElement) => {

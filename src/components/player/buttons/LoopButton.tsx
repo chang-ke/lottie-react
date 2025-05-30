@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import { FC } from "react";
 
 import config from "../../../config";
 import { BaseButton, BaseButtonProps } from "../../misc/BaseButton";

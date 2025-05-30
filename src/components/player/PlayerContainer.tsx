@@ -1,4 +1,4 @@
-import React, {
+import {
   DetailedHTMLProps,
   forwardRef,
   ForwardRefRenderFunction,
@@ -10,10 +10,10 @@ export type PlayerContainerProps = DetailedHTMLProps<
   HTMLDivElement
 >;
 
-export const _PlayerContainer: ForwardRefRenderFunction<HTMLDivElement, PlayerContainerProps> = (
-  props,
-  ref,
-) => {
+export const _PlayerContainer: ForwardRefRenderFunction<
+  HTMLDivElement,
+  PlayerContainerProps
+> = (props, ref) => {
   const { children, ...rest } = props;
 
   return (

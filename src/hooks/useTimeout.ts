@@ -25,7 +25,10 @@ export const useTimeout = (ms: number, fn?: () => void): UseTimeoutFnReturn => {
     }
 
     setStatus(TimeoutState.InProgress);
-    timeout.current && clearTimeout(timeout.current);
+    if (timeout.current) {
+      clearTimeout(timeout.current);
+      timeout.current = undefined;
+    }
 
     timeout.current = setTimeout(() => {
       setStatus(TimeoutState.Idle);
@@ -35,15 +38,18 @@ export const useTimeout = (ms: number, fn?: () => void): UseTimeoutFnReturn => {
 
   const clear = useCallback(() => {
     setStatus(TimeoutState.NotSet);
-    timeout.current && clearTimeout(timeout.current);
+    if (timeout.current) {
+      clearTimeout(timeout.current);
+      timeout.current = undefined;
+    }
   }, []);
 
-  // update ref when function changes
+  // update ref when the function changes
   useEffect(() => {
     callback.current = fn;
   }, [fn]);
 
-  // set on mount, clear on unmount
+  // set on mount, clear on unmounting
   useEffect(
     () => {
       set();
@@ -51,9 +57,10 @@ export const useTimeout = (ms: number, fn?: () => void): UseTimeoutFnReturn => {
       return clear;
     },
 
-    // * We are disabling the `exhaustive-deps` here because we want to
-    // * (re)initialise only when the `ms` value change
-    // ! DON'T CHANGE because we will end up having the "Maximum update depth exceeded" error
+    // We are disabling the `exhaustive-deps` here because we want to
+    // (re)initialize only when the `ms` value change.
+    //
+    // (!) DON'T CHANGE because we will end up having the "Maximum update depth exceeded" error
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [ms],
   );

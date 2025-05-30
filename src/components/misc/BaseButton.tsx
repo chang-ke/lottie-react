@@ -1,10 +1,10 @@
-import React, { FC, JSX, useEffect, useRef, useState } from "react";
+import { FC, JSX, useEffect, useRef, useState } from "react";
 
 import config from "../../config";
 
 export interface BaseButtonProps {
   children: JSX.Element;
-  onClick?: () => void;
+  onClick?: () => void | Promise<void>;
   DropdownContent?: (setIsMenuOpen: (state: boolean) => void) => JSX.Element;
 }
 
@@ -88,7 +88,7 @@ export const BaseButton: FC<BaseButtonProps> = ({
         }}
         onClick={() => {
           setIsMenuOpen(!isMenuOpen);
-          onClick?.();
+          void onClick?.();
         }}
       >
         {children}

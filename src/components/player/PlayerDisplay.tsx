@@ -1,4 +1,4 @@
-import React, {
+import {
   DetailedHTMLProps,
   forwardRef,
   ForwardRefRenderFunction,
@@ -18,7 +18,7 @@ export type PlayerDisplayProps = DetailedHTMLProps<
  * @param props
  * @param ref
  */
-const _PlayerDisplay: ForwardRefRenderFunction<
+const PlayerDisplayWithRef: ForwardRefRenderFunction<
   HTMLDivElement,
   PlayerDisplayProps
 > = (props, ref) => {
@@ -51,4 +51,4 @@ const _PlayerDisplay: ForwardRefRenderFunction<
   );
 };
 
-export const PlayerDisplay = forwardRef(_PlayerDisplay);
+export const PlayerDisplay = forwardRef(PlayerDisplayWithRef);

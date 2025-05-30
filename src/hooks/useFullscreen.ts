@@ -49,6 +49,7 @@ export const useFullscreen = (
       await getFullscreenInfo(ref)?.requestFullscreen();
       setIsFullscreen(!!getFullscreenInfo(ref)?.fullscreenElement);
     } catch (e) {
+      logger.error(`Failed to enter fullscreen mode: ${String(e)}`);
       setIsFullscreen(false);
     }
   };
@@ -67,7 +68,7 @@ export const useFullscreen = (
       setIsFullscreen(!!getFullscreenInfo(ref)?.fullscreenElement);
     });
 
-    // Remove the listener on unmount
+    // Remove the listener on unmounting
     return () => {
       getFullscreenInfo(ref)?.onFullscreenChange(null);
     };

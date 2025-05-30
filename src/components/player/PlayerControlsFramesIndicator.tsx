@@ -1,4 +1,4 @@
-import React, {
+import {
   CSSProperties,
   FC,
   useCallback,
@@ -63,13 +63,11 @@ export const PlayerControlsFramesIndicator: FC<PlayerFramesIndicatorProps> = ({
    * Listen for event regarding the `currentFrame`
    */
   useEffect(() => {
-    if (subscribe) {
-      return subscribe(LottieSubscription.Frame, ({ currentFrame }) => {
-        if (containerRef.current) {
-          containerRef.current.innerText = currentFrame?.toFixed(_decimals);
-        }
-      });
-    }
+    return subscribe(LottieSubscription.Frame, ({ currentFrame }) => {
+      if (containerRef.current) {
+        containerRef.current.innerText = currentFrame.toFixed(_decimals);
+      }
+    });
   }, [_decimals, subscribe]);
 
   return (

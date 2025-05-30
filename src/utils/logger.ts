@@ -22,27 +22,28 @@ const prefixMessage = (message?: string) =>
 
 /**
  * Method to wrap console's log methods
+ * @param isEnabled
  * @param method
  */
 const customLogger =
-  (method: typeof console.log) =>
+  (isEnabled: boolean, method: typeof console.log) =>
   (message?: string, ...optionalParams: unknown[]) => {
-    isLoggerActive &&
-      isFunction(method) &&
+    if (isEnabled && isFunction(method)) {
       method(prefixMessage(message), ...optionalParams);
+    }
   };
 
 /**
  * Custom Logger
  */
 const logger = {
-  log: customLogger(console.log),
+  log: customLogger(isLoggerActive, console.log),
 
-  error: customLogger(console.error),
+  error: customLogger(isLoggerActive, console.error),
 
-  warn: customLogger(console.warn),
+  warn: customLogger(isLoggerActive, console.warn),
 
-  info: customLogger(console.info),
+  info: customLogger(isLoggerActive, console.info),
 };
 
 export default logger;

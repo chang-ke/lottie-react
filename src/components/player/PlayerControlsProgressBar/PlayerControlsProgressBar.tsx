@@ -1,5 +1,5 @@
 import "./PlayerControlsProgressBar.less";
-import React, {
+import {
   ChangeEventHandler,
   MouseEventHandler,
   useEffect,
@@ -24,23 +24,20 @@ export type ProgressBarProps = Pick<
 export const PlayerControlsProgressBar = (props: ProgressBarProps) => {
   const containerRef = useRef<HTMLInputElement>(null);
   const { totalFrames, subscribe, disabled, onChange } = props;
-  const _totalFrames = totalFrames ?? 0;
   const isListeningForChanges = isFunction(onChange);
 
   /**
    * Listen for event regarding the `currentFrame`
    */
   useEffect(() => {
-    if (subscribe) {
-      return subscribe(LottieSubscription.Frame, ({ currentFrame }) => {
-        if (containerRef.current) {
-          // Update the `value` of the input range
-          containerRef.current.value = String(currentFrame);
-          // Set the `--value` CSS value so the styling can adapt
-          containerRef.current.style.setProperty("--value", `${currentFrame}`);
-        }
-      });
-    }
+    return subscribe(LottieSubscription.Frame, ({ currentFrame }) => {
+      if (containerRef.current) {
+        // Update the `value` of the input range
+        containerRef.current.value = String(currentFrame);
+        // Set the `--value` CSS value so the styling can adapt
+        containerRef.current.style.setProperty("--value", String(currentFrame));
+      }
+    });
   }, [subscribe]);
 
   /**
@@ -51,16 +48,16 @@ export const PlayerControlsProgressBar = (props: ProgressBarProps) => {
     const newFrame = Number(event.target.value);
 
     if (isListeningForChanges) {
-      onChange?.(newFrame);
+      onChange(newFrame);
     }
   };
 
   /**
-   * Handle mouse up on progress bar
+   * Handle mouse up on the progress bar
    */
   const onMouseUpHandler: MouseEventHandler<HTMLInputElement> = () => {
     if (isListeningForChanges && containerRef.current) {
-      onChange?.(Number(containerRef.current.value), true);
+      onChange(Number(containerRef.current.value), true);
     }
   };
 
@@ -68,7 +65,7 @@ export const PlayerControlsProgressBar = (props: ProgressBarProps) => {
     <div style={{ flex: 1 }}>
       <input
         ref={containerRef}
-        disabled={disabled || !_totalFrames}
+        disabled={disabled ?? !totalFrames}
         className={"player-controls-progress-bar"}
         type="range"
         style={{
@@ -81,13 +78,13 @@ export const PlayerControlsProgressBar = (props: ProgressBarProps) => {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           "--min": 0,
-          "--max": _totalFrames,
+          "--max": totalFrames,
           // "--value": 0,
         }}
         onChange={onChangeHandler}
         onMouseUp={onMouseUpHandler}
         min={0}
-        max={_totalFrames}
+        max={totalFrames}
         step={0.001}
       />
     </div>

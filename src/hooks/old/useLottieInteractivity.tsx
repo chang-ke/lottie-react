@@ -18,7 +18,7 @@
 // };
 //
 // import { AnimationSegment } from "lottie-web";
-// import React, { useEffect, ReactElement, useRef } from "react";
+// import { useEffect, ReactElement, useRef } from "react";
 // import { InteractivityProps } from "../../@types";
 //
 // export const getContainerVisibility = (container: Element): number => {

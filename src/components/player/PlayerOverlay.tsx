@@ -1,4 +1,4 @@
-import React, { DetailedHTMLProps, FC, HTMLAttributes } from "react";
+import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
 
 import "./PlayerOverlay.less";
 import { useFade } from "../../hooks/useFade";
