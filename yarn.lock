@@ -2246,7 +2246,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-import-context@npm:^0.1.5":
+"eslint-import-context@npm:^0.1.5, eslint-import-context@npm:^0.1.6":
   version: 0.1.6
   resolution: "eslint-import-context@npm:0.1.6"
   dependencies:
@@ -2332,24 +2332,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-import-x@npm:^4.13.3":
-  version: 4.13.3
-  resolution: "eslint-plugin-import-x@npm:4.13.3"
+"eslint-plugin-import-x@npm:^4.14.1":
+  version: 4.14.1
+  resolution: "eslint-plugin-import-x@npm:4.14.1"
   dependencies:
     "@typescript-eslint/utils": "npm:^8.32.1"
     comment-parser: "npm:^1.4.1"
     debug: "npm:^4.4.1"
-    eslint-import-context: "npm:^0.1.5"
-    eslint-import-resolver-node: "npm:^0.3.9"
+    eslint-import-context: "npm:^0.1.6"
     is-glob: "npm:^4.0.3"
     minimatch: "npm:^9.0.3 || ^10.0.1"
     semver: "npm:^7.7.2"
     stable-hash: "npm:^0.0.5"
-    tslib: "npm:^2.8.1"
-    unrs-resolver: "npm:^1.7.2"
+    unrs-resolver: "npm:^1.7.5"
   peerDependencies:
     eslint: ^8.57.0 || ^9.0.0
-  checksum: 10c0/582c9ad4827915ae4ff0a73dfd854c347c52d662d5cb37f290742b71ab0d7082e78a79723b7ebb169a553f7e6215a93af2d4216fba9eb3b8b48e165f4a7581a9
+    eslint-import-resolver-node: "*"
+  peerDependenciesMeta:
+    eslint-import-resolver-node:
+      optional: true
+  checksum: 10c0/0f6bef63f1049ead1a5de6b77deac3918a0a5fbec8e8f13e5723e8740914c605b7dc8d7de94efb2be27a0d55b61b66c5ca0ab4be7aa4c73276c434350523aad5
   languageName: node
   linkType: hard
 
@@ -3749,7 +3751,7 @@ __metadata:
     eslint: "npm:^9.27.0"
     eslint-config-prettier: "npm:^10.1.5"
     eslint-import-resolver-typescript: "npm:^4.4.1"
-    eslint-plugin-import-x: "npm:^4.13.3"
+    eslint-plugin-import-x: "npm:^4.14.1"
     eslint-plugin-jsx-a11y: "npm:^6.10.2"
     eslint-plugin-promise: "npm:^7.2.1"
     eslint-plugin-react: "npm:^7.37.5"
@@ -5945,7 +5947,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.1.0, tslib@npm:^2.3.0, tslib@npm:^2.4.0, tslib@npm:^2.8.0, tslib@npm:^2.8.1":
+"tslib@npm:^2.1.0, tslib@npm:^2.3.0, tslib@npm:^2.4.0, tslib@npm:^2.8.0":
   version: 2.8.1
   resolution: "tslib@npm:2.8.1"
   checksum: 10c0/9c4759110a19c53f992d9aae23aac5ced636e99887b51b9e61def52611732872ff7668757d4e4c61f19691e36f4da981cd9485e869b4a7408d689f6bf1f14e62
@@ -6101,7 +6103,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unrs-resolver@npm:^1.6.2, unrs-resolver@npm:^1.7.2":
+"unrs-resolver@npm:^1.6.2, unrs-resolver@npm:^1.7.2, unrs-resolver@npm:^1.7.5":
   version: 1.7.8
   resolution: "unrs-resolver@npm:1.7.8"
   dependencies:
