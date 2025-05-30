@@ -97,6 +97,7 @@ export default function LottieReactPage() {
               // src="/assets/groovyWalk.json"
               src="https://raw.githubusercontent.com/Gamote/lottie-react/refs/heads/v3/example/public/assets/groovyWalk.json"
               // object works too
+              enableReinitialize={true}
               initialValues={{
                 autoplay: true,
                 // TODO: Should we allow changing loop dynamically? `setLoop` is not available
