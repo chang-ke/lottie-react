@@ -139,11 +139,78 @@ export interface UseLottieStateOptions {
 export type LottieRef = Omit<UseLottieFactoryResult, "setContainerRef">;
 
 /**
+ * External player configuration
+ */
+export interface PlayerConfig {
+  enabled?: boolean;
+  theme?: {
+    colors?: {
+      primary?: string;
+      secondary?: string;
+      background?: string;
+      backgroundHover?: string;
+      text?: string;
+      border?: string;
+      accent?: string;
+    };
+    sizing?: {
+      height?: number;
+      buttonSize?: number;
+      fontSize?: number;
+      borderRadius?: number;
+    };
+    spacing?: {
+      padding?: number;
+      gap?: number;
+    };
+    effects?: {
+      backdropBlur?: boolean;
+      shadows?: boolean;
+      transitions?: boolean;
+    };
+  };
+  elements?: {
+    playPause?: boolean;
+    stop?: boolean;
+    progressBar?: boolean;
+    frameIndicator?: boolean;
+    speed?: boolean;
+    direction?: boolean;
+    loop?: boolean;
+    fullscreen?: boolean;
+  };
+  responsive?: {
+    enabled?: boolean;
+    breakpoint?: number;
+    compact?: boolean;
+    hideOnMobile?: {
+      playPause?: boolean;
+      stop?: boolean;
+      progressBar?: boolean;
+      frameIndicator?: boolean;
+      speed?: boolean;
+      direction?: boolean;
+      loop?: boolean;
+      fullscreen?: boolean;
+    };
+  };
+  overlays?: {
+    loading?: JSX.Element;
+    error?: JSX.Element;
+  };
+}
+
+/**
  * Properties for the `Lottie` & `LottieLight` components
  */
 export type LottieProps<Version extends LottieVersion = LottieVersion.Full> =
   UseLottieFactoryOptions<Version> & {
+    // Legacy controls (for backwards compatibility) - will use internal player
     controls?: boolean | PlayerControlsElement[];
+    
+    // New external player configuration - overrides controls if provided
+    player?: PlayerConfig;
+    
     LoadingOverlay?: JSX.Element;
     LoadingOverlayContent?: JSX.Element;
     loadingMinDisplayTime?: number;

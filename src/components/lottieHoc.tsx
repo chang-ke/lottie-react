@@ -3,25 +3,28 @@ import {
   forwardRef,
   ForwardRefRenderFunction,
   useImperativeHandle,
-  useRef,
 } from "react";
 
-import { LottieProps, LottieRef, LottieState, LottieVersion } from "../@types";
+import {
+  LottieProps,
+  LottieRef,
+  LottieState,
+  LottieVersion,
+  Direction,
+  LottieSubscription,
+} from "../@types";
+import { PlayerState } from "../externals/player";
+import { Player as ExternalPlayer } from "../externals/player/Player";
 import { useLottieFactory } from "../hooks/useLottieFactory";
 
-import {
-  PlayerFailure,
-  PlayerLoading,
-  PlayerContainer,
-  PlayerControls,
-  PlayerDisplay,
-} from "./player";
-
 /**
- * High Order Component to build Lottie's animation component
- * with different versions of the animations
+ * V3 High Order Component to build an animation component
  *
- * @param lottie
+ * Key changes in v3:
+ * - Controls are OFF by default
+ * - New `player` prop for player configuration
+ * - External player handles both display and controls
+ * - Subscription-based architecture for performance
  */
 export const lottieHoc = <Version extends LottieVersion>(
   lottie: LottiePlayer,
@@ -30,34 +33,18 @@ export const lottieHoc = <Version extends LottieVersion>(
     props,
     ref,
   ) => {
-    const {
-      controls,
-      LoadingOverlay,
-      LoadingOverlayContent,
-      loadingMinDisplayTime,
-      loadingFadeOutTime,
-      disableLoading,
-      FailureOverlay,
-      FailureOverlayContent,
-      disableFailure,
-      ...hookOptions
-    } = props;
+    const { player, ...hookOptions } = props;
 
-    // Initialise Lottie
+    // Initialize animation
     const { setContainerRef, ...lottieFactoryResult } =
       useLottieFactory<Version>(lottie, {
         ...hookOptions,
       });
 
     /**
-     * Make the hook variables/methods available through the provided 'lottieRef'
+     * Make the hook variables/methods available through the provided ref
      */
     useImperativeHandle(ref, () => lottieFactoryResult);
-
-    /**
-     * Ref to the {@link Element} that we want to be used by the Fullscreen API
-     */
-    const fullscreenElementRef = useRef<HTMLDivElement>(null);
 
     const {
       state,
@@ -75,47 +62,103 @@ export const lottieHoc = <Version extends LottieVersion>(
       subscribe,
     } = lottieFactoryResult;
 
+    // Convert internal state to player state (no currentFrame here!)
+    const playerState: PlayerState = {
+      isPlaying: state === LottieState.Playing,
+      totalFrames,
+      direction: direction === Direction.Right ? 1 : -1,
+      loop: typeof loop === "boolean" ? loop : loop > 0,
+      speed,
+      isLoading: state === LottieState.Loading,
+      hasError: state === LottieState.Failure,
+    };
+
+    // Create subscription functions for performance-critical updates
+    const subscriptions = {
+      frame: (callback: (currentFrame: number) => void) =>
+        subscribe(
+          LottieSubscription.Frame,
+          ({ currentFrame }: { currentFrame: number }) => {
+            callback(currentFrame);
+          },
+        ),
+      state: (callback: (state: PlayerState) => void) =>
+        subscribe(
+          LottieSubscription.NewState,
+          ({ state: newLottieState }: { state: LottieState }) => {
+            // Convert LottieState to PlayerState format
+            const convertedPlayerState: PlayerState = {
+              isPlaying: newLottieState === LottieState.Playing,
+              totalFrames,
+              direction: direction === Direction.Right ? 1 : -1,
+              loop: typeof loop === "boolean" ? loop : loop > 0,
+              speed,
+              isLoading: newLottieState === LottieState.Loading,
+              hasError: newLottieState === LottieState.Failure,
+            };
+            callback(convertedPlayerState);
+          },
+        ),
+    };
+
+    // Convert internal actions to player actions
+    const playerActions = {
+      play,
+      pause,
+      stop,
+      seek: (frame: number) => {
+        seek(frame, true);
+      },
+      changeSpeed,
+      changeDirection: (dir: 1 | -1) => {
+        changeDirection(dir === 1 ? Direction.Right : Direction.Left);
+      },
+      toggleLoop,
+    };
+
+    // Default overlays
+    const defaultOverlays = {
+      loading: (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#ffffff",
+            fontSize: "14px",
+          }}
+        >
+          Loading...
+        </div>
+      ),
+      error: (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#ff6b6b",
+            fontSize: "14px",
+          }}
+        >
+          Error loading animation
+        </div>
+      ),
+    };
+
+    // Use external player as the complete solution
     return (
-      <PlayerContainer ref={fullscreenElementRef}>
-        <PlayerLoading
-          show={!disableLoading && state === LottieState.Loading}
-          minDisplayTime={loadingMinDisplayTime}
-          fadeOutTime={loadingFadeOutTime}
-          Component={LoadingOverlay}
-          Content={LoadingOverlayContent}
-        />
-
-        <PlayerFailure
-          show={!disableFailure && state === LottieState.Failure}
-          Component={FailureOverlay}
-          Content={FailureOverlayContent}
-        />
-
-        <PlayerDisplay ref={setContainerRef} />
-
-        <PlayerControls
-          fullscreenElementRef={fullscreenElementRef}
-          show={
-            state !== LottieState.Loading &&
-            state !== LottieState.Failure &&
-            !!controls
-          }
-          elements={Array.isArray(controls) ? controls : undefined}
-          state={state}
-          totalFrames={totalFrames}
-          direction={direction}
-          loop={loop}
-          play={play}
-          pause={pause}
-          stop={stop}
-          seek={seek}
-          toggleLoop={toggleLoop}
-          speed={speed}
-          changeSpeed={changeSpeed}
-          changeDirection={changeDirection}
-          subscribe={subscribe}
-        />
-      </PlayerContainer>
+      <ExternalPlayer
+        ref={setContainerRef}
+        state={playerState}
+        subscriptions={subscriptions}
+        actions={playerActions}
+        theme={player?.theme}
+        elements={player?.elements}
+        responsive={player?.responsive}
+        overlays={player?.overlays ?? defaultOverlays}
+        show={true}
+      />
     );
   };
 

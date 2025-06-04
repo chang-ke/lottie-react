@@ -9,7 +9,7 @@ export default function Home() {
         compare and test the behavior between raw lottie-web and the lottie-react wrapper.
       </p>
       
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginTop: '2rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '2rem', marginTop: '2rem' }}>
         <div style={{
           padding: '1.5rem',
           border: '1px solid #28a745',
@@ -40,6 +40,36 @@ export default function Home() {
           <p style={{ fontSize: '0.9rem', color: '#666' }}>
             Use this page to test the React wrapper functionality and performance.
           </p>
+        </div>
+        
+        <div style={{
+          padding: '1.5rem',
+          border: '1px solid #6366f1',
+          borderRadius: '8px',
+          backgroundColor: '#f8f9fa'
+        }}>
+          <h2 style={{ color: '#6366f1', margin: '0 0 1rem 0' }}>🎮 Player V3</h2>
+          <p>
+            New V3 Player architecture with subscription-based updates, zero re-renders
+            on frame changes, and complete display + controls solution.
+          </p>
+          <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem' }}>
+            Performance-optimized player with controls off by default.
+          </p>
+          <a
+            href="/player-v3"
+            style={{
+              display: 'inline-block',
+              padding: '0.5rem 1rem',
+              backgroundColor: '#6366f1',
+              color: 'white',
+              textDecoration: 'none',
+              borderRadius: '4px',
+              fontSize: '0.9rem'
+            }}
+          >
+            View Examples →
+          </a>
         </div>
       </div>
 
