@@ -39,14 +39,16 @@ export const ProgressBar = (props: ProgressBarProps) => {
    */
   const onChangeHandler: ChangeEventHandler<HTMLInputElement> = (event) => {
     const newFrame = Number(event.target.value);
-    onChange?.(newFrame);
+    // During dragging, seek without ending flag
+    onChange?.(newFrame, false);
   };
 
   /**
-   * Handle mouse up on the progress bar
+   * Handle mouse up on the progress bar to indicate dragging has ended
    */
   const onMouseUpHandler: MouseEventHandler<HTMLInputElement> = () => {
     if (containerRef.current) {
+      // When dragging ends, call with isDraggingEnded flag
       onChange?.(Number(containerRef.current.value), true);
     }
   };
@@ -149,10 +151,11 @@ export const ProgressBar = (props: ProgressBarProps) => {
         min={0}
         max={totalFrames}
         step={0.001}
+        defaultValue={0}
         aria-label="Animation progress"
         aria-valuemin={0}
         aria-valuemax={totalFrames}
-        aria-valuenow={0} // Initial value, will be updated via subscription
+        aria-valuenow={0}
       />
     </div>
   );

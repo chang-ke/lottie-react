@@ -106,8 +106,8 @@ export const lottieHoc = <Version extends LottieVersion>(
       play,
       pause,
       stop,
-      seek: (frame: number) => {
-        seek(frame, true);
+      seek: (frame: number, isDraggingEnded?: boolean) => {
+        seek(frame, isDraggingEnded ?? true);
       },
       changeSpeed,
       changeDirection: (dir: 1 | -1) => {

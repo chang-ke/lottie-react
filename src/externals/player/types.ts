@@ -28,7 +28,7 @@ export interface PlayerActions {
   play: () => void;
   pause: () => void;
   stop: () => void;
-  seek: (frame: number) => void;
+  seek: (frame: number, isDraggingEnded?: boolean) => void;
   changeSpeed: (speed: number) => void;
   changeDirection: (direction: 1 | -1) => void;
   toggleLoop: () => void;
