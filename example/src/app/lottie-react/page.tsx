@@ -101,10 +101,11 @@ export default function LottieReactPage() {
               initialValues={{
                 autoplay: true,
                 // TODO: Should we allow changing loop dynamically? `setLoop` is not available
-                loop: loop,
-                speed: speed,
-                direction: direction,
+                loop,
+                speed,
+                direction,
               }}
+              controls={true}
               // Loading controls
               // disableLoading={true}
               LoadingOverlay={<>Something</>}

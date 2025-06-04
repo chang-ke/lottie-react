@@ -61,7 +61,7 @@ export const PlayerControls: FC<PlayerControlsProps> = (props) => {
     subscribe,
   } = props;
 
-  // Initialise the hook for using the Fullscreen API
+  // Initialize the hook for using the Fullscreen API
   const { isFullscreen, toggleFullscreen } =
     useFullscreen(fullscreenElementRef);
 

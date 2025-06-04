@@ -389,6 +389,7 @@ export const useLottieFactory = <
 
   /**
    * Checks for and (re)register the consumer's subscriptions
+   * TODO(fix): this gets triggered every time the options change, no matter if the subscriptions are the same, this is a bug
    */
   useEffect(() => {
     // Skip update if the new subscriptions are the same with the previous ones
