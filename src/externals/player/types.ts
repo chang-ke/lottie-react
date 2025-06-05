@@ -89,10 +89,31 @@ export interface PlayerResponsive {
 }
 
 /**
+ * Loading overlay configuration
+ */
+export interface LoadingOverlayConfig {
+  /**
+   * Custom loading component to display
+   */
+  component?: ReactNode;
+  /**
+   * Minimum time to display the loading screen in milliseconds
+   * Helpful when loading is very fast to avoid blinking effect
+   * @default 0
+   */
+  minDisplayTime?: number;
+  /**
+   * Time of the fadeout animation in milliseconds
+   * @default 600
+   */
+  fadeOutTime?: number;
+}
+
+/**
  * Custom overlays that consumer can provide
  */
 export interface PlayerOverlays {
-  loading?: ReactNode;
+  loading?: ReactNode | LoadingOverlayConfig | null;
   error?: ReactNode;
 }
 
