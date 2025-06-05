@@ -1,4 +1,5 @@
 import { forwardRef, ForwardRefRenderFunction } from "react";
+
 import { PlayerTheme } from '../types';
 import { mergeTheme } from '../utils/PlayerTheme';
 

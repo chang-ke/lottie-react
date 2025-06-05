@@ -1,4 +1,5 @@
 import { FC, JSX, useEffect, useRef, useState, useCallback } from "react";
+
 import { PlayerTheme } from '../types';
 import { mergeTheme, getResponsiveSize, getButtonColors } from '../utils/PlayerTheme';
 
@@ -43,9 +44,9 @@ export const BaseButton: FC<BaseButtonProps> = ({
   useEffect(() => {
     if (typeof window === 'undefined') return;
     
-    const handleResize = () => setScreenWidth(window.innerWidth);
+    const handleResize = () => { setScreenWidth(window.innerWidth); };
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    return () => { window.removeEventListener('resize', handleResize); };
   }, []);
 
   // Handle click outside to close dropdown
@@ -63,7 +64,7 @@ export const BaseButton: FC<BaseButtonProps> = ({
     };
 
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    return () => { document.removeEventListener('mousedown', handleClickOutside); };
   }, [DropdownContent, isMenuOpen]);
 
   const handleClick = useCallback(() => {
@@ -166,10 +167,10 @@ export const BaseButton: FC<BaseButtonProps> = ({
         style={buttonStyle}
         onClick={handleClick}
         onKeyDown={handleKeyDown}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
+        onMouseEnter={() => { setIsHovered(true); }}
+        onMouseLeave={() => { setIsHovered(false); }}
+        onFocus={() => { setIsFocused(true); }}
+        onBlur={() => { setIsFocused(false); }}
         disabled={disabled}
         aria-label={ariaLabel}
         type="button"

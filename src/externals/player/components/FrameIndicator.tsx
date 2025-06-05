@@ -1,4 +1,5 @@
 import { FC, useState, useEffect } from "react";
+
 import { PlayerTheme } from '../types';
 import { mergeTheme } from '../utils/PlayerTheme';
 

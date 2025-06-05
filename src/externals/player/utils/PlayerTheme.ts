@@ -29,7 +29,7 @@ export const mergeTheme = (userTheme?: PlayerTheme): Required<PlayerTheme> => {
 /**
  * Get responsive size based on screen width
  */
-export const getResponsiveSize = (baseSize: number, screenWidth: number, breakpoint: number = 480): number => {
+export const getResponsiveSize = (baseSize: number, screenWidth: number, breakpoint = 480): number => {
   if (screenWidth < breakpoint) {
     return Math.max(baseSize * 0.8, 20); // Minimum 20px for touch targets
   }
@@ -42,7 +42,7 @@ export const getResponsiveSize = (baseSize: number, screenWidth: number, breakpo
 /**
  * Calculate if screen is mobile based on breakpoint
  */
-export const isMobile = (screenWidth: number, breakpoint: number = 480): boolean => {
+export const isMobile = (screenWidth: number, breakpoint = 480): boolean => {
   return screenWidth < breakpoint;
 };
 

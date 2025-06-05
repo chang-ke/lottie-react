@@ -1,4 +1,5 @@
 import { ChangeEventHandler, MouseEventHandler, useEffect, useRef } from "react";
+
 import { PlayerTheme } from '../types';
 import { mergeTheme } from '../utils/PlayerTheme';
 
