@@ -134,6 +134,13 @@ const PlayerWithRef: ForwardRefRenderFunction<HTMLDivElement, PlayerProps> = (
     [actions],
   );
 
+  // Check if any controls are actually enabled and visible
+  const hasAnyControls = useMemo(() => {
+    return Object.keys(DEFAULT_PLAYER_ELEMENTS).some((key) =>
+      shouldShowElement(key as keyof PlayerElements)
+    );
+  }, [shouldShowElement]);
+
   if (!show) {
     return null;
   }
@@ -237,8 +244,8 @@ const PlayerWithRef: ForwardRefRenderFunction<HTMLDivElement, PlayerProps> = (
         </div>
       )}
 
-      {/* Controls container - only show when not loading/error */}
-      {!state.isLoading && !state.hasError && (
+      {/* Controls container - only show when not loading/error AND there are controls to show */}
+      {!state.isLoading && !state.hasError && hasAnyControls && (
         <div
           style={containerStyle}
           role="toolbar"
