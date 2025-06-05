@@ -10,6 +10,7 @@ import React, {
 
 import { Display } from "./components/Display";
 import { FrameIndicator } from "./components/FrameIndicator";
+import { LoadingOverlay } from "./components/LoadingOverlay";
 import {
   PlayButton,
   PauseButton,
@@ -26,7 +27,7 @@ import {
   DEFAULT_PLAYER_ELEMENTS,
   DEFAULT_PLAYER_RESPONSIVE,
 } from "./types";
-import { mergeTheme, isMobile } from "./utils/PlayerTheme";
+import { mergeTheme, isMobile, processLoadingConfig } from "./utils/PlayerTheme";
 import { useFullscreen } from "./utils/useFullscreen";
 
 /**
@@ -144,6 +145,9 @@ const PlayerWithRef: ForwardRefRenderFunction<HTMLDivElement, PlayerProps> = (
     );
   }, [shouldShowElement]);
 
+  // Process loading overlay configuration
+  const loadingConfig = useMemo(() => processLoadingConfig(overlays?.loading), [overlays?.loading]);
+
   if (!show) {
     return null;
   }
@@ -208,23 +212,8 @@ const PlayerWithRef: ForwardRefRenderFunction<HTMLDivElement, PlayerProps> = (
       <Display ref={ref} theme={theme} style={{ flex: 1 }} />
 
       {/* Loading overlay */}
-      {state.isLoading && overlays?.loading && (
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            zIndex: 10,
-          }}
-        >
-          {overlays.loading}
-        </div>
+      {state.isLoading && loadingConfig && (
+        <LoadingOverlay show={state.isLoading} config={loadingConfig} />
       )}
 
       {/* Error overlay */}

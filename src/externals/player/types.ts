@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import React, { ReactNode } from "react";
 
 /**
  * Player state for initial render and non-subscribable data
@@ -110,10 +110,18 @@ export interface LoadingOverlayConfig {
 }
 
 /**
+ * Loading overlay options
+ */
+export type LoadingOverlayOptions =
+  | ReactNode // Simple ReactNode for custom loading component
+  | LoadingOverlayConfig // Full configuration object
+  | null; // Explicitly disabled
+
+/**
  * Custom overlays that consumer can provide
  */
 export interface PlayerOverlays {
-  loading?: ReactNode | LoadingOverlayConfig | null;
+  loading?: LoadingOverlayOptions;
   error?: ReactNode;
 }
 
@@ -133,7 +141,7 @@ export interface PlayerConfig {
 }
 
 /**
- * Props for the main Player component
+ * Props for the main Player element
  */
 export interface PlayerProps extends PlayerConfig {
   show?: boolean;

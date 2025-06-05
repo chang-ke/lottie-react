@@ -1,4 +1,6 @@
-import { PlayerTheme } from '../types';
+import { ReactNode } from 'react';
+
+import { PlayerTheme, LoadingOverlayOptions, LoadingOverlayConfig } from '../types';
 
 /**
  * Fully resolved theme type with all properties defined
@@ -145,6 +147,44 @@ export const getButtonColors = (
   })();
 
   return { backgroundColor, iconColor };
+};
+
+/**
+ * Process loading overlay options into a standardized config
+ */
+export const processLoadingConfig = (loading?: LoadingOverlayOptions): LoadingOverlayConfig | null => {
+  // Explicitly disabled
+  if (loading === null) {
+    return null;
+  }
+
+  // No loading config provided - use default
+  if (loading === undefined) {
+    return {
+      minDisplayTime: 0,
+      fadeOutTime: 600,
+    };
+  }
+
+  // Check if it's a config object (has config-specific properties)
+  if (
+    typeof loading === 'object' &&
+    ('component' in loading || 'minDisplayTime' in loading || 'fadeOutTime' in loading)
+  ) {
+    // It's a LoadingOverlayConfig
+    return {
+      minDisplayTime: 0,
+      fadeOutTime: 600,
+      ...loading,
+    };
+  }
+
+  // It's a ReactNode
+  return {
+    component: loading as ReactNode,
+    minDisplayTime: 0,
+    fadeOutTime: 600,
+  };
 };
 
 /**
