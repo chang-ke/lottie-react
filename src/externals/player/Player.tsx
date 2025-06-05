@@ -63,10 +63,13 @@ const PlayerWithRef: ForwardRefRenderFunction<HTMLDivElement, PlayerProps> = (
   const mergedElements = useMemo(() => {
     if (controls === false) {
       // Controls disabled, return all false
-      return Object.keys(DEFAULT_PLAYER_ELEMENTS).reduce((acc, key) => {
-        acc[key as keyof PlayerElements] = false;
-        return acc;
-      }, {} as PlayerElements);
+      return Object.keys(DEFAULT_PLAYER_ELEMENTS).reduce<PlayerElements>(
+        (acc, key) => {
+          acc[key as keyof PlayerElements] = false;
+          return acc;
+        },
+        {},
+      );
     }
     if (controls === true) {
       // Controls enabled with defaults
@@ -137,7 +140,7 @@ const PlayerWithRef: ForwardRefRenderFunction<HTMLDivElement, PlayerProps> = (
   // Check if any controls are actually enabled and visible
   const hasAnyControls = useMemo(() => {
     return Object.keys(DEFAULT_PLAYER_ELEMENTS).some((key) =>
-      shouldShowElement(key as keyof PlayerElements)
+      shouldShowElement(key as keyof PlayerElements),
     );
   }, [shouldShowElement]);
 

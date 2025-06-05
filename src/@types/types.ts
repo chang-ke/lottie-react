@@ -9,8 +9,8 @@ import {
 } from "lottie-web";
 import { JSX, RefCallback, RefObject } from "react";
 
-import { SubscriptionManager } from "../utils/SubscriptionManager";
 import { PlayerElements } from "../externals/player/types";
+import { SubscriptionManager } from "../utils/SubscriptionManager";
 
 import {
   Direction,

@@ -14,7 +14,7 @@ import {
 } from "./PlayerIcons";
 
 // Play Button
-export interface PlayButtonProps extends Pick<BaseButtonProps, "onClick" | "disabled" | "theme"> {}
+export type PlayButtonProps = Pick<BaseButtonProps, "onClick" | "disabled" | "theme">;
 
 export const PlayButton: FC<PlayButtonProps> = ({ onClick, disabled = false, theme }) => (
   <BaseButton
@@ -31,7 +31,7 @@ export const PlayButton: FC<PlayButtonProps> = ({ onClick, disabled = false, the
 );
 
 // Pause Button
-export interface PauseButtonProps extends Pick<BaseButtonProps, "onClick" | "disabled" | "theme"> {}
+export type PauseButtonProps = Pick<BaseButtonProps, "onClick" | "disabled" | "theme">;
 
 export const PauseButton: FC<PauseButtonProps> = ({ onClick, disabled = false, theme }) => (
   <BaseButton
@@ -48,7 +48,7 @@ export const PauseButton: FC<PauseButtonProps> = ({ onClick, disabled = false, t
 );
 
 // Stop Button
-export interface StopButtonProps extends Pick<BaseButtonProps, "onClick" | "disabled" | "theme"> {}
+export type StopButtonProps = Pick<BaseButtonProps, "onClick" | "disabled" | "theme">;
 
 export const StopButton: FC<StopButtonProps> = ({ onClick, disabled = false, theme }) => (
   <BaseButton
@@ -148,8 +148,8 @@ export const SpeedButton: FC<SpeedButtonProps> = ({
       disabled={disabled}
       variant="secondary"
       size="small"
-      ariaLabel={`Playback speed: ${speed}x`}
-      tooltip={`Speed: ${speed}x`}
+      ariaLabel={`Playback speed: ${String(speed)}x`}
+      tooltip={`Speed: ${String(speed)}x`}
       theme={theme}
       DropdownContent={DropdownContent}
     >

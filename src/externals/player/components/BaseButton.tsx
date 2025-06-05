@@ -1,13 +1,24 @@
-import { FC, JSX, useEffect, useRef, useState, useCallback } from "react";
+import React, {
+  FC,
+  JSX,
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+} from "react";
 
-import { PlayerTheme } from '../types';
-import { mergeTheme, getResponsiveSize, getButtonColors } from '../utils/PlayerTheme';
+import { PlayerTheme } from "../types";
+import {
+  mergeTheme,
+  getResponsiveSize,
+  getButtonColors,
+} from "../utils/PlayerTheme";
 
 export interface BaseButtonProps {
   children: JSX.Element;
   onClick?: () => void | Promise<void>;
-  variant?: 'primary' | 'secondary' | 'accent';
-  size?: 'small' | 'medium' | 'large';
+  variant?: "primary" | "secondary" | "accent";
+  size?: "small" | "medium" | "large";
   disabled?: boolean;
   isActive?: boolean;
   ariaLabel?: string;
@@ -23,8 +34,8 @@ export interface BaseButtonProps {
 export const BaseButton: FC<BaseButtonProps> = ({
   children,
   onClick,
-  variant = 'secondary',
-  size = 'medium',
+  variant = "secondary",
+  size = "medium",
   disabled = false,
   isActive = false,
   ariaLabel,
@@ -36,20 +47,26 @@ export const BaseButton: FC<BaseButtonProps> = ({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
-  const [screenWidth, setScreenWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
+  const [screenWidth, setScreenWidth] = useState(
+    typeof window !== "undefined" ? window.innerWidth : 1024,
+  );
 
   const mergedTheme = mergeTheme(theme);
 
   // Handle window resize for responsive sizing
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    
-    const handleResize = () => { setScreenWidth(window.innerWidth); };
-    window.addEventListener('resize', handleResize);
-    return () => { window.removeEventListener('resize', handleResize); };
+    if (typeof window === "undefined") return;
+
+    const handleResize = () => {
+      setScreenWidth(window.innerWidth);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
-  // Handle click outside to close dropdown
+  // Handle click outside to close the dropdown
   useEffect(() => {
     if (!DropdownContent || !isMenuOpen) return;
 
@@ -63,8 +80,10 @@ export const BaseButton: FC<BaseButtonProps> = ({
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => { document.removeEventListener('mousedown', handleClickOutside); };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, [DropdownContent, isMenuOpen]);
 
   const handleClick = useCallback(() => {
@@ -72,30 +91,34 @@ export const BaseButton: FC<BaseButtonProps> = ({
     if (DropdownContent) {
       setIsMenuOpen(!isMenuOpen);
     }
-    onClick?.();
+    void onClick?.();
   }, [disabled, DropdownContent, isMenuOpen, onClick]);
 
-  const handleKeyDown = useCallback((event: React.KeyboardEvent) => {
-    if (disabled) return;
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      handleClick();
-    }
-  }, [disabled, handleClick]);
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent) => {
+      if (disabled) return;
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        handleClick();
+      }
+    },
+    [disabled, handleClick],
+  );
 
   // Get responsive button size
   const buttonSize = getResponsiveSize(
-    mergedTheme.sizing.buttonSize!,
+    mergedTheme.sizing.buttonSize ?? 32,
     screenWidth,
-    480
+    480,
   );
 
   // Get icon size based on button size
-  const iconSize = size === 'small' 
-    ? Math.round(buttonSize * 0.6)
-    : size === 'large' 
-    ? Math.round(buttonSize * 0.7)
-    : Math.round(buttonSize * 0.65);
+  const iconSize =
+    size === "small"
+      ? Math.round(buttonSize * 0.6)
+      : size === "large"
+        ? Math.round(buttonSize * 0.7)
+        : Math.round(buttonSize * 0.65);
 
   // Get button colors
   const { backgroundColor, iconColor } = getButtonColors(mergedTheme, {
@@ -108,58 +131,61 @@ export const BaseButton: FC<BaseButtonProps> = ({
   });
 
   const buttonStyle: React.CSSProperties = {
-    position: 'relative',
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    position: "relative",
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
     width: buttonSize,
     height: buttonSize,
-    minWidth: buttonSize, // Ensure minimum touch target
+    minWidth: buttonSize, // Ensure a minimum touch target
     minHeight: buttonSize,
     padding: 0,
     margin: 0,
-    border: 'none',
+    border: "none",
     borderRadius: mergedTheme.sizing.borderRadius,
     backgroundColor,
     color: iconColor,
-    cursor: disabled ? 'default' : 'pointer',
-    transition: mergedTheme.effects.transitions ? 'all 150ms ease' : 'none',
-    outline: 'none',
+    cursor: disabled ? "default" : "pointer",
+    transition: mergedTheme.effects.transitions ? "all 150ms ease" : "none",
+    outline: "none",
     // Ensure proper focus visibility
-    boxShadow: isFocused && !disabled ? `0 0 0 2px ${mergedTheme.colors.accent}` : 'none',
+    boxShadow:
+      isFocused && !disabled
+        ? `0 0 0 2px ${mergedTheme.colors.accent ?? "#007bff"}`
+        : "none",
   };
 
   const containerStyle: React.CSSProperties = {
-    position: 'relative',
-    display: 'inline-block',
-    zIndex: isMenuOpen ? 9999 : 1, // High z-index when menu is open
+    position: "relative",
+    display: "inline-block",
+    zIndex: isMenuOpen ? 9999 : 1, // High z-index when a menu is open
   };
 
   const dropdownStyle: React.CSSProperties = {
-    position: 'absolute',
-    bottom: '100%',
+    position: "absolute",
+    bottom: "100%",
     right: 0,
     marginBottom: mergedTheme.spacing.gap,
-    backgroundColor: mergedTheme.colors.background + 'f0', // High opacity
+    backgroundColor: `${mergedTheme.colors.background ?? "#000000"}f0`, // High opacity
     borderRadius: mergedTheme.sizing.borderRadius,
-    boxShadow: mergedTheme.effects.shadows ? '0 4px 12px rgba(0, 0, 0, 0.4)' : 'none',
-    backdropFilter: mergedTheme.effects.backdropBlur ? 'blur(8px)' : 'none',
+    boxShadow: mergedTheme.effects.shadows
+      ? "0 4px 12px rgba(0, 0, 0, 0.4)"
+      : "none",
+    backdropFilter: mergedTheme.effects.backdropBlur ? "blur(8px)" : "none",
     minWidth: 120,
-    overflow: 'hidden',
+    overflow: "hidden",
     opacity: isMenuOpen ? 1 : 0,
-    transform: isMenuOpen ? 'translateY(0)' : 'translateY(4px)',
-    transition: mergedTheme.effects.transitions ? 'all 200ms ease' : 'none',
-    pointerEvents: isMenuOpen ? 'auto' : 'none',
-    zIndex: 10000, // Ensure dropdown is always on top
+    transform: isMenuOpen ? "translateY(0)" : "translateY(4px)",
+    transition: mergedTheme.effects.transitions ? "all 200ms ease" : "none",
+    pointerEvents: isMenuOpen ? "auto" : "none",
+    zIndex: 10000, // Ensure the dropdown is always on top
   };
 
   return (
     <div ref={containerRef} style={containerStyle} title={tooltip}>
       {/* Dropdown menu */}
       {DropdownContent && (
-        <div style={dropdownStyle}>
-          {DropdownContent(setIsMenuOpen)}
-        </div>
+        <div style={dropdownStyle}>{DropdownContent(setIsMenuOpen)}</div>
       )}
 
       {/* Button */}
@@ -167,10 +193,18 @@ export const BaseButton: FC<BaseButtonProps> = ({
         style={buttonStyle}
         onClick={handleClick}
         onKeyDown={handleKeyDown}
-        onMouseEnter={() => { setIsHovered(true); }}
-        onMouseLeave={() => { setIsHovered(false); }}
-        onFocus={() => { setIsFocused(true); }}
-        onBlur={() => { setIsFocused(false); }}
+        onMouseEnter={() => {
+          setIsHovered(true);
+        }}
+        onMouseLeave={() => {
+          setIsHovered(false);
+        }}
+        onFocus={() => {
+          setIsFocused(true);
+        }}
+        onBlur={() => {
+          setIsFocused(false);
+        }}
         disabled={disabled}
         aria-label={ariaLabel}
         type="button"
@@ -179,9 +213,9 @@ export const BaseButton: FC<BaseButtonProps> = ({
           style={{
             width: iconSize,
             height: iconSize,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
           {children}
