@@ -74,10 +74,10 @@ export const ProgressBar = (props: ProgressBarProps) => {
     appearance: "none",
     // Track styling
     background: `linear-gradient(to right,
-      ${mergedTheme.colors.accent ?? "#007bff"} 0%,
-      ${mergedTheme.colors.accent ?? "#007bff"} calc(var(--value, 0) / var(--max, ${String(totalFrames)}) * 100%),
-      ${mergedTheme.colors.border ?? "#cccccc"} calc(var(--value, 0) / var(--max, ${String(totalFrames)}) * 100%),
-      ${mergedTheme.colors.border ?? "#cccccc"} 100%)`,
+      ${mergedTheme.colors.accent} 0%,
+      ${mergedTheme.colors.accent} calc(var(--value, 0) / var(--max, ${String(totalFrames)}) * 100%),
+      ${mergedTheme.colors.border} calc(var(--value, 0) / var(--max, ${String(totalFrames)}) * 100%),
+      ${mergedTheme.colors.border} 100%)`,
     transition: mergedTheme.effects.transitions ? "all 150ms ease" : "none",
   };
 
@@ -89,8 +89,8 @@ export const ProgressBar = (props: ProgressBarProps) => {
       width: 16px;
       height: 16px;
       border-radius: 50%;
-      background: ${mergedTheme.colors.primary ?? "#007bff"};
-      border: 2px solid ${mergedTheme.colors.background ?? "#ffffff"};
+      background: ${mergedTheme.colors.primary};
+      border: 2px solid ${mergedTheme.colors.background};
       cursor: pointer;
       box-shadow: ${mergedTheme.effects.shadows ? "0 2px 4px rgba(0, 0, 0, 0.2)" : "none"};
       transition: ${mergedTheme.effects.transitions ? "all 150ms ease" : "none"};
@@ -98,7 +98,7 @@ export const ProgressBar = (props: ProgressBarProps) => {
     
     input[type="range"]::-webkit-slider-thumb:hover {
       transform: scale(1.1);
-      background: ${mergedTheme.colors.accent ?? "#007bff"};
+      background: ${mergedTheme.colors.accent};
     }
     
     input[type="range"]:disabled::-webkit-slider-thumb {
@@ -114,8 +114,8 @@ export const ProgressBar = (props: ProgressBarProps) => {
       width: 16px;
       height: 16px;
       border-radius: 50%;
-      background: ${mergedTheme.colors.primary ?? "#007bff"};
-      border: 2px solid ${mergedTheme.colors.background ?? "#ffffff"};
+      background: ${mergedTheme.colors.primary};
+      border: 2px solid ${mergedTheme.colors.background};
       cursor: pointer;
       box-shadow: ${mergedTheme.effects.shadows ? "0 2px 4px rgba(0, 0, 0, 0.2)" : "none"};
       transition: ${mergedTheme.effects.transitions ? "all 150ms ease" : "none"};
@@ -123,7 +123,7 @@ export const ProgressBar = (props: ProgressBarProps) => {
     
     input[type="range"]::-moz-range-thumb:hover {
       transform: scale(1.1);
-      background: ${mergedTheme.colors.accent ?? "#007bff"};
+      background: ${mergedTheme.colors.accent};
     }
     
     input[type="range"]:disabled::-moz-range-thumb {

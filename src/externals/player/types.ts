@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 
 /**
  * Player state for initial render and non-subscribable data
@@ -117,36 +117,6 @@ export interface PlayerConfig {
 export interface PlayerProps extends PlayerConfig {
   show?: boolean;
 }
-
-/**
- * Default theme values
- */
-export const DEFAULT_PLAYER_THEME: Required<PlayerTheme> = {
-  colors: {
-    primary: "#ffffff",
-    secondary: "#ffffff80",
-    background: "#00000080",
-    backgroundHover: "#ffffff20",
-    text: "#ffffff",
-    border: "#ffffff30",
-    accent: "#ff6b6b",
-  },
-  sizing: {
-    height: 48,
-    buttonSize: 32,
-    fontSize: 12,
-    borderRadius: 6,
-  },
-  spacing: {
-    padding: 12,
-    gap: 8,
-  },
-  effects: {
-    backdropBlur: true,
-    shadows: true,
-    transitions: true,
-  },
-};
 
 /**
  * Default element visibility

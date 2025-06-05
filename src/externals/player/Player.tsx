@@ -154,7 +154,7 @@ const PlayerWithRef: ForwardRefRenderFunction<HTMLDivElement, PlayerProps> = (
     alignItems: "center",
     justifyContent: "center",
     height: mergedTheme.sizing.height,
-    padding: `0 ${String(mergedTheme.spacing.padding ?? 0)}px`,
+    padding: `0 ${String(mergedTheme.spacing.padding)}px`,
     backgroundColor: mergedTheme.colors.background,
     borderRadius: mergedResponsive.compact
       ? 0
@@ -181,7 +181,7 @@ const PlayerWithRef: ForwardRefRenderFunction<HTMLDivElement, PlayerProps> = (
   const controlGroupStyle: React.CSSProperties = {
     display: "flex",
     alignItems: "center",
-    gap: Math.round((mergedTheme.spacing.gap ?? 8) * 0.5),
+    gap: Math.round((mergedTheme.spacing.gap * 0.5)),
   };
 
   const dividerStyle: React.CSSProperties = {

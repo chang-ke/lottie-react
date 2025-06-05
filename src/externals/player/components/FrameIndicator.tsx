@@ -38,7 +38,7 @@ export const FrameIndicator: FC<FrameIndicatorProps> = ({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    padding: `${String(Math.round((mergedTheme.spacing.padding ?? 8) * 0.5))}px ${String(mergedTheme.spacing.padding ?? 8)}px`,
+    padding: `${String(Math.round((mergedTheme.spacing.padding * 0.5)))}px ${String(mergedTheme.spacing.padding)}px`,
     backgroundColor: mergedTheme.colors.background,
     borderRadius: mergedTheme.sizing.borderRadius,
     fontFamily:
@@ -49,7 +49,7 @@ export const FrameIndicator: FC<FrameIndicatorProps> = ({
     whiteSpace: "nowrap",
     minWidth: showTotal ? "60px" : "40px",
     textAlign: "center",
-    border: `1px solid ${mergedTheme.colors.border ?? "#cccccc"}`,
+    border: `1px solid ${mergedTheme.colors.border}`,
     transition: mergedTheme.effects.transitions ? "all 150ms ease" : "none",
   };
 

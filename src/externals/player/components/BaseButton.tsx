@@ -107,7 +107,7 @@ export const BaseButton: FC<BaseButtonProps> = ({
 
   // Get responsive button size
   const buttonSize = getResponsiveSize(
-    mergedTheme.sizing.buttonSize ?? 32,
+    mergedTheme.sizing.buttonSize,
     screenWidth,
     480,
   );
@@ -151,7 +151,7 @@ export const BaseButton: FC<BaseButtonProps> = ({
     // Ensure proper focus visibility
     boxShadow:
       isFocused && !disabled
-        ? `0 0 0 2px ${mergedTheme.colors.accent ?? "#007bff"}`
+        ? `0 0 0 2px ${mergedTheme.colors.accent}`
         : "none",
   };
 
@@ -166,7 +166,7 @@ export const BaseButton: FC<BaseButtonProps> = ({
     bottom: "100%",
     right: 0,
     marginBottom: mergedTheme.spacing.gap,
-    backgroundColor: `${mergedTheme.colors.background ?? "#000000"}f0`, // High opacity
+    backgroundColor: `${mergedTheme.colors.background}f0`, // High opacity
     borderRadius: mergedTheme.sizing.borderRadius,
     boxShadow: mergedTheme.effects.shadows
       ? "0 4px 12px rgba(0, 0, 0, 0.4)"
