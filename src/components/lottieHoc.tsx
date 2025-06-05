@@ -116,36 +116,6 @@ export const lottieHoc = <Version extends LottieVersion>(
       toggleLoop,
     };
 
-    // Default overlays
-    const defaultOverlays = {
-      loading: (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "#ffffff",
-            fontSize: "14px",
-          }}
-        >
-          Loading...
-        </div>
-      ),
-      error: (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "#ff6b6b",
-            fontSize: "14px",
-          }}
-        >
-          Error loading animation
-        </div>
-      ),
-    };
-
     // Use external player as the complete solution
     return (
       <ExternalPlayer
@@ -156,7 +126,7 @@ export const lottieHoc = <Version extends LottieVersion>(
         theme={player?.theme}
         controls={player?.controls}
         responsive={player?.responsive}
-        overlays={player?.overlays ?? defaultOverlays}
+        overlays={player?.overlays}
         show={true}
       />
     );

@@ -9,7 +9,7 @@ import {
 } from "lottie-web";
 import { JSX, RefCallback, RefObject } from "react";
 
-import { PlayerElements } from "../externals/player/types";
+import { PlayerElements, LoadingOverlayOptions } from "../externals/player/types";
 import { SubscriptionManager } from "../utils/SubscriptionManager";
 
 import {
@@ -187,7 +187,7 @@ export interface PlayerConfig {
     };
   };
   overlays?: {
-    loading?: JSX.Element;
+    loading?: LoadingOverlayOptions;
     error?: JSX.Element;
   };
 }
@@ -202,13 +202,4 @@ export type LottieProps<Version extends LottieVersion = LottieVersion.Full> =
     
     // New external player configuration - overrides controls if provided
     player?: PlayerConfig;
-    
-    LoadingOverlay?: JSX.Element;
-    LoadingOverlayContent?: JSX.Element;
-    loadingMinDisplayTime?: number;
-    loadingFadeOutTime?: number;
-    disableLoading?: boolean;
-    FailureOverlay?: JSX.Element;
-    FailureOverlayContent?: JSX.Element;
-    disableFailure?: boolean;
   };

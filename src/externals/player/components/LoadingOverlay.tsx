@@ -1,7 +1,7 @@
 import { FC } from "react";
 
-import { useFade } from "../../../hooks/useFade";
 import { LoadingOverlayConfig } from "../types";
+import { useFade } from "../utils/useFade";
 
 export interface LoadingOverlayProps {
   show: boolean;
@@ -61,23 +61,26 @@ export const LoadingOverlay: FC<LoadingOverlayProps> = ({ show, config }) => {
   }
 
   return (
-    <div
-      style={{
-        position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "rgba(0, 0, 0, 0.7)",
-        zIndex: 1000,
-        ...fadeProps.style,
-      }}
-      onAnimationEnd={fadeProps.onAnimationEnd}
-    >
-      {component ?? <DefaultLoadingSpinner />}
-    </div>
+    <>
+      <style>{fadeProps.keyframes}</style>
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "rgba(0, 0, 0, 0.7)",
+          zIndex: 1000,
+          ...fadeProps.style,
+        }}
+        onAnimationEnd={fadeProps.onAnimationEnd}
+      >
+        {component ?? <DefaultLoadingSpinner />}
+      </div>
+    </>
   );
 };
