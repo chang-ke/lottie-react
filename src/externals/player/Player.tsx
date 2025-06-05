@@ -40,7 +40,7 @@ const PlayerWithRef: ForwardRefRenderFunction<HTMLDivElement, PlayerProps> = (
     subscriptions,
     actions,
     theme,
-    elements = DEFAULT_PLAYER_ELEMENTS,
+    controls = false,
     responsive = DEFAULT_PLAYER_RESPONSIVE,
     overlays,
     className,
@@ -60,10 +60,21 @@ const PlayerWithRef: ForwardRefRenderFunction<HTMLDivElement, PlayerProps> = (
   const { isFullscreen, toggleFullscreen } = useFullscreen(fullscreenRef);
 
   const mergedTheme = mergeTheme(theme);
-  const mergedElements = useMemo(
-    () => ({ ...DEFAULT_PLAYER_ELEMENTS, ...elements }),
-    [elements],
-  );
+  const mergedElements = useMemo(() => {
+    if (controls === false) {
+      // Controls disabled, return all false
+      return Object.keys(DEFAULT_PLAYER_ELEMENTS).reduce((acc, key) => {
+        acc[key as keyof PlayerElements] = false;
+        return acc;
+      }, {} as PlayerElements);
+    }
+    if (controls === true) {
+      // Controls enabled with defaults
+      return DEFAULT_PLAYER_ELEMENTS;
+    }
+    // Custom controls configuration - full control, no defaults merged
+    return controls;
+  }, [controls]);
   const mergedResponsive = useMemo(
     () => ({ ...DEFAULT_PLAYER_RESPONSIVE, ...responsive }),
     [responsive],

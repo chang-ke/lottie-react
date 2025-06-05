@@ -10,6 +10,7 @@ import {
 import { JSX, RefCallback, RefObject } from "react";
 
 import { SubscriptionManager } from "../utils/SubscriptionManager";
+import { PlayerElements } from "../externals/player/types";
 
 import {
   Direction,
@@ -169,16 +170,7 @@ export interface PlayerConfig {
       transitions?: boolean;
     };
   };
-  elements?: {
-    playPause?: boolean;
-    stop?: boolean;
-    progressBar?: boolean;
-    frameIndicator?: boolean;
-    speed?: boolean;
-    direction?: boolean;
-    loop?: boolean;
-    fullscreen?: boolean;
-  };
+  controls?: boolean | PlayerElements;
   responsive?: {
     enabled?: boolean;
     breakpoint?: number;

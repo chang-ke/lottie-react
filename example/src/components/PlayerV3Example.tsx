@@ -52,7 +52,7 @@ export const CustomPlayerV3 = () => {
               transitions: true,
             },
           },
-          elements: {
+          controls: {
             playPause: true,
             stop: true,
             progressBar: true,
@@ -90,7 +90,7 @@ export const MinimalPlayerV3 = () => {
       <Lottie
         src={SAMPLE_ANIMATION}
         player={{
-          elements: {
+          controls: {
             playPause: true,
             progressBar: true,
           },
@@ -113,7 +113,7 @@ export const MobilePlayerV3 = () => {
       <Lottie
         src={SAMPLE_ANIMATION}
         player={{
-          elements: {
+          controls: {
             playPause: true,
             progressBar: true,
             frameIndicator: false, // Hidden on mobile

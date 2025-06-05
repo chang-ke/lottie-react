@@ -104,7 +104,7 @@ export interface PlayerConfig {
   subscriptions: PlayerSubscriptions;
   actions: PlayerActions;
   theme?: PlayerTheme;
-  elements?: PlayerElements;
+  controls?: boolean | PlayerElements;
   responsive?: PlayerResponsive;
   overlays?: PlayerOverlays;
   className?: string;

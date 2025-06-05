@@ -153,7 +153,7 @@ export default function PlayerV3Page() {
         transitions: true,
       },
     },
-    elements: {
+    controls: {
       playPause: true,
       stop: true,
       progressBar: true,
@@ -214,7 +214,7 @@ export default function PlayerV3Page() {
               {`<Lottie
   src={SAMPLE_ANIMATION}
   player={{
-    elements: {
+    controls: {
       playPause: true,
       progressBar: true,
     },
@@ -266,7 +266,7 @@ export default function PlayerV3Page() {
               {`<Lottie
   src={SAMPLE_ANIMATION}
   player={{
-    elements: {
+    controls: {
       playPause: true,
       progressBar: true,
       frameIndicator: false, // Hidden on mobile
