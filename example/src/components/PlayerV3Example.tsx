@@ -1,5 +1,5 @@
-import React from 'react';
-import { Lottie } from '../components/Lottie';
+import React from "react";
+import { Lottie } from "lottie-react";
 
 /**
  * Example demonstrating the new V3 Player architecture
@@ -12,7 +12,8 @@ import { Lottie } from '../components/Lottie';
  */
 
 // Common animation used across examples
-const SAMPLE_ANIMATION = "https://raw.githubusercontent.com/Gamote/lottie-react/refs/heads/v3/example/public/assets/groovyWalk.json";
+const SAMPLE_ANIMATION =
+  "https://raw.githubusercontent.com/Gamote/lottie-react/refs/heads/v3/example/public/assets/groovyWalk.json";
 
 // Example 1: Basic usage (no controls)
 export const BasicLottieV3 = () => {
@@ -35,10 +36,10 @@ export const CustomPlayerV3 = () => {
         player={{
           theme: {
             colors: {
-              primary: '#6366f1',
-              secondary: '#94a3b8',
-              background: 'rgba(15, 23, 42, 0.9)',
-              accent: '#f59e0b',
+              primary: "#6366f1",
+              secondary: "#94a3b8",
+              background: "rgba(15, 23, 42, 0.9)",
+              accent: "#f59e0b",
             },
             sizing: {
               height: 60,
@@ -71,8 +72,10 @@ export const CustomPlayerV3 = () => {
             },
           },
           overlays: {
-            loading: <div style={{ color: '#6366f1' }}>Loading animation...</div>,
-            error: <div style={{ color: '#ef4444' }}>Failed to load</div>,
+            loading: (
+              <div style={{ color: "#6366f1" }}>Loading animation...</div>
+            ),
+            error: <div style={{ color: "#ef4444" }}>Failed to load</div>,
           },
         }}
       />
@@ -93,8 +96,8 @@ export const MinimalPlayerV3 = () => {
           },
           theme: {
             colors: {
-              primary: '#ffffff',
-              background: 'rgba(0, 0, 0, 0.7)',
+              primary: "#ffffff",
+              background: "rgba(0, 0, 0, 0.7)",
             },
           },
         }}
