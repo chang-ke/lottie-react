@@ -1,4 +1,4 @@
-import { RefObject, ReactNode } from 'react';
+import React, { ReactNode } from "react";
 
 /**
  * Player state for initial render and non-subscribable data
@@ -123,13 +123,13 @@ export interface PlayerProps extends PlayerConfig {
  */
 export const DEFAULT_PLAYER_THEME: Required<PlayerTheme> = {
   colors: {
-    primary: '#ffffff',
-    secondary: '#ffffff80',
-    background: '#00000080',
-    backgroundHover: '#ffffff20',
-    text: '#ffffff',
-    border: '#ffffff30',
-    accent: '#ff6b6b',
+    primary: "#ffffff",
+    secondary: "#ffffff80",
+    background: "#00000080",
+    backgroundHover: "#ffffff20",
+    text: "#ffffff",
+    border: "#ffffff30",
+    accent: "#ff6b6b",
   },
   sizing: {
     height: 48,

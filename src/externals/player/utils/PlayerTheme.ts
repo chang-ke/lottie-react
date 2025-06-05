@@ -63,14 +63,14 @@ export const getButtonColors = (
   const { disabled, isActive, isHovered, isFocused, isMenuOpen, variant = 'secondary' } = options;
 
   const backgroundColor = (() => {
-    if (disabled) return theme.colors.background + '20'; // 20% opacity
-    if (isActive) return theme.colors.accent + '40'; // 40% opacity  
+    if (disabled) return `${theme.colors.background ?? '#000000'}20`; // 20% opacity
+    if (isActive) return `${theme.colors.accent ?? '#ff6b6b'}40`; // 40% opacity
     if (isHovered || isFocused || isMenuOpen) return theme.colors.backgroundHover;
     return theme.colors.background;
   })();
 
   const iconColor = (() => {
-    if (disabled) return theme.colors.text + '30'; // 30% opacity
+    if (disabled) return `${theme.colors.text ?? '#ffffff'}30`; // 30% opacity
     if (variant === 'accent' || isActive) return theme.colors.accent;
     if (variant === 'primary') return theme.colors.primary;
     return theme.colors.secondary;
@@ -84,18 +84,18 @@ export const getButtonColors = (
  */
 export const generateCSSVars = (theme: Required<PlayerTheme>): Record<string, string> => {
   return {
-    '--player-primary': theme.colors.primary!,
-    '--player-secondary': theme.colors.secondary!,
-    '--player-background': theme.colors.background!,
-    '--player-background-hover': theme.colors.backgroundHover!,
-    '--player-text': theme.colors.text!,
-    '--player-border': theme.colors.border!,
-    '--player-accent': theme.colors.accent!,
-    '--player-height': `${theme.sizing.height!}px`,
-    '--player-button-size': `${theme.sizing.buttonSize!}px`,
-    '--player-font-size': `${theme.sizing.fontSize!}px`,
-    '--player-border-radius': `${theme.sizing.borderRadius!}px`,
-    '--player-padding': `${theme.spacing.padding!}px`,
-    '--player-gap': `${theme.spacing.gap!}px`,
+    '--player-primary': theme.colors.primary ?? '#ffffff',
+    '--player-secondary': theme.colors.secondary ?? '#ffffff80',
+    '--player-background': theme.colors.background ?? '#00000080',
+    '--player-background-hover': theme.colors.backgroundHover ?? '#ffffff20',
+    '--player-text': theme.colors.text ?? '#ffffff',
+    '--player-border': theme.colors.border ?? '#ffffff30',
+    '--player-accent': theme.colors.accent ?? '#ff6b6b',
+    '--player-height': `${String(theme.sizing.height ?? 48)}px`,
+    '--player-button-size': `${String(theme.sizing.buttonSize ?? 32)}px`,
+    '--player-font-size': `${String(theme.sizing.fontSize ?? 12)}px`,
+    '--player-border-radius': `${String(theme.sizing.borderRadius ?? 6)}px`,
+    '--player-padding': `${String(theme.spacing.padding ?? 12)}px`,
+    '--player-gap': `${String(theme.spacing.gap ?? 8)}px`,
   };
 };
