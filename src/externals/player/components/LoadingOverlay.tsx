@@ -44,11 +44,7 @@ const DefaultLoadingSpinner: FC<{ color?: string; size?: number }> = ({
  * Supports minimum display time and customizable fade out duration
  */
 export const LoadingOverlay: FC<LoadingOverlayProps> = ({ show, config }) => {
-  const {
-    component,
-    minDisplayTime = 0,
-    fadeOutTime = 600,
-  } = config ?? {};
+  const { component, minDisplayTime = 0, fadeOutTime = 600 } = config ?? {};
 
   const { isVisible, fadeProps } = useFade({
     shouldShow: show,
@@ -77,6 +73,7 @@ export const LoadingOverlay: FC<LoadingOverlayProps> = ({ show, config }) => {
           zIndex: 1000,
           ...fadeProps.style,
         }}
+        // TODO: do we need it?
         onAnimationEnd={fadeProps.onAnimationEnd}
       >
         {component ?? <DefaultLoadingSpinner />}

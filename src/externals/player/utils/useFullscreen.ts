@@ -49,7 +49,9 @@ const getExtendedDocument = (): ExtendedDocument | null => {
 /**
  * Get fullscreen info with vendor prefix support
  */
-const getFullscreenInfo = (ref?: RefObject<ExtendedElement | null>): FullscreenInfo => {
+const getFullscreenInfo = (
+  ref?: RefObject<ExtendedElement | null>,
+): FullscreenInfo => {
   if (!ref?.current) {
     return null;
   }
@@ -66,7 +68,8 @@ const getFullscreenInfo = (ref?: RefObject<ExtendedElement | null>): FullscreenI
         fullscreenElement: extendedDocument.fullscreenElement,
         requestFullscreen: () => ref.current?.requestFullscreen(),
         exitFullscreen: () => extendedDocument.exitFullscreen(),
-        onFullscreenChange: (listener) => (extendedDocument.onfullscreenchange = listener),
+        onFullscreenChange: (listener) =>
+          (extendedDocument.onfullscreenchange = listener),
       };
     // MOZ
     case extendedDocument.mozFullScreenEnabled:
@@ -74,7 +77,8 @@ const getFullscreenInfo = (ref?: RefObject<ExtendedElement | null>): FullscreenI
         fullscreenElement: extendedDocument.mozFullScreenElement ?? null,
         requestFullscreen: () => ref.current?.requestFullscreen(),
         exitFullscreen: () => extendedDocument.exitFullscreen(),
-        onFullscreenChange: (listener) => (extendedDocument.onfullscreenchange = listener),
+        onFullscreenChange: (listener) =>
+          (extendedDocument.onfullscreenchange = listener),
       };
     // MS
     case extendedDocument.msFullscreenEnabled:
@@ -82,15 +86,19 @@ const getFullscreenInfo = (ref?: RefObject<ExtendedElement | null>): FullscreenI
         fullscreenElement: extendedDocument.msFullscreenElement ?? null,
         requestFullscreen: () => ref.current?.requestFullscreen(),
         exitFullscreen: () => extendedDocument.exitFullscreen(),
-        onFullscreenChange: (listener) => (extendedDocument.onfullscreenchange = listener),
+        onFullscreenChange: (listener) =>
+          (extendedDocument.onfullscreenchange = listener),
       };
     // WebKit
     case extendedDocument.webkitFullscreenEnabled:
       return {
-        fullscreenElement: extendedDocument.webkitCurrentFullScreenElement ?? null,
+        fullscreenElement:
+          extendedDocument.webkitCurrentFullScreenElement ?? null,
         requestFullscreen: () => ref.current?.webkitRequestFullscreen?.(),
-        exitFullscreen: async () => await extendedDocument.webkitExitFullscreen?.(),
-        onFullscreenChange: (listener) => (extendedDocument.onwebkitfullscreenchange = listener),
+        exitFullscreen: async () =>
+          await extendedDocument.webkitExitFullscreen?.(),
+        onFullscreenChange: (listener) =>
+          (extendedDocument.onwebkitfullscreenchange = listener),
       };
     // Not supported
     default:

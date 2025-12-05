@@ -1,4 +1,4 @@
-import { CSSProperties, useEffect, useState, useCallback } from "react";
+import { CSSProperties, useEffect, useState, useCallback, useRef } from "react";
 
 interface UseFadeProps {
   shouldShow: boolean;
@@ -6,15 +6,8 @@ interface UseFadeProps {
   minimumDisplayTime?: number | null;
 }
 
-enum TimeoutState {
-  NotStarted = "NOT_STARTED",
-  InProgress = "IN_PROGRESS", 
-  Finished = "FINISHED",
-}
-
 /**
- * Self-contained fade hook for the external player library
- * Handles minimum display time and fade out transitions
+ * Simple, working fade hook
  */
 export const useFade = ({
   shouldShow,
@@ -22,67 +15,74 @@ export const useFade = ({
   minimumDisplayTime = 0,
 }: UseFadeProps) => {
   const animationName = "player-overlay-fade-out";
-  
+
   const [isVisible, setIsVisible] = useState(shouldShow);
-  const [internalShow, setInternalShow] = useState(shouldShow);
-  const [timeoutState, setTimeoutState] = useState<TimeoutState>(TimeoutState.NotStarted);
+  const [isFadingOut, setIsFadingOut] = useState(false);
+  const [canHide, setCanHide] = useState(!minimumDisplayTime);
+  const minDisplayTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Handle shouldShow changes
+  // When shouldShow becomes true, show immediately and start the minimum timer
+  // Only runs when shouldShow transitions to true
   useEffect(() => {
-    if (shouldShow === internalShow) return;
-
     if (shouldShow) {
-      // Show immediately
       setIsVisible(true);
-      setInternalShow(true);
-      
-      // Start minimum display timer if needed
-      if (minimumDisplayTime && minimumDisplayTime > 0) {
-        setTimeoutState(TimeoutState.InProgress);
-        const timer = setTimeout(() => {
-          setTimeoutState(TimeoutState.Finished);
-        }, minimumDisplayTime);
-        
-        return () => { clearTimeout(timer); };
-      } else {
-        setTimeoutState(TimeoutState.Finished);
-      }
-    } else {
-      setInternalShow(false);
-    }
-  }, [shouldShow, internalShow, minimumDisplayTime]);
+      setIsFadingOut(false);
+      setCanHide(!minimumDisplayTime);
 
-  // Handle fade out when conditions are met
-  useEffect(() => {
-    if (
-      !internalShow && 
-      isVisible && 
-      timeoutState === TimeoutState.Finished &&
-      (!fadeOutTime || fadeOutTime <= 0)
-    ) {
-      // No fade animation, hide immediately
-      setIsVisible(false);
+      // Clear any existing timer
+      if (minDisplayTimerRef.current) {
+        clearTimeout(minDisplayTimerRef.current);
+        minDisplayTimerRef.current = null;
+      }
+
+      // Start minimum display timer if specified
+      if (minimumDisplayTime && minimumDisplayTime > 0) {
+        minDisplayTimerRef.current = setTimeout(() => {
+          setCanHide(true);
+          minDisplayTimerRef.current = null;
+        }, minimumDisplayTime);
+      }
     }
-  }, [internalShow, isVisible, timeoutState, fadeOutTime]);
+    // Note: We only run this when shouldShow becomes true, not when it becomes false
+    // This prevents the cleanup from clearing the timer when loading completes
+  }, [shouldShow, minimumDisplayTime]);
+
+  // Cleanup timer only on unmounting
+  useEffect(() => {
+    return () => {
+      if (minDisplayTimerRef.current) {
+        clearTimeout(minDisplayTimerRef.current);
+        minDisplayTimerRef.current = null;
+      }
+    };
+  }, []);
+
+  // When shouldShow becomes false, and we can hide, start to fade out or hide immediately
+  useEffect(() => {
+    if (!shouldShow && canHide && isVisible && !isFadingOut) {
+      if (fadeOutTime && fadeOutTime > 0) {
+        setIsFadingOut(true);
+      } else {
+        setIsVisible(false);
+      }
+    }
+  }, [shouldShow, canHide, isVisible, fadeOutTime, isFadingOut]);
 
   const onAnimationEnd = useCallback((event: { animationName: string }) => {
-    if (event.animationName === animationName && !internalShow) {
+    if (event.animationName === animationName) {
       setIsVisible(false);
+      setIsFadingOut(false);
     }
-  }, [internalShow]);
+  }, []);
 
-  const shouldStartFadeOut = !internalShow && 
-    timeoutState === TimeoutState.Finished && 
-    fadeOutTime && 
-    fadeOutTime > 0;
+  const style: CSSProperties = isFadingOut
+    ? {
+        animationName,
+        animationDuration: `${String(fadeOutTime)}ms`,
+        animationFillMode: "forwards",
+      }
+    : {};
 
-  const style: CSSProperties = shouldStartFadeOut ? {
-    animationName,
-    animationDuration: `${String(fadeOutTime)}ms`,
-    animationFillMode: 'forwards',
-  } : {};
-
-  // Inject keyframes for fade out animation
   const keyframes = `
     @keyframes ${animationName} {
       from { opacity: 1; }

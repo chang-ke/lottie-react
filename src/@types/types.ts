@@ -9,7 +9,7 @@ import {
 } from "lottie-web";
 import { JSX, RefCallback, RefObject } from "react";
 
-import { PlayerElements, LoadingOverlayOptions } from "../externals/player/types";
+import { PlayerElements, LoadingOverlayOptions } from "../externals/player";
 import { SubscriptionManager } from "../utils/SubscriptionManager";
 
 import {
@@ -199,7 +199,7 @@ export type LottieProps<Version extends LottieVersion = LottieVersion.Full> =
   UseLottieFactoryOptions<Version> & {
     // Legacy controls (for backwards compatibility) - will use internal player
     controls?: boolean | PlayerControlsElement[];
-    
+
     // New external player configuration - overrides controls if provided
     player?: PlayerConfig;
   };

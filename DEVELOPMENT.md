@@ -18,7 +18,7 @@ mkdir example && cd example
 yarn create next-app . --typescript
 ```
 
-### Tell `example` to our library
+### Tell `example` the path to our library
 
 Open `example/package.json` and add our library as a workspace dependency:
 

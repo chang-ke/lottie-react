@@ -211,8 +211,8 @@ const PlayerWithRef: ForwardRefRenderFunction<HTMLDivElement, PlayerProps> = (
       {/* Display area for content - ALWAYS render so setContainerRef works */}
       <Display ref={ref} theme={theme} style={{ flex: 1 }} />
 
-      {/* Loading overlay */}
-      {state.isLoading && loadingConfig && (
+      {/* Loading overlay - always render so it can fade out */}
+      {loadingConfig && (
         <LoadingOverlay show={state.isLoading} config={loadingConfig} />
       )}
 

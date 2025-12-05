@@ -22,6 +22,15 @@ export const BasicLottieV3 = () => {
       <Lottie
         src={SAMPLE_ANIMATION}
         // No controls by default - just the animation display
+        player={{
+          overlays: {
+            // Not working
+            loading: {
+              minDisplayTime: 3000, // Show loading for at least 1 second
+              fadeOutTime: 3000,
+            },
+          },
+        }}
       />
     </div>
   );

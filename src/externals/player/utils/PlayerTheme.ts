@@ -1,6 +1,10 @@
-import { ReactNode } from 'react';
+import { ReactNode } from "react";
 
-import { PlayerTheme, LoadingOverlayOptions, LoadingOverlayConfig } from '../types';
+import {
+  PlayerTheme,
+  LoadingOverlayOptions,
+  LoadingOverlayConfig,
+} from "../types";
 
 /**
  * Fully resolved theme type with all properties defined
@@ -71,27 +75,41 @@ export const mergeTheme = (userTheme?: PlayerTheme): ResolvedPlayerTheme => {
   return {
     colors: {
       primary: userTheme.colors?.primary ?? DEFAULT_PLAYER_THEME.colors.primary,
-      secondary: userTheme.colors?.secondary ?? DEFAULT_PLAYER_THEME.colors.secondary,
-      background: userTheme.colors?.background ?? DEFAULT_PLAYER_THEME.colors.background,
-      backgroundHover: userTheme.colors?.backgroundHover ?? DEFAULT_PLAYER_THEME.colors.backgroundHover,
+      secondary:
+        userTheme.colors?.secondary ?? DEFAULT_PLAYER_THEME.colors.secondary,
+      background:
+        userTheme.colors?.background ?? DEFAULT_PLAYER_THEME.colors.background,
+      backgroundHover:
+        userTheme.colors?.backgroundHover ??
+        DEFAULT_PLAYER_THEME.colors.backgroundHover,
       text: userTheme.colors?.text ?? DEFAULT_PLAYER_THEME.colors.text,
       border: userTheme.colors?.border ?? DEFAULT_PLAYER_THEME.colors.border,
       accent: userTheme.colors?.accent ?? DEFAULT_PLAYER_THEME.colors.accent,
     },
     sizing: {
       height: userTheme.sizing?.height ?? DEFAULT_PLAYER_THEME.sizing.height,
-      buttonSize: userTheme.sizing?.buttonSize ?? DEFAULT_PLAYER_THEME.sizing.buttonSize,
-      fontSize: userTheme.sizing?.fontSize ?? DEFAULT_PLAYER_THEME.sizing.fontSize,
-      borderRadius: userTheme.sizing?.borderRadius ?? DEFAULT_PLAYER_THEME.sizing.borderRadius,
+      buttonSize:
+        userTheme.sizing?.buttonSize ?? DEFAULT_PLAYER_THEME.sizing.buttonSize,
+      fontSize:
+        userTheme.sizing?.fontSize ?? DEFAULT_PLAYER_THEME.sizing.fontSize,
+      borderRadius:
+        userTheme.sizing?.borderRadius ??
+        DEFAULT_PLAYER_THEME.sizing.borderRadius,
     },
     spacing: {
-      padding: userTheme.spacing?.padding ?? DEFAULT_PLAYER_THEME.spacing.padding,
+      padding:
+        userTheme.spacing?.padding ?? DEFAULT_PLAYER_THEME.spacing.padding,
       gap: userTheme.spacing?.gap ?? DEFAULT_PLAYER_THEME.spacing.gap,
     },
     effects: {
-      backdropBlur: userTheme.effects?.backdropBlur ?? DEFAULT_PLAYER_THEME.effects.backdropBlur,
-      shadows: userTheme.effects?.shadows ?? DEFAULT_PLAYER_THEME.effects.shadows,
-      transitions: userTheme.effects?.transitions ?? DEFAULT_PLAYER_THEME.effects.transitions,
+      backdropBlur:
+        userTheme.effects?.backdropBlur ??
+        DEFAULT_PLAYER_THEME.effects.backdropBlur,
+      shadows:
+        userTheme.effects?.shadows ?? DEFAULT_PLAYER_THEME.effects.shadows,
+      transitions:
+        userTheme.effects?.transitions ??
+        DEFAULT_PLAYER_THEME.effects.transitions,
     },
   };
 };
@@ -99,7 +117,11 @@ export const mergeTheme = (userTheme?: PlayerTheme): ResolvedPlayerTheme => {
 /**
  * Get responsive size based on screen width
  */
-export const getResponsiveSize = (baseSize: number, screenWidth: number, breakpoint = 480): number => {
+export const getResponsiveSize = (
+  baseSize: number,
+  screenWidth: number,
+  breakpoint = 480,
+): number => {
   if (screenWidth < breakpoint) {
     return Math.max(baseSize * 0.8, 20); // Minimum 20px for touch targets
   }
@@ -127,22 +149,30 @@ export const getButtonColors = (
     isHovered?: boolean;
     isFocused?: boolean;
     isMenuOpen?: boolean;
-    variant?: 'primary' | 'secondary' | 'accent';
-  }
+    variant?: "primary" | "secondary" | "accent";
+  },
 ) => {
-  const { disabled, isActive, isHovered, isFocused, isMenuOpen, variant = 'secondary' } = options;
+  const {
+    disabled,
+    isActive,
+    isHovered,
+    isFocused,
+    isMenuOpen,
+    variant = "secondary",
+  } = options;
 
   const backgroundColor = (() => {
     if (disabled) return `${theme.colors.background}20`; // 20% opacity
     if (isActive) return `${theme.colors.accent}40`; // 40% opacity
-    if (isHovered || isFocused || isMenuOpen) return theme.colors.backgroundHover;
+    if (isHovered || isFocused || isMenuOpen)
+      return theme.colors.backgroundHover;
     return theme.colors.background;
   })();
 
   const iconColor = (() => {
     if (disabled) return `${theme.colors.text}30`; // 30% opacity
-    if (variant === 'accent' || isActive) return theme.colors.accent;
-    if (variant === 'primary') return theme.colors.primary;
+    if (variant === "accent" || isActive) return theme.colors.accent;
+    if (variant === "primary") return theme.colors.primary;
     return theme.colors.secondary;
   })();
 
@@ -152,7 +182,9 @@ export const getButtonColors = (
 /**
  * Process loading overlay options into a standardized config
  */
-export const processLoadingConfig = (loading?: LoadingOverlayOptions): LoadingOverlayConfig | null => {
+export const processLoadingConfig = (
+  loading?: LoadingOverlayOptions,
+): LoadingOverlayConfig | null => {
   // Explicitly disabled
   if (loading === null) {
     return null;
@@ -168,8 +200,10 @@ export const processLoadingConfig = (loading?: LoadingOverlayOptions): LoadingOv
 
   // Check if it's a config object (has config-specific properties)
   if (
-    typeof loading === 'object' &&
-    ('component' in loading || 'minDisplayTime' in loading || 'fadeOutTime' in loading)
+    typeof loading === "object" &&
+    ("component" in loading ||
+      "minDisplayTime" in loading ||
+      "fadeOutTime" in loading)
   ) {
     // It's a LoadingOverlayConfig
     return {
@@ -190,20 +224,22 @@ export const processLoadingConfig = (loading?: LoadingOverlayOptions): LoadingOv
 /**
  * Generate CSS custom properties from theme
  */
-export const generateCSSVars = (theme: ResolvedPlayerTheme): Record<string, string> => {
+export const generateCSSVars = (
+  theme: ResolvedPlayerTheme,
+): Record<string, string> => {
   return {
-    '--player-primary': theme.colors.primary,
-    '--player-secondary': theme.colors.secondary,
-    '--player-background': theme.colors.background,
-    '--player-background-hover': theme.colors.backgroundHover,
-    '--player-text': theme.colors.text,
-    '--player-border': theme.colors.border,
-    '--player-accent': theme.colors.accent,
-    '--player-height': `${String(theme.sizing.height)}px`,
-    '--player-button-size': `${String(theme.sizing.buttonSize)}px`,
-    '--player-font-size': `${String(theme.sizing.fontSize)}px`,
-    '--player-border-radius': `${String(theme.sizing.borderRadius)}px`,
-    '--player-padding': `${String(theme.spacing.padding)}px`,
-    '--player-gap': `${String(theme.spacing.gap)}px`,
+    "--player-primary": theme.colors.primary,
+    "--player-secondary": theme.colors.secondary,
+    "--player-background": theme.colors.background,
+    "--player-background-hover": theme.colors.backgroundHover,
+    "--player-text": theme.colors.text,
+    "--player-border": theme.colors.border,
+    "--player-accent": theme.colors.accent,
+    "--player-height": `${String(theme.sizing.height)}px`,
+    "--player-button-size": `${String(theme.sizing.buttonSize)}px`,
+    "--player-font-size": `${String(theme.sizing.fontSize)}px`,
+    "--player-border-radius": `${String(theme.sizing.borderRadius)}px`,
+    "--player-padding": `${String(theme.spacing.padding)}px`,
+    "--player-gap": `${String(theme.spacing.gap)}px`,
   };
 };
