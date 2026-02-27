@@ -1,5 +1,3 @@
-import { ReactNode } from "react";
-
 import {
   PlayerTheme,
   LoadingOverlayOptions,
@@ -207,15 +205,15 @@ export const processLoadingConfig = (
   ) {
     // It's a LoadingOverlayConfig
     return {
-      minDisplayTime: 0,
-      fadeOutTime: 600,
-      ...loading,
+      component: "component" in loading ? loading.component : undefined,
+      minDisplayTime: "minDisplayTime" in loading ? loading.minDisplayTime ?? 0 : 0,
+      fadeOutTime: "fadeOutTime" in loading ? loading.fadeOutTime ?? 600 : 600,
     };
   }
 
   // It's a ReactNode
   return {
-    component: loading as ReactNode,
+    component: loading,
     minDisplayTime: 0,
     fadeOutTime: 600,
   };

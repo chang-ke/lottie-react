@@ -1,5 +1,6 @@
 import React from "react";
 import { Lottie } from "lottie-react";
+import { PlayerControlsElement } from "../../../src";
 
 /**
  * Example demonstrating the new V3 Player architecture
@@ -22,13 +23,27 @@ export const BasicLottieV3 = () => {
       <Lottie
         src={SAMPLE_ANIMATION}
         // No controls by default - just the animation display
+        controls={[PlayerControlsElement.Play]}
+        initialValues={{
+          loop: true,
+          autoplay: true,
+        }}
+        subscriptions={{
+          ready: () => console.log("ready"),
+        }}
         player={{
+          enabled: true,
+          controls: {
+            playPause: true,
+            frameIndicator: true,
+            progressBar: true,
+          },
           overlays: {
             // Not working
-            loading: {
-              minDisplayTime: 3000, // Show loading for at least 1 second
-              fadeOutTime: 3000,
-            },
+            // loading: {
+            //   minDisplayTime: 3000, // Show loading for at least 1 second
+            //   fadeOutTime: 3000,
+            // },
           },
         }}
       />
