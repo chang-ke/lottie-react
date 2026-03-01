@@ -59,7 +59,7 @@ export const useLottieFactory = <
     [],
   );
 
-  // Animation state with previous-value tracking (used by seek to resume state)
+  // Animation state — transitions fire the onChange callback to notify subscribers.
   const { state, setState } = useStateWithPrevious<LottieState>({
     initialState: LottieState.loading,
     onChange: (_prev, newState) => {
@@ -69,7 +69,8 @@ export const useLottieFactory = <
     },
   });
 
-  // Ref-snapshot of initial values — stable reference, updated on each render
+  // Tracks the last-applied initial values so the enableReinitialize effect
+  // can diff against them and only apply what actually changed.
   const _initialValues = useRef(options.initialValues);
 
   // Local states derived from initialValues (owned by this hook after mount)
@@ -87,8 +88,12 @@ export const useLottieFactory = <
     options.initialValues?.segment ?? undefined,
   );
 
+  // Ref mirror of `state` — updated every render so seek can read the latest
+  // state value without it becoming a useCallback dependency.
+  const stateRef = useRef(state);
+  stateRef.current = state;
+
   // Ref used by `seek` to restore playback state after a drag ends.
-  // Using a ref (not state) avoids a stale-closure in the seek callback.
   const stateBeforeSeeking = useRef<LottieState | null>(null);
 
   // ─────────────────────────────────────────────────────────────────
@@ -399,34 +404,36 @@ export const useLottieFactory = <
         ? (animationItem.totalFrames * seekInfo.number) / 100
         : seekInfo.number;
 
-      setState((prevState) => {
-        // Remember the pre-seek state so we can resume it when seeking ends.
-        // Uses a ref to avoid stale closures in nested setState calls.
-        if (!isSeekingEnded && stateBeforeSeeking.current === null) {
-          stateBeforeSeeking.current = prevState;
-        } else if (isSeekingEnded) {
-          stateBeforeSeeking.current = null;
-        }
+      // Snapshot the pre-seek state on the first drag event so we can restore
+      // it when the gesture ends. stateRef.current is always the latest rendered
+      // state, avoiding stale-closure issues without adding state as a dep.
+      if (!isSeekingEnded && stateBeforeSeeking.current === null) {
+        stateBeforeSeeking.current = stateRef.current;
+      }
+
+      if (isSeekingEnded) {
+        const savedState = stateBeforeSeeking.current;
+        stateBeforeSeeking.current = null;
 
         const shouldPlayAfter =
-          isSeekingEnded &&
-          (prevState === LottieState.playing ||
-            stateBeforeSeeking.current === LottieState.playing);
+          savedState === LottieState.playing ||
+          stateRef.current === LottieState.playing;
 
         if (shouldPlayAfter) {
           animationItem.goToAndPlay(frame, true);
-          return LottieState.playing;
+          setState(LottieState.playing);
+          return;
         }
+      }
 
-        animationItem.goToAndStop(frame, true);
+      // Still dragging, or seeking ended without needing to resume playback.
+      animationItem.goToAndStop(frame, true);
 
-        if (prevState !== LottieState.stopped) {
-          if (isSeekingEnded && frame === 0) return LottieState.stopped;
-          return LottieState.paused;
-        }
-
-        return prevState;
-      });
+      if (stateRef.current !== LottieState.stopped) {
+        setState(
+          isSeekingEnded && frame === 0 ? LottieState.stopped : LottieState.paused,
+        );
+      }
     },
     [animationItem, setState],
   );
