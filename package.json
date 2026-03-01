@@ -25,6 +25,13 @@
   "types": "build/index.d.ts",
   "main": "build/index.js",
   "module": "build/index.esm.js",
+  "exports": {
+    ".": {
+      "import": "./build/index.esm.js",
+      "require": "./build/index.js",
+      "types": "./build/index.d.ts"
+    }
+  },
   "files": [
     "build"
   ],

@@ -1,22 +1,25 @@
-/**
- * Check if the value is a valid animation source that can be passed to Lottie
- * @param source
- */
 import { AnimationConfigWithData, AnimationConfigWithPath } from "lottie-web";
 
-const normalizeAnimationSource = (
-  source: unknown,
-):
+type NormalizedSource =
   | Pick<AnimationConfigWithData, "animationData">
-  | Pick<AnimationConfigWithPath, "path">
-  | null => {
-  // If JSON file
-  if (source && typeof source === "string" && source.endsWith(".json")) {
-    return { path: source };
+  | Pick<AnimationConfigWithPath, "path">;
+
+/**
+ * Converts the consumer-facing `src` prop into the format expected by lottie-web.
+ *
+ * Accepts:
+ * - A non-empty string — treated as a URL/path (supports `.json`, `.lottie`,
+ *   query-string URLs, etc. — lottie-web handles the actual loading)
+ * - A plain object — passed directly as `animationData`
+ *
+ * Returns `null` when the source is missing or invalid.
+ */
+const normalizeAnimationSource = (source: unknown): NormalizedSource | null => {
+  if (source && typeof source === "string" && source.trim().length > 0) {
+    return { path: source.trim() };
   }
 
-  // If object
-  if (source && typeof source === "object") {
+  if (source && typeof source === "object" && !Array.isArray(source)) {
     return { animationData: source };
   }
 

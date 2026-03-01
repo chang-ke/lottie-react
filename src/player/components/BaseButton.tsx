@@ -24,12 +24,17 @@ export interface BaseButtonProps {
   ariaLabel?: string;
   tooltip?: string;
   theme?: PlayerTheme;
-  DropdownContent?: (setIsMenuOpen: (state: boolean) => void) => JSX.Element;
+  /** Screen width passed from the Player — avoids per-button resize listeners. */
+  screenWidth?: number;
+  DropdownContent?: (setIsMenuOpen: (open: boolean) => void) => JSX.Element;
 }
 
 /**
- * Isolated base button component for the external player
- * No external dependencies - everything is passed via props
+ * Base button used by all Player controls.
+ *
+ * - Screen width is received as a prop from the parent Player (single source of
+ *   truth for responsive sizing, no individual resize listeners).
+ * - Dropdown closes on outside click via a document mousedown listener.
  */
 export const BaseButton: FC<BaseButtonProps> = ({
   children,
@@ -41,78 +46,53 @@ export const BaseButton: FC<BaseButtonProps> = ({
   ariaLabel,
   tooltip,
   theme,
+  screenWidth = 1024,
   DropdownContent,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
-  const [screenWidth, setScreenWidth] = useState(
-    typeof window !== "undefined" ? window.innerWidth : 1024,
-  );
 
   const mergedTheme = mergeTheme(theme);
 
-  // Handle window resize for responsive sizing
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const handleResize = () => {
-      setScreenWidth(window.innerWidth);
-    };
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
-  // Handle click outside to close the dropdown
+  // Close dropdown when clicking outside
   useEffect(() => {
     if (!DropdownContent || !isMenuOpen) return;
 
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        containerRef.current &&
-        event.target &&
-        !containerRef.current.contains(event.target as Node)
-      ) {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setIsMenuOpen(false);
       }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => { document.removeEventListener("mousedown", handleClickOutside); };
   }, [DropdownContent, isMenuOpen]);
 
   const handleClick = useCallback(() => {
     if (disabled) return;
-    if (DropdownContent) {
-      setIsMenuOpen(!isMenuOpen);
-    }
+    if (DropdownContent) setIsMenuOpen((prev) => !prev);
     void onClick?.();
-  }, [disabled, DropdownContent, isMenuOpen, onClick]);
+  }, [disabled, DropdownContent, onClick]);
 
   const handleKeyDown = useCallback(
-    (event: React.KeyboardEvent) => {
+    (e: React.KeyboardEvent) => {
       if (disabled) return;
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
         handleClick();
       }
     },
     [disabled, handleClick],
   );
 
-  // Get responsive button size
   const buttonSize = getResponsiveSize(
     mergedTheme.sizing.buttonSize,
     screenWidth,
     480,
   );
 
-  // Get icon size based on button size
   const iconSize =
     size === "small"
       ? Math.round(buttonSize * 0.6)
@@ -120,7 +100,6 @@ export const BaseButton: FC<BaseButtonProps> = ({
         ? Math.round(buttonSize * 0.7)
         : Math.round(buttonSize * 0.65);
 
-  // Get button colors
   const { backgroundColor, iconColor } = getButtonColors(mergedTheme, {
     disabled,
     isActive,
@@ -137,7 +116,7 @@ export const BaseButton: FC<BaseButtonProps> = ({
     justifyContent: "center",
     width: buttonSize,
     height: buttonSize,
-    minWidth: buttonSize, // Ensure a minimum touch target
+    minWidth: buttonSize,
     minHeight: buttonSize,
     padding: 0,
     margin: 0,
@@ -148,17 +127,14 @@ export const BaseButton: FC<BaseButtonProps> = ({
     cursor: disabled ? "default" : "pointer",
     transition: mergedTheme.effects.transitions ? "all 150ms ease" : "none",
     outline: "none",
-    // Ensure proper focus visibility
     boxShadow:
-      isFocused && !disabled
-        ? `0 0 0 2px ${mergedTheme.colors.accent}`
-        : "none",
+      isFocused && !disabled ? `0 0 0 2px ${mergedTheme.colors.accent}` : "none",
   };
 
   const containerStyle: React.CSSProperties = {
     position: "relative",
     display: "inline-block",
-    zIndex: isMenuOpen ? 9999 : 1, // High z-index when a menu is open
+    zIndex: isMenuOpen ? 9999 : 1,
   };
 
   const dropdownStyle: React.CSSProperties = {
@@ -166,11 +142,9 @@ export const BaseButton: FC<BaseButtonProps> = ({
     bottom: "100%",
     right: 0,
     marginBottom: mergedTheme.spacing.gap,
-    backgroundColor: `${mergedTheme.colors.background}f0`, // High opacity
+    backgroundColor: `${mergedTheme.colors.background}f0`,
     borderRadius: mergedTheme.sizing.borderRadius,
-    boxShadow: mergedTheme.effects.shadows
-      ? "0 4px 12px rgba(0, 0, 0, 0.4)"
-      : "none",
+    boxShadow: mergedTheme.effects.shadows ? "0 4px 12px rgba(0,0,0,0.4)" : "none",
     backdropFilter: mergedTheme.effects.backdropBlur ? "blur(8px)" : "none",
     minWidth: 120,
     overflow: "hidden",
@@ -178,33 +152,22 @@ export const BaseButton: FC<BaseButtonProps> = ({
     transform: isMenuOpen ? "translateY(0)" : "translateY(4px)",
     transition: mergedTheme.effects.transitions ? "all 200ms ease" : "none",
     pointerEvents: isMenuOpen ? "auto" : "none",
-    zIndex: 10000, // Ensure the dropdown is always on top
+    zIndex: 10000,
   };
 
   return (
     <div ref={containerRef} style={containerStyle} title={tooltip}>
-      {/* Dropdown menu */}
       {DropdownContent && (
         <div style={dropdownStyle}>{DropdownContent(setIsMenuOpen)}</div>
       )}
-
-      {/* Button */}
       <button
         style={buttonStyle}
         onClick={handleClick}
         onKeyDown={handleKeyDown}
-        onMouseEnter={() => {
-          setIsHovered(true);
-        }}
-        onMouseLeave={() => {
-          setIsHovered(false);
-        }}
-        onFocus={() => {
-          setIsFocused(true);
-        }}
-        onBlur={() => {
-          setIsFocused(false);
-        }}
+        onMouseEnter={() => { setIsHovered(true); }}
+        onMouseLeave={() => { setIsHovered(false); }}
+        onFocus={() => { setIsFocused(true); }}
+        onBlur={() => { setIsFocused(false); }}
         disabled={disabled}
         aria-label={ariaLabel}
         type="button"

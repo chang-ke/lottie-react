@@ -184,16 +184,18 @@ export const processLoadingConfig = (
   loading?: LoadingOverlayOptions,
 ): LoadingOverlayConfig | null => {
   // Explicitly disabled
-  if (loading === null) {
+  if (loading === null || loading === false) {
     return null;
   }
 
-  // No loading config provided - use default
+  // No loading config provided — disabled by default (opt-in)
   if (loading === undefined) {
-    return {
-      minDisplayTime: 0,
-      fadeOutTime: 600,
-    };
+    return null;
+  }
+
+  // true → enable with default spinner and timings
+  if (loading === true) {
+    return { minDisplayTime: 0, fadeOutTime: 600 };
   }
 
   // Check if it's a config object (has config-specific properties)
@@ -211,9 +213,10 @@ export const processLoadingConfig = (
     };
   }
 
-  // It's a ReactNode
+  // It's a plain ReactNode (string, element, etc.)
   return {
-    component: loading,
+    // Cast is safe: at this point loading is not null/undefined/boolean/LoadingOverlayConfig
+    component: loading as import("react").ReactNode,
     minDisplayTime: 0,
     fadeOutTime: 600,
   };

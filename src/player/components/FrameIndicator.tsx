@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from "react";
+import React, { FC, useEffect, useRef } from "react";
 
 import { PlayerTheme } from "../types";
 import { mergeTheme } from "../utils/PlayerTheme";
@@ -12,9 +12,11 @@ export interface FrameIndicatorProps {
 }
 
 /**
- * Isolated Frame Indicator component for the external player
- * Shows current frame and optionally total frames
- * Subscribes to frame updates to avoid parent re-renders
+ * Displays the current frame number alongside the total.
+ *
+ * Performance: subscribes directly to frame updates and mutates the DOM span
+ * via a ref — this avoids setState calls at 60 fps and keeps this component
+ * from ever causing a React re-render during playback.
  */
 export const FrameIndicator: FC<FrameIndicatorProps> = ({
   totalFrames,
@@ -23,22 +25,22 @@ export const FrameIndicator: FC<FrameIndicatorProps> = ({
   theme,
   subscribeToFrame,
 }) => {
-  const [currentFrame, setCurrentFrame] = useState(0);
+  const currentFrameRef = useRef<HTMLSpanElement>(null);
   const mergedTheme = mergeTheme(theme);
 
   useEffect(() => {
-    return subscribeToFrame(setCurrentFrame);
-  }, [subscribeToFrame]);
-
-  const formatFrame = (frame: number): string => {
-    return frame.toFixed(decimals);
-  };
+    return subscribeToFrame((frame) => {
+      if (currentFrameRef.current) {
+        currentFrameRef.current.textContent = frame.toFixed(decimals);
+      }
+    });
+  }, [subscribeToFrame, decimals]);
 
   const containerStyle: React.CSSProperties = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    padding: `${String(Math.round((mergedTheme.spacing.padding * 0.5)))}px ${String(mergedTheme.spacing.padding)}px`,
+    padding: `${String(Math.round(mergedTheme.spacing.padding * 0.5))}px ${String(mergedTheme.spacing.padding)}px`,
     backgroundColor: mergedTheme.colors.background,
     borderRadius: mergedTheme.sizing.borderRadius,
     fontFamily:
@@ -70,14 +72,16 @@ export const FrameIndicator: FC<FrameIndicatorProps> = ({
   return (
     <div
       style={containerStyle}
-      title={`Frame ${formatFrame(currentFrame)}${showTotal ? ` of ${formatFrame(totalFrames)}` : ""}`}
-      aria-label={`Current frame: ${formatFrame(currentFrame)}${showTotal ? ` of ${formatFrame(totalFrames)}` : ""}`}
+      aria-label={`Animation frame indicator`}
+      aria-live="off"
     >
-      <span style={currentFrameStyle}>{formatFrame(currentFrame)}</span>
+      <span ref={currentFrameRef} style={currentFrameStyle}>
+        {(0).toFixed(decimals)}
+      </span>
       {showTotal && (
         <>
           <span style={separatorStyle}>/</span>
-          <span style={totalFrameStyle}>{formatFrame(totalFrames)}</span>
+          <span style={totalFrameStyle}>{totalFrames.toFixed(decimals)}</span>
         </>
       )}
     </div>

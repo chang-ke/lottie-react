@@ -1,49 +1,29 @@
-/**
- * Keep the state of the logger
- */
 import isFunction from "./isFunction";
 
-let isLoggerActive = true;
+const prefix = "[lottie-react]";
 
-/**
- * Set if the logs should appear or not
- * @param isActive
- */
-export const setLogger = (isActive: boolean) => {
-  isLoggerActive = isActive;
-};
+const noop = () => undefined;
 
-/**
- * Prefix a message with a custom message
- * @param message
- */
-const prefixMessage = (message?: string) =>
-  `[lottie-react]${message !== undefined ? ` ${message}` : ""}`;
-
-/**
- * Method to wrap console's log methods
- * @param isEnabled
- * @param method
- */
-const customLogger =
-  (isEnabled: boolean, method: typeof console.log) =>
-  (message?: string, ...optionalParams: unknown[]) => {
-    if (isEnabled && isFunction(method)) {
-      method(prefixMessage(message), ...optionalParams);
+const makeMethod =
+  (active: boolean, consoleFn: typeof console.log) =>
+  (message?: string, ...rest: unknown[]) => {
+    if (active && isFunction(consoleFn)) {
+      consoleFn(
+        `${prefix}${message !== undefined ? ` ${message}` : ""}`,
+        ...rest,
+      );
     }
   };
 
 /**
- * Custom Logger
+ * Creates a scoped logger for the animation instance.
+ * Logging is disabled by default and only active when `debug: true` is passed.
  */
-const logger = {
-  log: customLogger(isLoggerActive, console.log),
+export const createLogger = (debug = false) => ({
+  log: debug ? makeMethod(true, console.log) : noop,
+  warn: debug ? makeMethod(true, console.warn) : noop,
+  error: debug ? makeMethod(true, console.error) : noop,
+  info: debug ? makeMethod(true, console.info) : noop,
+});
 
-  error: customLogger(isLoggerActive, console.error),
-
-  warn: customLogger(isLoggerActive, console.warn),
-
-  info: customLogger(isLoggerActive, console.info),
-};
-
-export default logger;
+export type Logger = ReturnType<typeof createLogger>;

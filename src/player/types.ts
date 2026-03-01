@@ -110,12 +110,18 @@ export interface LoadingOverlayConfig {
 }
 
 /**
- * Loading overlay options
+ * Loading overlay options:
+ * - `true`  — enable with default spinner and timings
+ * - `false` / `null` — explicitly disabled (default)
+ * - `LoadingOverlayConfig` — full configuration object
+ * - `ReactNode` — custom loading component with default timings
  */
 export type LoadingOverlayOptions =
-  | ReactNode // Simple ReactNode for custom loading component
-  | LoadingOverlayConfig // Full configuration object
-  | null; // Explicitly disabled
+  | true
+  | ReactNode
+  | LoadingOverlayConfig
+  | false
+  | null;
 
 /**
  * Custom overlays that consumer can provide

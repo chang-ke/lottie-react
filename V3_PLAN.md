@@ -22,6 +22,7 @@
 11. [Files to Clean Up](#11-files-to-clean-up)
 12. [Implementation Roadmap](#12-implementation-roadmap)
 13. [Competitive Landscape](#13-competitive-landscape)
+14. [Progress](#14-progress)
 
 ---
 
@@ -1019,3 +1020,248 @@ devDependencies (to review/remove):
   postcss, autoprefixer         — No CSS processing needed
   rollup-plugin-postcss         — Same as above
 ```
+
+---
+
+## 14. Progress
+
+> Last updated: March 2026
+> Phases completed: **0, 1, 2, 3, Feedback** (of 7)
+
+---
+
+### Phase 0 — Cleanup ✅
+
+**Deleted files:**
+- `src/old/` — entire directory (~24 files). Contained: old player, old HOC (`oldLottieHoc.tsx`), old config, and the entirely-commented-out `useLottieInteractivity.tsx`.
+- `src/hooks/useFade.ts` — duplicate of `src/externals/player/utils/useFade.ts` with 5 unresolved TODOs.
+- `src/hooks/useTimeout.ts` — only used by the now-deleted `useFade.ts`.
+- `CODEBASE_IMPROVEMENTS.md` — superseded by this plan.
+
+**`.gitignore`:**
+- Added `.DS_Store` entry.
+
+**`src/@types/enums.ts`:**
+- Removed `PlayerControlsElement` enum. It was dead code — the Player already used `PlayerElements` (interface-based, granular control config).
+
+**`src/@types/types.ts`:**
+- Removed dead `controls?: boolean | PlayerControlsElement[]` prop from `LottieProps`.
+- Removed `PlayerControlsElement` import.
+- Removed duplicate `PlayerConfig` interface. Replaced with `LottiePlayerConfig` which imports `PlayerTheme`, `PlayerElements`, `PlayerResponsive`, `PlayerOverlays` directly from the player module.
+- Removed unused `UseLottieStateOptions` interface.
+- Changed `LottieSubscriptionAction<T = unknown>` → `LottieSubscriptionAction<T = void>`.
+
+**`src/components/lottieHoc.tsx`:**
+- Removed legacy `controls` destructuring and all related references.
+- Cleaned up HOC structure with clear comments about design decisions.
+- `player` prop now typed as `LottiePlayerConfig`.
+
+**`example/src/components/PlayerV3Example.tsx`:**
+- Removed `PlayerControlsElement` import and all usages.
+- Updated all examples to use the clean v3 `player` prop API.
+- Re-enabled loading overlay config (was commented out as "Not working").
+
+---
+
+### Phase 1 — Core Fixes ✅
+
+**`src/utils/SubscriptionManager.ts` — Major rewrite:**
+- Replaced Node.js `EventEmitter` (which pulled in a ~13 KB browser polyfill) with a custom 65-line typed implementation.
+- Uses `Map<string, Set<AnyHandler>>` internally.
+- Full type safety at the public API (`subscribe`, `notify`). Internal storage uses `as unknown as AnyHandler` double-cast (no `any`).
+- No `@ts-ignore` directives.
+
+**`src/utils/logger.ts` — Rewrite:**
+- Logging now defaults to **OFF**. The old code had `let isLoggerActive = true` — production consumers saw debug logs in their console.
+- `createLogger(debug = false)` factory — returns scoped logger. Returns no-op functions when `debug` is false (zero overhead).
+
+**`src/utils/normalizeAnimationSource.ts` — Rewrite:**
+- Now accepts **any non-empty string** as a `path` (previously only strings ending in `.json`).
+- Supports query-string URLs (`animation.json?v=2`), `.lottie` files, extensionless CDN URLs, etc.
+- Explicitly rejects arrays (previously could incorrectly accept them as objects).
+
+**`src/hooks/useLottieFactory.tsx` — Significant changes:**
+- Wired `debug` prop to `createLogger(debug)` via `useMemo`.
+- **Fixed subscription re-registration bug.** Old code used `isEqual` (deep comparison) on subscription objects that include functions — function equality is referential so this always returned `false`, re-registering on every render. Fixed with ref-forwarding: `_subscriptionsRef.current = options.subscriptions` is assigned synchronously in the render body. Stable "forwarding" handlers are registered once via `useEffect`, and the `subscriptionTypesKey` (sorted event type keys joined) is the only dependency. Re-registration only happens when the _set_ of subscribed event types changes.
+- **Fixed `stateBeforeSeeking` stale closure.** Changed from `useState` to `useRef<LottieState | null>`. State-based version could capture stale values inside the nested `setState` callback.
+- `autoplay` and `initialSegment` no longer wrapped in `useState` (they are not dynamic — the animation must be reloaded to change them).
+
+**`src/externals/player/utils/PlayerTheme.ts`:**
+- Fixed TypeScript narrowing error in `processLoadingConfig` — the fall-through case now correctly casts to `ReactNode`.
+
+---
+
+### Phase 2 — Player Polish ✅
+
+**`src/externals/player/components/FrameIndicator.tsx` — Rewrite:**
+- **Critical performance fix.** Old code used `useState(0)` + `setCurrentFrame` — this fired `setState` 60 times per second, causing 60 re-renders/second from this one component.
+- New code: `useRef<HTMLSpanElement>` + direct `.textContent` mutation. Component **never re-renders during playback**.
+- Initial value `{(0).toFixed(decimals)}` renders on mount; the frame subscription updates the DOM directly from there.
+
+**`src/externals/player/components/ProgressBar.tsx` — Touch support:**
+- Added `onTouchEnd` handler mirroring `onMouseUp`. Seeking now works on mobile/touch devices.
+- Extracted `commitSeek()` helper shared by both handlers.
+
+**`src/externals/player/components/BaseButton.tsx` — Resize listener removed:**
+- Removed `window.addEventListener("resize", ...)` (there were up to 7 of these — one per control button).
+- Added `screenWidth?: number` prop (default `1024`) — the parent Player passes the single tracked value down.
+
+**`src/externals/player/components/PlayerButtons.tsx`:**
+- Added `screenWidth?: number` to all 7 button prop interfaces.
+- All buttons now thread `screenWidth` through to `<BaseButton>`.
+
+**`src/externals/player/Player.tsx` — Multiple fixes:**
+- **`style` double-application fixed.** The `style` prop was previously spread into both the outer wrapper div AND the controls bar's `containerStyle`. Consumer styles (e.g. `border`, `background`) were appearing on the controls bar. Now `style` is applied only to the outer wrapper; the controls bar uses purely theme-derived styles.
+- **Single resize listener.** One `window.addEventListener("resize")` at the Player level sets `screenWidth` state, which is passed as a prop to all buttons. Eliminates N per-button listeners.
+- **Keyboard shortcuts.** `k`=play/pause, `l`=loop, `f`=fullscreen. Implemented via a document-level `keydown` listener (registered once via `useEffect`) gated by player focus state tracked with `onFocus`/`onBlur` on the container div. No `tabIndex` or ARIA role manipulation needed — keyboard shortcuts activate whenever any focusable element inside the player (toolbar buttons, progress bar) has focus.
+- **Loading overlay is now opt-in.** Previously `processLoadingConfig(undefined)` returned a default config, so the spinner showed by default. Now it returns `null` — the overlay is disabled unless the consumer explicitly passes `overlays={{ loading: {} }}` or a custom component/config.
+
+**`src/externals/player/utils/PlayerTheme.ts`:**
+- `processLoadingConfig(undefined)` now returns `null` instead of a default config.
+
+---
+
+### Phase 3 — Public API ✅
+
+**`src/hooks/useLottie.ts` — New file:**
+- Consumer-facing hook for the full lottie-web build.
+- Thin wrapper: calls `useLottieFactory(lottie, options)` with the full lottie-web player instance already bound.
+- Signature: `useLottie(options: UseLottieFactoryOptions): UseLottieFactoryResult`
+
+**`src/hooks/useLottieLight.ts` — New file:**
+- Consumer-facing hook for the `lottie_light` build (SVG-only, ~150 KB smaller bundle).
+- Signature: `useLottieLight(options: UseLottieFactoryOptions<LottieVersion.Light>): UseLottieFactoryResult`
+
+**`src/index.ts` — Clean public API:**
+- Replaced `export * from "./@types"` (leaky barrel) with explicit named exports.
+- `InternalListener` is no longer part of the public API.
+- New exports: `useLottie`, `useLottieLight`, player types (`LoadingOverlayConfig`, `LoadingOverlayOptions`, `PlayerElements`, `PlayerOverlays`, `PlayerResponsive`, `PlayerTheme`).
+
+**`src/externals/player/entry.ts` — New file:**
+- Clean entry point for the `lottie-react/player` sub-path.
+- Exports: `Player`, player types, `DEFAULT_PLAYER_ELEMENTS`, `DEFAULT_PLAYER_RESPONSIVE`.
+
+**`rollup.config.mts`:**
+- Added 3 new build configurations for the player sub-path:
+  - `build/player.js` + `build/player.min.js` (CJS)
+  - `build/player.esm.js` + `build/player.esm.min.js` (ESM)
+  - `build/player.d.ts` (TypeScript declarations)
+
+**`package.json`:**
+- Added `exports` field:
+  ```json
+  {
+    ".":        { "import": "./build/index.esm.js",  "require": "./build/index.js",  "types": "./build/index.d.ts"  },
+    "./player": { "import": "./build/player.esm.js", "require": "./build/player.js", "types": "./build/player.d.ts" }
+  }
+  ```
+
+**Build outputs (all passing):**
+| File | Format | Entry |
+|------|--------|-------|
+| `build/index.js` | CJS | `src/index.ts` |
+| `build/index.esm.js` | ESM | `src/index.ts` |
+| `build/index.d.ts` | Types | `src/index.ts` |
+| `build/player.js` | CJS | `src/externals/player/entry.ts` |
+| `build/player.esm.js` | ESM | `src/externals/player/entry.ts` |
+| `build/player.d.ts` | Types | `src/externals/player/entry.ts` |
+
+**Public API surface (`build/index.d.ts`):**
+```ts
+// Components
+export { Lottie, LottieLight }
+export default Lottie
+
+// Hooks
+export { useLottie, useLottieLight }
+
+// Enums
+export { Direction, LottieRenderer, LottieState, LottieSubscription, LottieVersion }
+
+// Types
+export type { LottiePlayerConfig, LottieProps, LottieRef, LottieSubscriptionAction,
+              LottieSubscriptions, UseLottieFactoryOptions, UseLottieFactoryResult,
+              LoadingOverlayConfig, LoadingOverlayOptions, PlayerElements, PlayerOverlays,
+              PlayerResponsive, PlayerTheme }
+```
+
+---
+
+### Known Issues / Tech Debt (Post-Phase 3)
+
+| Item | Severity | Notes |
+|------|----------|-------|
+| `react-fast-compare` still a dependency | Low | Used in `useLottieFactory` for `initialValues` deep comparison with `enableReinitialize`. Still valid for that use case. Could be replaced with a shallow compare for the limited object shape, but low priority. |
+| `src/hooks/useNonReactiveState.ts` still exists | Low | Listed for deletion in §11. Used only by `useStateWithPrevious`. Could be inlined as a plain `useRef`. |
+| `src/utils/isFunction.ts` still exists | Low | Listed for review in §11. Used only in `useStateWithPrevious`. Could be inlined as `typeof fn === "function"`. |
+| `src/externals/player/index.ts` exports too many internals | Low | Still re-exports everything (BaseButton, ProgressBar, FrameIndicator, PlayerTheme utils, etc.). This is the _internal_ index used within the package; the public player sub-path entry (`entry.ts`) is already clean. |
+| `build/` directory may be tracked in git | Low | Should be in `.gitignore`. Check with `git status`. |
+| `postcss`, `less`, `autoprefixer`, `rollup-plugin-postcss` in devDeps | Low | No `.less` or `.css` files in v3 source. Postcss plugin is configured in rollup but processes nothing. Safe to remove — verify build still passes after removal. |
+| Inline `<style>` tags in components | Low | `ProgressBar`, `LoadingOverlay`, and `DefaultLoadingSpinner` each inject `<style>` blocks. Fine for v3.0; consider `useInsertionEffect` consolidation in v3.1. |
+
+---
+
+### Phase 4 (Feedback Addressal) — Enums, Structure, API, Divider Bug ✅
+
+Six pre-v3.0 feedback items addressed. Build and ESLint both pass.
+
+**Enums → `const` + `type` pattern (`src/types/enums.ts`):**
+- All 5 enums (`LottieState`, `LottieSubscription`, `LottieVersion`, `LottieRenderer`, `Direction`) converted from native TypeScript `enum` to `const` object + union type alias.
+- Keys are lowercase and match their string values (`LottieState.playing`, `Direction.right`, etc.) — single source of truth; no case-mapping overhead.
+- Removed dead members: `LottieSubscription.Load` and `LottieSubscription.Freeze` (never emitted by the factory hook).
+- Build output changed from IIFE-compiled `enum` blocks to plain `declare const` objects — fully tree-shakable.
+- `LottieSubscriptions` interface uses computed property names (`[LottieSubscription.frame]: ...`) — keys are derived directly from the const values, so renaming a value automatically updates the interface key too.
+- All internal usages updated: `useLottieFactory.tsx`, `LottieHoc.tsx` — no raw string literals.
+- Generic parameter defaults and conditionals use `typeof LottieVersion.full` (extracts the literal type `"full"` from the const value, necessary because const object members are values, not types).
+
+**`lottie-react/player` sub-path removed:**
+- `src/player/entry.ts` deleted — the Player requires `state`, `subscriptions`, and `actions` that only `useLottieFactory` can provide; no realistic consumer would build their own.
+- 3 player build configs removed from `rollup.config.mts`.
+- `"./player"` entry removed from `package.json` `exports` field.
+- All player types consumers need (`PlayerTheme`, `PlayerElements`, etc.) remain exported from the main `lottie-react` entry.
+
+**Directory and file renames:**
+- `src/@types/` → `src/types/` — `@` prefix is the npm scoped-package convention, not a source directory convention.
+- `src/externals/player/` → `src/player/` — "externals" was misleading; the Player is a first-class part of this library.
+- `src/components/lottieHoc.tsx` → `src/components/LottieHoc.tsx` — all component files are PascalCase; the HOC factory was the odd one out.
+- `src/player/index.ts` slimmed to a minimal barrel (only `Player`, `PlayerState`, `PlayerSubscriptions`, `PlayerActions`, `PlayerProps`) — internal component/util exports no longer leak out.
+- All import paths updated across the codebase; old directories deleted.
+
+**`LoadingOverlayOptions` type extended (`src/player/types.ts`, `src/player/utils/PlayerTheme.ts`):**
+- Added `true` as a valid value: `overlays={{ loading: true }}` enables the default spinner with default timings.
+- Added `false` as an explicit alias for disabled (alongside the existing `null`).
+- `processLoadingConfig` updated: `true` → `{ minDisplayTime: 0, fadeOutTime: 600 }`.
+
+**Trailing divider bug fixed (`src/player/Player.tsx`):**
+- Root cause: the right-side divider was unconditionally rendered inside the `progressBar` block, leaving a trailing `|` when no secondary controls were visible.
+- Fix: two computed booleans — `hasPrimaryControls` (`playPause || stop`) and `hasSecondaryControls` (`frameIndicator || loop || direction || speed || fullscreen`).
+- Left divider: only renders when `progressBar && hasPrimaryControls`.
+- Right divider: only renders when `progressBar && hasSecondaryControls`.
+- Primary and secondary control group `<div>` wrappers only render when their group has visible content (eliminates empty flex items affecting spacing).
+
+**`FullRes` example updated (`example/src/components/PlayerV3Example.tsx`):**
+- Was a copy of `MobilePlayerV3` (compact mode, minimal controls) with `width/height: "100%"`.
+- Replaced with a fluid `aspectRatio: "4/3"` layout using `controls: true` (full default control set).
+
+---
+
+### What's Next
+
+The remaining phases from the roadmap (in order of priority):
+
+**Phase 4 — Interactivity** (highest value, not started)
+- `src/hooks/useLottieInteractivity.ts` — scroll mode + cursor mode
+- Add `interactivity` prop to `LottieProps` and wire up in `LottieHoc.tsx`
+- See §8 for the full API design
+
+**Phase 5 — Testing** (blocking for release confidence)
+- Set up Vitest + React Testing Library
+- Unit tests for utilities, hooks, and components
+- See §9 for full strategy and file structure
+
+**Phase 6 — Documentation**
+- README rewrite, migration guide, JSDoc on public API
+- See §10 for site structure and content plan
+
+**Phase 7 — Pre-Launch**
+- Bundle size analysis, SSR testing, publish RC

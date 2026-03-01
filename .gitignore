@@ -13,6 +13,9 @@ node_modules
 # IDE directories
 .idea
 
+# OS artifacts
+.DS_Store
+
 # Builds
 build
 

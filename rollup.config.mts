@@ -14,7 +14,7 @@ import postcss from "rollup-plugin-postcss";
 import packageJson from "./package.json" with { type: "json" };
 
 /**
- * Entry point of our library
+ * Main entry point
  */
 const input = "./src/index.ts";
 
@@ -178,6 +178,7 @@ const options: RollupOptions[] = [
     external: [/\.less$/u],
     plugins: [resolve(), dts()],
   },
+
 ];
 
 export default options;

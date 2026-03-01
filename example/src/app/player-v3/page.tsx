@@ -3,6 +3,7 @@
 import {
   BasicLottieV3,
   CustomPlayerV3,
+  FullRes,
   MinimalPlayerV3,
   MobilePlayerV3,
 } from "@/components/PlayerV3Example";
@@ -286,6 +287,14 @@ export default function PlayerV3Page() {
         />`}
             </pre>
           </details>
+        </section>
+
+        <section>
+          <h2 style={{ color: "#64748b", marginBottom: "1rem" }}>Full Res</h2>
+          <p style={{ color: "#64748b", marginBottom: "1.5rem" }}>
+            Full resolution player with no responsiveness or compact mode.
+          </p>
+          <FullRes />
         </section>
       </div>
 

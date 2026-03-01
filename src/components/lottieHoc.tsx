@@ -5,6 +5,9 @@ import {
   useImperativeHandle,
 } from "react";
 
+import { useLottieFactory } from "../hooks/useLottieFactory";
+import { PlayerState } from "../player";
+import { Player as ExternalPlayer } from "../player/Player";
 import {
   LottieProps,
   LottieRef,
@@ -12,19 +15,15 @@ import {
   LottieVersion,
   Direction,
   LottieSubscription,
-} from "../@types";
-import { PlayerState } from "../externals/player";
-import { Player as ExternalPlayer } from "../externals/player/Player";
-import { useLottieFactory } from "../hooks/useLottieFactory";
+} from "../types";
 
 /**
- * V3 High Order Component to build an animation component
+ * High Order Component that binds the animation factory hook to the Player.
  *
- * Key changes in v3:
- * - Controls are OFF by default
- * - New `player` prop for player configuration
- * - External player handles both display and controls
- * - Subscription-based architecture for performance
+ * Key v3 design decisions:
+ * - Controls are OFF by default (clean API, opt-in)
+ * - Subscription-based architecture for performance (no re-renders on frame)
+ * - Player handles both display and controls
  */
 export const lottieHoc = <Version extends LottieVersion>(
   lottie: LottiePlayer,
@@ -35,15 +34,9 @@ export const lottieHoc = <Version extends LottieVersion>(
   ) => {
     const { player, ...hookOptions } = props;
 
-    // Initialize animation
     const { setContainerRef, ...lottieFactoryResult } =
-      useLottieFactory<Version>(lottie, {
-        ...hookOptions,
-      });
+      useLottieFactory<Version>(lottie, hookOptions);
 
-    /**
-     * Make the hook variables/methods available through the provided ref
-     */
     useImperativeHandle(ref, () => lottieFactoryResult);
 
     const {
@@ -62,46 +55,42 @@ export const lottieHoc = <Version extends LottieVersion>(
       subscribe,
     } = lottieFactoryResult;
 
-    // Convert internal state to player state (no currentFrame here!)
+    // Convert internal state to the Player's flat state shape.
+    // currentFrame is intentionally omitted — it's subscription-only for performance.
     const playerState: PlayerState = {
-      isPlaying: state === LottieState.Playing,
+      isPlaying: state === LottieState.playing,
       totalFrames,
-      direction: direction === Direction.Right ? 1 : -1,
+      direction: direction === Direction.right ? 1 : -1,
       loop: typeof loop === "boolean" ? loop : loop > 0,
       speed,
-      isLoading: state === LottieState.Loading,
-      hasError: state === LottieState.Failure,
+      isLoading: state === LottieState.loading,
+      hasError: state === LottieState.failure,
     };
 
-    // Create subscription functions for performance-critical updates
+    // Subscription bridges — forward internal subscriptions in the Player's shape
     const subscriptions = {
       frame: (callback: (currentFrame: number) => void) =>
+        subscribe(LottieSubscription.frame, ({ currentFrame }) => {
+          callback(currentFrame);
+        }),
+      state: (callback: (s: PlayerState) => void) =>
         subscribe(
-          LottieSubscription.Frame,
-          ({ currentFrame }: { currentFrame: number }) => {
-            callback(currentFrame);
-          },
-        ),
-      state: (callback: (state: PlayerState) => void) =>
-        subscribe(
-          LottieSubscription.NewState,
-          ({ state: newLottieState }: { state: LottieState }) => {
-            // Convert LottieState to PlayerState format
-            const convertedPlayerState: PlayerState = {
-              isPlaying: newLottieState === LottieState.Playing,
+          LottieSubscription.newState,
+          ({ state: newState }: { state: LottieState }) => {
+            callback({
+              isPlaying: newState === LottieState.playing,
               totalFrames,
-              direction: direction === Direction.Right ? 1 : -1,
+              direction: direction === Direction.right ? 1 : -1,
               loop: typeof loop === "boolean" ? loop : loop > 0,
               speed,
-              isLoading: newLottieState === LottieState.Loading,
-              hasError: newLottieState === LottieState.Failure,
-            };
-            callback(convertedPlayerState);
+              isLoading: newState === LottieState.loading,
+              hasError: newState === LottieState.failure,
+            });
           },
         ),
     };
 
-    // Convert internal actions to player actions
+    // Adapt internal action signatures to the Player's action interface
     const playerActions = {
       play,
       pause,
@@ -111,12 +100,11 @@ export const lottieHoc = <Version extends LottieVersion>(
       },
       changeSpeed,
       changeDirection: (dir: 1 | -1) => {
-        changeDirection(dir === 1 ? Direction.Right : Direction.Left);
+        changeDirection(dir === 1 ? Direction.right : Direction.left);
       },
       toggleLoop,
     };
 
-    // Use external player as the complete solution
     return (
       <ExternalPlayer
         ref={setContainerRef}
@@ -127,7 +115,6 @@ export const lottieHoc = <Version extends LottieVersion>(
         controls={player?.controls}
         responsive={player?.responsive}
         overlays={player?.overlays}
-        show={true}
       />
     );
   };
