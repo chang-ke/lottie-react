@@ -1,4 +1,6 @@
-import { FC, JSX } from "react";
+import { FC, JSX, useState } from "react";
+
+import { mergeTheme } from "../utils/PlayerTheme";
 
 import { BaseButton, BaseButtonProps } from "./BaseButton";
 import {
@@ -125,6 +127,9 @@ export const SpeedButton: FC<SpeedButtonProps> = ({
   theme,
   screenWidth,
 }) => {
+  const mergedTheme = mergeTheme(theme);
+  const [hoveredSpeed, setHoveredSpeed] = useState<number | null>(null);
+
   const DropdownContent = (setIsMenuOpen: (state: boolean) => void): JSX.Element => (
     <div style={{ padding: "4px 0" }}>
       {speeds.map((speedOption) => (
@@ -134,15 +139,21 @@ export const SpeedButton: FC<SpeedButtonProps> = ({
             onSpeedChange(speedOption);
             setIsMenuOpen(false);
           }}
+          onMouseEnter={() => { setHoveredSpeed(speedOption); }}
+          onMouseLeave={() => { setHoveredSpeed(null); }}
           style={{
             width: "100%",
             padding: "8px 16px",
             border: "none",
-            background: speed === speedOption ? "rgba(255, 255, 255, 0.1)" : "transparent",
-            color: "white",
+            background:
+              speed === speedOption || hoveredSpeed === speedOption
+                ? mergedTheme.colors.backgroundHover
+                : "transparent",
+            color: mergedTheme.colors.text,
             textAlign: "left",
             cursor: "pointer",
-            fontSize: "14px",
+            fontSize: `${String(mergedTheme.sizing.fontSize)}px`,
+            fontWeight: speed === speedOption ? 600 : 400,
           }}
         >
           {speedOption}x
