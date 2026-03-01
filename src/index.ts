@@ -7,6 +7,7 @@ export { LottieLight } from "./components/LottieLight";
 // ─── Hooks ────────────────────────────────────────────────────────────────────
 export { useLottie } from "./hooks/useLottie";
 export { useLottieLight } from "./hooks/useLottieLight";
+export { useLottieInteractivity } from "./interactivity";
 
 // ─── Enums ────────────────────────────────────────────────────────────────────
 export {
@@ -37,5 +38,30 @@ export type {
   PlayerResponsive,
   PlayerTheme,
 } from "./player/types";
+
+// ─── Interactivity ────────────────────────────────────────────────────────────
+export {
+  ChainTransitionType,
+  InteractivityActionType,
+  InteractivityMode,
+} from "./interactivity";
+
+export type {
+  ChainConfig,
+  ChainState,
+  ChainTransition,
+  ClickConfig,
+  CursorAction,
+  CursorConfig,
+  FrameRange,
+  FrameSpecifier,
+  HoverConfig,
+  InteractivityConfig,
+  InteractivityTarget,
+  ScrollAction,
+  ScrollConfig,
+  ScrollContainer,
+  UseLottieInteractivityResult,
+} from "./interactivity";
 
 export default Lottie;

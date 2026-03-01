@@ -9,7 +9,7 @@ export default function Home() {
         compare and test the behavior between raw lottie-web and the lottie-react wrapper.
       </p>
       
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '2rem', marginTop: '2rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '2rem', marginTop: '2rem' }}>
         <div style={{
           padding: '1.5rem',
           border: '1px solid #28a745',
@@ -62,6 +62,35 @@ export default function Home() {
               display: 'inline-block',
               padding: '0.5rem 1rem',
               backgroundColor: '#6366f1',
+              color: 'white',
+              textDecoration: 'none',
+              borderRadius: '4px',
+              fontSize: '0.9rem'
+            }}
+          >
+            View Examples →
+          </a>
+        </div>
+        <div style={{
+          padding: '1.5rem',
+          border: '1px solid #f59e0b',
+          borderRadius: '8px',
+          backgroundColor: '#f8f9fa'
+        }}>
+          <h2 style={{ color: '#d97706', margin: '0 0 1rem 0' }}>✨ Interactivity</h2>
+          <p>
+            Five interaction modes: scroll, cursor, hover, click, chain.
+            Zero re-renders, rAF-throttled, SSR-safe.
+          </p>
+          <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem' }}>
+            Declarative prop or standalone hook.
+          </p>
+          <a
+            href="/interactivity"
+            style={{
+              display: 'inline-block',
+              padding: '0.5rem 1rem',
+              backgroundColor: '#d97706',
               color: 'white',
               textDecoration: 'none',
               borderRadius: '4px',

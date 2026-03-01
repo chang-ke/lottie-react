@@ -19,12 +19,14 @@ import {
   LottieVersion,
 } from "./enums";
 
+import type { InteractivityConfig } from "../interactivity/types";
 import type {
   PlayerElements,
   PlayerOverlays,
   PlayerResponsive,
   PlayerTheme,
 } from "../player/types";
+
 
 /**
  * Shape of the internal listener
@@ -140,4 +142,5 @@ export type LottieProps<
   Version extends LottieVersion = typeof LottieVersion.full,
 > = UseLottieFactoryOptions<Version> & {
   player?: LottiePlayerConfig;
+  interactivity?: InteractivityConfig;
 };

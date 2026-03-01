@@ -6,6 +6,7 @@ import {
 } from "react";
 
 import { useLottieFactory } from "../hooks/useLottieFactory";
+import { InteractivityBridge } from "../interactivity/InteractivityBridge";
 import { PlayerState } from "../player";
 import { Player as ExternalPlayer } from "../player/Player";
 import {
@@ -32,7 +33,7 @@ export const lottieHoc = <Version extends LottieVersion>(
     props,
     ref,
   ) => {
-    const { player, ...hookOptions } = props;
+    const { player, interactivity, ...hookOptions } = props;
 
     const { setContainerRef, ...lottieFactoryResult } =
       useLottieFactory<Version>(lottie, hookOptions);
@@ -106,16 +107,24 @@ export const lottieHoc = <Version extends LottieVersion>(
     };
 
     return (
-      <ExternalPlayer
-        ref={setContainerRef}
-        state={playerState}
-        subscriptions={subscriptions}
-        actions={playerActions}
-        theme={player?.theme}
-        controls={player?.controls}
-        responsive={player?.responsive}
-        overlays={player?.overlays}
-      />
+      <>
+        <ExternalPlayer
+          ref={setContainerRef}
+          state={playerState}
+          subscriptions={subscriptions}
+          actions={playerActions}
+          theme={player?.theme}
+          controls={player?.controls}
+          responsive={player?.responsive}
+          overlays={player?.overlays}
+        />
+        {interactivity && (
+          <InteractivityBridge
+            target={lottieFactoryResult}
+            config={interactivity}
+          />
+        )}
+      </>
     );
   };
 
