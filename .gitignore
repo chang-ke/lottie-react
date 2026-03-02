@@ -15,3 +15,6 @@ build
 
 # Agent's memory bank
 memory-bank
+
+# Testing
+coverage

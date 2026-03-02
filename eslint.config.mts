@@ -61,7 +61,7 @@ const importConfig = {
 export default defineConfig([
   // Globally ignore certain directories - must be in a separate object
   {
-    ignores: ["build/", "example/"],
+    ignores: ["build/", "example/", "coverage/"],
   },
 
   // Global language options
