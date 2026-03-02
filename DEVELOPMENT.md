@@ -2,20 +2,16 @@
 
 ## Setup example
 
-### Set workspaces in your `package.json` file:
-```json
-{
-  "workspaces": [
-    ".",
-    "example"
-  ]
-}
+### Set workspace packages in `pnpm-workspace.yaml`:
+```yaml
+packages:
+  - "example"
 ```
 
 ### Create an example Next.js app:
 ```
 mkdir example && cd example
-yarn create next-app . --typescript
+pnpm create next-app . --typescript
 ```
 
 ### Tell `example` the path to our library
@@ -33,42 +29,42 @@ Open `example/package.json` and add our library as a workspace dependency:
    },
    "dependencies": {
 -    // …
-+    "lottie-react": "workspace:*" 
++    "lottie-react": "workspace:*"
    }
  }
 ```
 
-The `"workspace:*"` specifier instructs Yarn to symlink our **root** package into `example/node_modules/lottie-react`.
+The `"workspace:*"` specifier instructs pnpm to symlink our **root** package into `example/node_modules/lottie-react`.
 
 ### Re-install & link
 
 Back at repo root:
 
 ```bash
-yarn install
+pnpm install
 ```
 
-Yarn v4 will hoist shared deps and create a symlink so `example` "sees" our library as if it was published.
+pnpm will hoist shared deps and create a symlink so `example` "sees" our library as if it was published.
 
 ### One-command dev
 
-Install `concurrently` as a dev dependency: `yarn add -D concurrently`
+Install `concurrently` as a dev dependency: `pnpm add -D concurrently`
 
 Then, add the following script to your root `package.json`:
 
 ```jsonc
 "scripts": {
-  "dev": "concurrently \"yarn build:watch\" \"yarn workspace lottie-react-example dev\""
+  "dev": "concurrently \"pnpm run build:watch\" \"pnpm --filter lottie-react-example dev\""
 }
 ```
 
 Then simply:
 
 ```bash
-yarn dev
+pnpm dev
 ```
 
-✨Done, we are ready to develop and test! 
+✨Done, we are ready to develop and test!
 
 
 ## TODO(s)

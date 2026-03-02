@@ -35,22 +35,18 @@
   "files": [
     "build"
   ],
-  "workspaces": [
-    ".",
-    "example"
-  ],
   "scripts": {
-    "typecheck": "yarn tsc --noEmit",
+    "typecheck": "tsc --noEmit",
     "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
-    "format": "yarn format:check --write",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint:check": "eslint .",
-    "lint": "yarn lint:check --fix",
+    "lint": "eslint . --fix",
     "lint:inspect": "eslint --inspect-config",
     "build": "rollup --config rollup.config.mts --configPlugin @rollup/plugin-typescript --configImportAttributesKey with",
-    "build:watch": "yarn build -w",
-    "dev": "concurrently \"yarn build:watch\" \"yarn workspace lottie-react-example dev\"",
-    "postbuild": "npm pack && tar -xvzf *.tgz && rm -rf package *.tgz",
-    "prepublishOnly": "rm -rf build && yarn build",
+    "build:watch": "pnpm run build -w",
+    "dev": "concurrently \"pnpm run build:watch\" \"pnpm --filter lottie-react-example dev\"",
+    "postbuild": "pnpm pack && tar -xvzf *.tgz && rm -rf package *.tgz",
+    "prepublishOnly": "rm -rf build && pnpm run build",
     "test": "echo TBI"
   },
   "dependencies": {
@@ -95,6 +91,5 @@
   },
   "engines": {
     "node": "^18.18.0 || ^19.8.0 || >= 20.0.0"
-  },
-  "packageManager": "yarn@4.9.1"
+  }
 }
