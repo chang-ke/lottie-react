@@ -1,10 +1,39 @@
-import { CSSProperties, useEffect, useState, useCallback, useRef } from "react";
+import { CSSProperties, useCallback, useEffect, useReducer, useRef } from "react";
 
 interface UseFadeProps {
   shouldShow: boolean;
   fadeOutTime?: number | null;
   minimumDisplayTime?: number | null;
 }
+
+interface FadeState {
+  isVisible: boolean;
+  isFadingOut: boolean;
+  canHide: boolean;
+}
+
+type FadeAction =
+  | { type: "show"; canHideImmediately: boolean }
+  | { type: "canHide" }
+  | { type: "startFadeOut" }
+  | { type: "hide" };
+
+const fadeReducer = (state: FadeState, action: FadeAction): FadeState => {
+  switch (action.type) {
+    case "show":
+      return {
+        isVisible: true,
+        isFadingOut: false,
+        canHide: action.canHideImmediately,
+      };
+    case "canHide":
+      return { ...state, canHide: true };
+    case "startFadeOut":
+      return { ...state, isFadingOut: true };
+    case "hide":
+      return { ...state, isVisible: false, isFadingOut: false };
+  }
+};
 
 /**
  * Simple, working fade hook
@@ -16,18 +45,23 @@ export const useFade = ({
 }: UseFadeProps) => {
   const animationName = "player-overlay-fade-out";
 
-  const [isVisible, setIsVisible] = useState(shouldShow);
-  const [isFadingOut, setIsFadingOut] = useState(false);
-  const [canHide, setCanHide] = useState(!minimumDisplayTime);
+  const [{ isVisible, isFadingOut, canHide }, dispatch] = useReducer(
+    fadeReducer,
+    undefined,
+    () => ({
+      isVisible: shouldShow,
+      isFadingOut: false,
+      canHide: !minimumDisplayTime,
+    }),
+  );
+
   const minDisplayTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // When shouldShow becomes true, show immediately and start the minimum timer
   // Only runs when shouldShow transitions to true
   useEffect(() => {
     if (shouldShow) {
-      setIsVisible(true);
-      setIsFadingOut(false);
-      setCanHide(!minimumDisplayTime);
+      dispatch({ type: "show", canHideImmediately: !minimumDisplayTime });
 
       // Clear any existing timer
       if (minDisplayTimerRef.current) {
@@ -38,7 +72,7 @@ export const useFade = ({
       // Start minimum display timer if specified
       if (minimumDisplayTime && minimumDisplayTime > 0) {
         minDisplayTimerRef.current = setTimeout(() => {
-          setCanHide(true);
+          dispatch({ type: "canHide" });
           minDisplayTimerRef.current = null;
         }, minimumDisplayTime);
       }
@@ -61,17 +95,16 @@ export const useFade = ({
   useEffect(() => {
     if (!shouldShow && canHide && isVisible && !isFadingOut) {
       if (fadeOutTime && fadeOutTime > 0) {
-        setIsFadingOut(true);
+        dispatch({ type: "startFadeOut" });
       } else {
-        setIsVisible(false);
+        dispatch({ type: "hide" });
       }
     }
   }, [shouldShow, canHide, isVisible, fadeOutTime, isFadingOut]);
 
   const onAnimationEnd = useCallback((event: { animationName: string }) => {
     if (event.animationName === animationName) {
-      setIsVisible(false);
-      setIsFadingOut(false);
+      dispatch({ type: "hide" });
     }
   }, []);
 

@@ -4,9 +4,6 @@ import terser from "@rollup/plugin-terser";
 import typescript from "@rollup/plugin-typescript";
 import autoprefixer from "autoprefixer";
 import { RollupOptions } from "rollup";
-// (!) The type definitions for `rollup-plugin-delete` are available but not work properly
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
 import del from "rollup-plugin-delete";
 import { dts } from "rollup-plugin-dts";
 import postcss from "rollup-plugin-postcss";
@@ -27,9 +24,11 @@ const getMinifiedName = (pathToFile: string) =>
   pathToFile.replace(/\.js$/, ".min.js");
 
 /**
- * Definition of the common plugins used in the rollup configurations
+ * Creates fresh plugin instances for each rollup configuration.
+ * Plugin instances must not be shared across configs — stateful plugins like
+ * "@rollup/plugin-typescript" maintain a per-build state (e.g., TS compiler program).
  */
-const reusablePluginList = [
+const createPlugins = () => [
   /**
    * Integrates with `postcss` for bundling styles
    */
@@ -55,7 +54,7 @@ const reusablePluginList = [
 ];
 
 /**
- * Packages that should not be in the bundle, instead they will be required
+ * Packages that should not be in the bundle; instead they will be required
  * These packages are in the `dependencies` therefore, `require(package)` will work
  *
  * (!) IMPORTANT: check if that is the case for UMD versions
@@ -106,10 +105,8 @@ const options: RollupOptions[] = [
        * Clean `build` folders and files before bundling
        * (!) This should be run just ones
        */
-      // (!) The type definitions for `rollup-plugin-delete` are available but not work properly
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       del({ targets: "build/*" }),
-      ...reusablePluginList,
+      ...createPlugins(),
     ],
     external: externalPackages,
   },
@@ -136,7 +133,7 @@ const options: RollupOptions[] = [
         plugins: [terser()],
       },
     ],
-    plugins: reusablePluginList,
+    plugins: createPlugins(),
     external: externalPackages,
   },
   /**
@@ -178,7 +175,6 @@ const options: RollupOptions[] = [
     external: [/\.less$/u],
     plugins: [resolve(), dts()],
   },
-
 ];
 
 export default options;

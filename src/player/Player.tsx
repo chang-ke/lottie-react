@@ -3,6 +3,7 @@ import React, {
   ForwardRefRenderFunction,
   useState,
   useEffect,
+  useLayoutEffect,
   useRef,
   useCallback,
   useMemo,
@@ -139,28 +140,33 @@ const PlayerWithRef: ForwardRefRenderFunction<HTMLDivElement, PlayerProps> = (
   // latest state, but the listener is only registered once.
   const isPlayerFocusedRef = useRef(false);
   const keyboardHandlerRef = useRef<(e: KeyboardEvent) => void>(() => undefined);
-  keyboardHandlerRef.current = (e: KeyboardEvent) => {
-    if (!isPlayerFocusedRef.current) return;
-    if ((e.target as HTMLElement).tagName === "INPUT") return;
-    switch (e.key.toLowerCase()) {
-      case "k":
-        e.preventDefault();
-        if (state.isPlaying) {
-          actions.pause();
-        } else {
-          actions.play();
-        }
-        break;
-      case "l":
-        e.preventDefault();
-        actions.toggleLoop();
-        break;
-      case "f":
-        e.preventDefault();
-        if (toggleFullscreen) void toggleFullscreen();
-        break;
-    }
-  };
+  // Update the handler after every render so it always closes over the latest
+  // state and actions — keyboard events can only fire after paint, so
+  // useLayoutEffect guarantees the ref is current before any interaction.
+  useLayoutEffect(() => {
+    keyboardHandlerRef.current = (e: KeyboardEvent) => {
+      if (!isPlayerFocusedRef.current) return;
+      if ((e.target as HTMLElement).tagName === "INPUT") return;
+      switch (e.key.toLowerCase()) {
+        case "k":
+          e.preventDefault();
+          if (state.isPlaying) {
+            actions.pause();
+          } else {
+            actions.play();
+          }
+          break;
+        case "l":
+          e.preventDefault();
+          actions.toggleLoop();
+          break;
+        case "f":
+          e.preventDefault();
+          if (toggleFullscreen) void toggleFullscreen();
+          break;
+      }
+    };
+  });
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {

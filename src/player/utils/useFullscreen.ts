@@ -1,4 +1,4 @@
-import { RefObject, useLayoutEffect, useState } from "react";
+import { RefObject, useLayoutEffect, useMemo, useState } from "react";
 
 /**
  * Extended version of the {@link Document} that includes the
@@ -113,9 +113,20 @@ const getFullscreenInfo = (
 export const useFullscreen = (
   ref?: RefObject<Element | null>,
 ): UseFullscreenResult => {
-  const [isFullscreen, setIsFullscreen] = useState(
-    !!getFullscreenInfo(ref)?.fullscreenElement,
-  );
+  // Fullscreen is never active before the element mounts, so false is always correct.
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  // Browser capability check — does not depend on the element ref.
+  const isSupported = useMemo(() => {
+    const doc = getExtendedDocument();
+    if (!doc) return false;
+    return (
+      doc.fullscreenEnabled ||
+      !!doc.mozFullScreenEnabled ||
+      !!doc.msFullscreenEnabled ||
+      !!doc.webkitFullscreenEnabled
+    );
+  }, []);
 
   const toggleFullscreen = async () => {
     // Skip if no reference
@@ -166,7 +177,7 @@ export const useFullscreen = (
   });
 
   // Checks if the browser is compatible
-  if (!getFullscreenInfo(ref)) {
+  if (!isSupported) {
     console.warn(`Fullscreen API is not supported by this browser.`);
 
     return {

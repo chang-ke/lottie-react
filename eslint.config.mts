@@ -1,4 +1,5 @@
 import eslint from "@eslint/js";
+import { defineConfig } from "eslint/config";
 import configPrettier from "eslint-config-prettier";
 import { importX as pluginImportX } from "eslint-plugin-import-x";
 import pluginJsxA11y from "eslint-plugin-jsx-a11y";
@@ -9,7 +10,7 @@ import pluginPromise from "eslint-plugin-promise";
 import pluginReact from "eslint-plugin-react";
 import { configs as pluginReactHooksConfigs } from "eslint-plugin-react-hooks";
 import globals from "globals";
-import tseslint, { configs as tseslintConfigs } from "typescript-eslint";
+import { configs as tseslintConfigs } from "typescript-eslint";
 
 /**
  * Configure ESLint rules for import order.
@@ -57,7 +58,7 @@ const importConfig = {
   },
 };
 
-export default tseslint.config([
+export default defineConfig([
   // Globally ignore certain directories - must be in a separate object
   {
     ignores: ["build/", "example/"],
@@ -119,8 +120,11 @@ export default tseslint.config([
   {
     settings: {
       react: {
-        // Automatically detect the React version
-        version: "detect",
+        /**
+         * TODO: Put it back to "detect" once "eslint-plugin-react" gets fixed
+         * @see https://github.com/facebook/react/issues/35729
+         */
+        version: "19",
       },
     },
     // TODO: check if we still need these rules
@@ -133,7 +137,7 @@ export default tseslint.config([
   },
 
   // React Hooks
-  pluginReactHooksConfigs["recommended-latest"],
+  pluginReactHooksConfigs.flat["recommended-latest"],
 
   // JSX A11y
   pluginJsxA11y.flatConfigs.recommended,

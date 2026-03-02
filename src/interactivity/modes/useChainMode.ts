@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { LottieSubscription } from "../../types";
 import {
@@ -21,10 +21,7 @@ export const useChainMode = (
   enabled: boolean,
 ): ChainModeResult => {
   const configRef = useRef(config);
-  configRef.current = config;
-
   const targetRef = useRef(target);
-  targetRef.current = target;
 
   const [currentChainState, setCurrentChainState] = useState<string | null>(
     config.initialState ?? config.states.at(0)?.name ?? null,
@@ -220,8 +217,14 @@ export const useChainMode = (
     // No deps — reads everything via refs (targetRef, configRef, enterStateRef)
   }, []);
 
-  // Always keep the ref in sync with the latest function
-  enterStateRef.current = enterState;
+  // Keep all prop/callback refs in sync with their latest values after every render.
+  // Keyboard/animation events only fire after paint, so useLayoutEffect guarantees
+  // freshness before any interaction.
+  useLayoutEffect(() => {
+    configRef.current = config;
+    targetRef.current = target;
+    enterStateRef.current = enterState;
+  });
 
   // Enter initial state when animation is ready
   useEffect(() => {
