@@ -1026,7 +1026,7 @@ devDependencies (to review/remove):
 ## 14. Progress
 
 > Last updated: March 2026
-> Phases completed: **0, 1, 2, 3, Feedback** (of 7)
+> Phases completed: **0, 1, 2, 3, Feedback, 4 (Interactivity)** (of 7)
 
 ---
 
@@ -1245,23 +1245,93 @@ Six pre-v3.0 feedback items addressed. Build and ESLint both pass.
 
 ---
 
+---
+
+### Phase 4 — Interactivity ✅
+
+Five interaction modes, two consumption paths (declarative + imperative), full feature parity with `@lottiefiles/lottie-interactivity` plus significant additions.
+
+**New directory: `src/interactivity/`**
+
+| File | Purpose |
+|------|---------|
+| `types.ts` | All enums, interfaces, and discriminated unions for the interactivity system |
+| `index.ts` | Barrel export |
+| `useLottieInteractivity.ts` | Main hook — dispatches to mode hooks; returns `{ isActive, currentChainState, goToChainState, disable, enable }` |
+| `InteractivityBridge.tsx` | Null-returning bridge component rendered inside `LottieHoc` — enables full tree-shaking of the interactivity module when the prop is unused |
+| `modes/useScrollMode.ts` | IntersectionObserver + scroll listener; per-action `playOnceFired` flags; custom scroll container support |
+| `modes/useCursorMode.ts` | mousemove/touchmove with rAF throttle; normalized (0..1) position; X + optional Y range matching |
+| `modes/useHoverMode.ts` | mouseenter/touchstart → play; mouseleave/touchend → stop or reverse; `reverseOnLeave` plays backward to frame 0 via `changeDirection` + `LottieSubscription.complete` |
+| `modes/useClickMode.ts` | Toggle play/pause; play segment with end-frame watcher; `count`-limited plays |
+| `modes/useChainMode.ts` | State machine; `enterStateRef` pattern prevents stale closures in advance callbacks; all 9 transition types |
+| `utils/mapRange.ts` | Linear interpolation `[inMin, inMax] → [outMin, outMax]` with clamping |
+| `utils/resolveFrames.ts` | `FrameSpecifier` → absolute frame number (number, `"50%"`, named marker) |
+
+**Modes implemented:**
+
+| Mode | Trigger | Key features |
+|------|---------|-------------|
+| `scroll` | Scroll position within container | `seek`, `play`, `stop`, `loop`, `playOnce`; custom container (`"window"` / `"self"` / `HTMLElement` / `RefObject`); IntersectionObserver gates scroll listener |
+| `cursor` | Mouse/touch position relative to container | `seek`, `play`, `stop`; X + Y range matching; rAF-throttled; touch support |
+| `hover` | mouseenter / mouseleave | `play`, `stop`; `reverseOnLeave`; `loop` during hover; `frames` constraint; `onEnter` / `onLeave` overrides |
+| `click` | click on container | `play`, `stop`, `playSegments`; `toggle` play/pause; `count` to lock after N completions |
+| `chain` | State machine with event-driven transitions | All 9 transition types (see below); `goToChainState(name)`; `currentChainState` reactive; `forceFlag` |
+
+**Chain transition types (all 9):**
+
+| Type | Behaviour |
+|------|----------|
+| `click` | Advance after N clicks (`count`, default 1) |
+| `hover` | Advance after N mouse enters (`count`, default 1) |
+| `repeat` | Advance after N loop completions (`count`, default 1) |
+| `onComplete` | Advance when animation completes |
+| `delay` | Advance after `delay` ms timeout |
+| `hold` | mousedown → play, mouseup → pause (no advance) |
+| `pauseHold` | mousedown → pause, mouseup → play (no advance) |
+| `none` | Stay in state indefinitely — only exits via `goToChainState()` |
+| `cursorSync` | Cursor X (0→1) maps to frames within state; stays until `goToChainState()` |
+
+**Additional features beyond the original plan:**
+- `playOnce` action type in scroll mode (fires once per mount, keyed by action index)
+- `forceFlag` on `ChainState` — always restarts from `frames[0]` (or 0) on re-entry
+- `count` on `click` and `hover` chain transitions (N interactions before advancing)
+- Named marker support in `FrameSpecifier` (via `animationItem.markers` lookup)
+- `enable()` / `disable()` runtime control of the entire interactivity system
+- Touch events throughout (touchmove → cursor, touchstart/touchend → hover)
+- SSR-safe — all browser API access inside `useEffect`
+
+**Modified existing files:**
+- `src/types/types.ts` — added `interactivity?: InteractivityConfig` to `LottieProps`
+- `src/components/LottieHoc.tsx` — extracts `interactivity` prop, renders `<InteractivityBridge>` conditionally in a Fragment
+- `src/index.ts` — exports `useLottieInteractivity`, `InteractivityMode`, `InteractivityActionType`, `ChainTransitionType`, and all interactivity types
+
+**Example app:**
+- `example/src/app/interactivity/page.tsx` — interactivity examples page
+- `example/src/components/InteractivityExamples.tsx` — 11 focused example components covering all modes and options
+- `example/src/app/page.tsx` — added interactivity card to homepage
+
+---
+
 ### What's Next
 
 The remaining phases from the roadmap (in order of priority):
 
-**Phase 4 — Interactivity** (highest value, not started)
-- `src/hooks/useLottieInteractivity.ts` — scroll mode + cursor mode
-- Add `interactivity` prop to `LottieProps` and wire up in `LottieHoc.tsx`
-- See §8 for the full API design
-
 **Phase 5 — Testing** (blocking for release confidence)
-- Set up Vitest + React Testing Library
-- Unit tests for utilities, hooks, and components
+- Set up Vitest + React Testing Library + jsdom
+- Create lottie-web mock and animation fixture
+- Unit tests: `SubscriptionManager`, `normalizeAnimationSource`, `mapRange`, `resolveFrames`
+- Hook tests: `useLottieFactory`, `useLottieInteractivity` (all 5 modes)
+- Component tests: `Lottie`, `LottieLight`, `Player`, `ProgressBar`, `FrameIndicator`
+- Integration tests: full animation lifecycle, interactivity lifecycle
 - See §9 for full strategy and file structure
 
 **Phase 6 — Documentation**
-- README rewrite, migration guide, JSDoc on public API
+- README rewrite for v3 (v2 → v3 migration table, full API reference)
+- JSDoc on all public API surfaces
+- Documentation site (Nextra or Starlight)
 - See §10 for site structure and content plan
 
 **Phase 7 — Pre-Launch**
-- Bundle size analysis, SSR testing, publish RC
+- Bundle size analysis (compare to v2, verify tree-shaking)
+- SSR testing (Next.js, Remix)
+- Publish `3.0.0-rc.1`, gather feedback, publish `3.0.0`
