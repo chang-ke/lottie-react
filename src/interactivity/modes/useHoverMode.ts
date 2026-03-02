@@ -1,7 +1,11 @@
 import { useEffect, useRef } from "react";
 
-import { Direction, LottieSubscription  } from "../../types/enums";
-import { HoverConfig, InteractivityActionType, InteractivityTarget } from "../types";
+import { Direction, LottieSubscription } from "../../types";
+import {
+  HoverConfig,
+  InteractivityActionType,
+  InteractivityTarget,
+} from "../types";
 import { resolveFrame } from "../utils/resolveFrames";
 
 export const useHoverMode = (
@@ -72,17 +76,14 @@ export const useHoverMode = (
         target.play();
 
         // Stop exactly at frame 0
-        unsubscribeFrame = target.subscribe(
-          LottieSubscription.complete,
-          () => {
-            target.stop();
-            target.changeDirection(Direction.right);
-            if (unsubscribeFrame) {
-              unsubscribeFrame();
-              unsubscribeFrame = null;
-            }
-          },
-        );
+        unsubscribeFrame = target.subscribe(LottieSubscription.complete, () => {
+          target.stop();
+          target.changeDirection(Direction.right);
+          if (unsubscribeFrame) {
+            unsubscribeFrame();
+            unsubscribeFrame = null;
+          }
+        });
         return;
       }
 
@@ -107,6 +108,6 @@ export const useHoverMode = (
       container.removeEventListener("mouseleave", handleLeave);
       container.removeEventListener("touchend", handleLeave);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [target.containerRef.current, target.animationItem, enabled]);
 };

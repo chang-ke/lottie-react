@@ -8,7 +8,7 @@ import {
   useLottie,
   useLottieInteractivity,
 } from "lottie-react";
-import { useRef } from "react";
+import React, { useRef } from "react";
 
 const SRC = "/assets/groovyWalk.json";
 
@@ -66,14 +66,17 @@ export function ScrollExample() {
 
   return (
     <section style={sectionStyle}>
-      <span style={{ ...labelStyle, backgroundColor: "#dbeafe", color: "#1d4ed8" }}>
+      <span
+        style={{ ...labelStyle, backgroundColor: "#dbeafe", color: "#1d4ed8" }}
+      >
         scroll
       </span>
       <h2 style={{ margin: "0 0 0.5rem" }}>Scroll-linked animation</h2>
       <p style={{ color: "#64748b", marginBottom: "1rem" }}>
         Scroll inside the box. The first animation <strong>seeks</strong>{" "}
-        continuously with scroll position; the second <strong>plays once</strong>{" "}
-        the first time it enters the viewport, then never again.
+        continuously with scroll position; the second{" "}
+        <strong>plays once</strong> the first time it enters the viewport, then
+        never again.
       </p>
 
       <div
@@ -86,18 +89,24 @@ export function ScrollExample() {
           backgroundColor: "#fff",
         }}
       >
-        <div style={{ padding: "0.75rem", textAlign: "center", color: "#94a3b8" }}>
+        <div
+          style={{ padding: "0.75rem", textAlign: "center", color: "#94a3b8" }}
+        >
           ↓ Scroll down
         </div>
         <div style={{ height: 220 }} />
 
-        <p style={{ textAlign: "center", ...variantLabel }}>seek — tracks scroll</p>
+        <p style={{ textAlign: "center", ...variantLabel }}>
+          seek — tracks scroll
+        </p>
         <div style={{ ...animBox, margin: "0 auto" }}>
           <Lottie
             src={SRC}
             interactivity={{
               mode: InteractivityMode.scroll,
-              actions: [{ visibility: [0, 1], type: InteractivityActionType.seek }],
+              actions: [
+                { visibility: [0, 1], type: InteractivityActionType.seek },
+              ],
               container: scrollRef,
             }}
           />
@@ -105,13 +114,20 @@ export function ScrollExample() {
 
         <div style={{ height: 260 }} />
 
-        <p style={{ textAlign: "center", ...variantLabel }}>playOnce — fires once on entry</p>
+        <p style={{ textAlign: "center", ...variantLabel }}>
+          playOnce — fires once on entry
+        </p>
         <div style={{ ...animBox, margin: "0 auto" }}>
           <Lottie
             src={SRC}
             interactivity={{
               mode: InteractivityMode.scroll,
-              actions: [{ visibility: [0.1, 0.9], type: InteractivityActionType.playOnce }],
+              actions: [
+                {
+                  visibility: [0.1, 0.9],
+                  type: InteractivityActionType.playOnce,
+                },
+              ],
               container: scrollRef,
             }}
           />
@@ -167,7 +183,9 @@ actions: [
 export function CursorExample() {
   return (
     <section style={sectionStyle}>
-      <span style={{ ...labelStyle, backgroundColor: "#fef9c3", color: "#854d0e" }}>
+      <span
+        style={{ ...labelStyle, backgroundColor: "#fef9c3", color: "#854d0e" }}
+      >
         cursor
       </span>
       <h2 style={{ margin: "0 0 0.5rem" }}>Cursor-driven animation</h2>
@@ -180,7 +198,13 @@ export function CursorExample() {
       <div style={{ display: "flex", gap: "2.5rem", flexWrap: "wrap" }}>
         <div>
           <p style={variantLabel}>seek — X axis</p>
-          <p style={{ fontSize: "0.78rem", color: "#94a3b8", margin: "0 0 0.5rem" }}>
+          <p
+            style={{
+              fontSize: "0.78rem",
+              color: "#94a3b8",
+              margin: "0 0 0.5rem",
+            }}
+          >
             move left/right to scrub
           </p>
           <div style={{ ...animBox, cursor: "crosshair" }}>
@@ -189,7 +213,10 @@ export function CursorExample() {
               interactivity={{
                 mode: InteractivityMode.cursor,
                 actions: [
-                  { position: { x: [0, 1] }, type: InteractivityActionType.seek },
+                  {
+                    position: { x: [0, 1] },
+                    type: InteractivityActionType.seek,
+                  },
                 ],
               }}
             />
@@ -198,7 +225,13 @@ export function CursorExample() {
 
         <div>
           <p style={variantLabel}>play / stop zones</p>
-          <p style={{ fontSize: "0.78rem", color: "#94a3b8", margin: "0 0 0.5rem" }}>
+          <p
+            style={{
+              fontSize: "0.78rem",
+              color: "#94a3b8",
+              margin: "0 0 0.5rem",
+            }}
+          >
             right half → play &nbsp;·&nbsp; left half → stop
           </p>
           <div style={{ ...animBox, cursor: "crosshair" }}>
@@ -207,8 +240,14 @@ export function CursorExample() {
               interactivity={{
                 mode: InteractivityMode.cursor,
                 actions: [
-                  { position: { x: [0, 0.45] }, type: InteractivityActionType.stop },
-                  { position: { x: [0.55, 1] }, type: InteractivityActionType.play },
+                  {
+                    position: { x: [0, 0.45] },
+                    type: InteractivityActionType.stop,
+                  },
+                  {
+                    position: { x: [0.55, 1] },
+                    type: InteractivityActionType.play,
+                  },
                 ],
               }}
             />
@@ -216,7 +255,9 @@ export function CursorExample() {
         </div>
       </div>
 
-      <code style={codeStyle}>{`// Seek: X position (0→1) maps to animation frames
+      <code
+        style={codeStyle}
+      >{`// Seek: X position (0→1) maps to animation frames
 { position: { x: [0, 1] }, type: InteractivityActionType.seek }
 
 // Zones: different action per region (first matching action wins)
@@ -241,13 +282,15 @@ actions: [
 export function HoverExample() {
   return (
     <section style={sectionStyle}>
-      <span style={{ ...labelStyle, backgroundColor: "#dcfce7", color: "#15803d" }}>
+      <span
+        style={{ ...labelStyle, backgroundColor: "#dcfce7", color: "#15803d" }}
+      >
         hover
       </span>
       <h2 style={{ margin: "0 0 0.5rem" }}>Hover-triggered animation</h2>
       <p style={{ color: "#64748b", marginBottom: "1rem" }}>
-        <code>mouseenter</code> / <code>mouseleave</code> (and touch equivalents)
-        control playback. Customise entry/exit behaviour with{" "}
+        <code>mouseenter</code> / <code>mouseleave</code> (and touch
+        equivalents) control playback. Customise entry/exit behaviour with{" "}
         <code>onEnter</code>, <code>onLeave</code>, <code>reverseOnLeave</code>,
         and <code>loop</code>.
       </p>
@@ -255,7 +298,13 @@ export function HoverExample() {
       <div style={{ display: "flex", gap: "2.5rem", flexWrap: "wrap" }}>
         <div>
           <p style={variantLabel}>reverseOnLeave</p>
-          <p style={{ fontSize: "0.78rem", color: "#94a3b8", margin: "0 0 0.5rem" }}>
+          <p
+            style={{
+              fontSize: "0.78rem",
+              color: "#94a3b8",
+              margin: "0 0 0.5rem",
+            }}
+          >
             plays forward, reverses on leave
           </p>
           <div style={{ ...animBox, cursor: "pointer" }}>
@@ -271,7 +320,13 @@ export function HoverExample() {
 
         <div>
           <p style={variantLabel}>loop while hovering</p>
-          <p style={{ fontSize: "0.78rem", color: "#94a3b8", margin: "0 0 0.5rem" }}>
+          <p
+            style={{
+              fontSize: "0.78rem",
+              color: "#94a3b8",
+              margin: "0 0 0.5rem",
+            }}
+          >
             loops while hovered, stops on leave
           </p>
           <div style={{ ...animBox, cursor: "pointer" }}>
@@ -286,7 +341,9 @@ export function HoverExample() {
         </div>
       </div>
 
-      <code style={codeStyle}>{`// Reverse on leave — plays backward to frame 0 when mouse exits
+      <code
+        style={codeStyle}
+      >{`// Reverse on leave — plays backward to frame 0 when mouse exits
 { mode: InteractivityMode.hover, reverseOnLeave: true }
 
 // Loop while hovered — stops (not reverses) on leave
@@ -308,7 +365,9 @@ export function HoverExample() {
 export function ClickExample() {
   return (
     <section style={sectionStyle}>
-      <span style={{ ...labelStyle, backgroundColor: "#fce7f3", color: "#9d174d" }}>
+      <span
+        style={{ ...labelStyle, backgroundColor: "#fce7f3", color: "#9d174d" }}
+      >
         click
       </span>
       <h2 style={{ margin: "0 0 0.5rem" }}>Click interaction</h2>
@@ -334,7 +393,13 @@ export function ClickExample() {
 
         <div>
           <p style={variantLabel}>play — stop after 2</p>
-          <p style={{ fontSize: "0.78rem", color: "#94a3b8", margin: "0 0 0.5rem" }}>
+          <p
+            style={{
+              fontSize: "0.78rem",
+              color: "#94a3b8",
+              margin: "0 0 0.5rem",
+            }}
+          >
             click to play — locks after 2 completions
           </p>
           <div style={{ ...animBox, cursor: "pointer" }}>
@@ -373,15 +438,17 @@ export function ClickExample() {
 export function ChainExample() {
   return (
     <section style={sectionStyle}>
-      <span style={{ ...labelStyle, backgroundColor: "#ede9fe", color: "#6d28d9" }}>
+      <span
+        style={{ ...labelStyle, backgroundColor: "#ede9fe", color: "#6d28d9" }}
+      >
         chain
       </span>
       <h2 style={{ margin: "0 0 0.5rem" }}>Chain — click transitions</h2>
       <p style={{ color: "#64748b", marginBottom: "1rem" }}>
-        A state machine where each state has an animation action and a transition
-        rule. <strong>Click</strong> to toggle between looping and frozen.{" "}
-        <code>forceFlag: true</code> always restarts the animation from the
-        beginning when re-entering a state.
+        A state machine where each state has an animation action and a
+        transition rule. <strong>Click</strong> to toggle between looping and
+        frozen. <code>forceFlag: true</code> always restarts the animation from
+        the beginning when re-entering a state.
       </p>
 
       <div style={{ ...animBox, cursor: "pointer" }}>
@@ -394,13 +461,19 @@ export function ChainExample() {
               {
                 name: "looping",
                 type: InteractivityActionType.loop,
-                transition: { type: ChainTransitionType.click, target: "frozen" },
+                transition: {
+                  type: ChainTransitionType.click,
+                  target: "frozen",
+                },
               },
               {
                 name: "frozen",
                 type: InteractivityActionType.stop,
                 forceFlag: true,
-                transition: { type: ChainTransitionType.click, target: "looping" },
+                transition: {
+                  type: ChainTransitionType.click,
+                  target: "looping",
+                },
               },
             ],
           }}
@@ -435,7 +508,9 @@ transition: { type: ChainTransitionType.hover, count: 2, target: "next" }`}</cod
 export function ChainAutoExample() {
   return (
     <section style={sectionStyle}>
-      <span style={{ ...labelStyle, backgroundColor: "#ede9fe", color: "#6d28d9" }}>
+      <span
+        style={{ ...labelStyle, backgroundColor: "#ede9fe", color: "#6d28d9" }}
+      >
         chain
       </span>
       <h2 style={{ margin: "0 0 0.5rem" }}>Chain — auto-sequence</h2>
@@ -454,12 +529,19 @@ export function ChainAutoExample() {
               {
                 name: "playing",
                 type: InteractivityActionType.play,
-                transition: { type: ChainTransitionType.onComplete, target: "resting" },
+                transition: {
+                  type: ChainTransitionType.onComplete,
+                  target: "resting",
+                },
               },
               {
                 name: "resting",
                 type: InteractivityActionType.stop,
-                transition: { type: ChainTransitionType.delay, delay: 1500, target: "playing" },
+                transition: {
+                  type: ChainTransitionType.delay,
+                  delay: 1500,
+                  target: "playing",
+                },
               },
             ],
           }}
@@ -494,7 +576,9 @@ transition: { type: ChainTransitionType.repeat, count: 3 }`}</code>
 export function ChainHoldExample() {
   return (
     <section style={sectionStyle}>
-      <span style={{ ...labelStyle, backgroundColor: "#ede9fe", color: "#6d28d9" }}>
+      <span
+        style={{ ...labelStyle, backgroundColor: "#ede9fe", color: "#6d28d9" }}
+      >
         chain
       </span>
       <h2 style={{ margin: "0 0 0.5rem" }}>Chain — hold to pause</h2>
@@ -521,7 +605,9 @@ export function ChainHoldExample() {
         />
       </div>
 
-      <code style={codeStyle}>{`// pauseHold — loops by default, hold to pause, release to resume
+      <code
+        style={codeStyle}
+      >{`// pauseHold — loops by default, hold to pause, release to resume
 states: [
   {
     name: "loop-hold",
@@ -551,7 +637,9 @@ states: [
 export function ChainCursorSyncExample() {
   return (
     <section style={sectionStyle}>
-      <span style={{ ...labelStyle, backgroundColor: "#ede9fe", color: "#6d28d9" }}>
+      <span
+        style={{ ...labelStyle, backgroundColor: "#ede9fe", color: "#6d28d9" }}
+      >
         chain
       </span>
       <h2 style={{ margin: "0 0 0.5rem" }}>Chain — cursor sync</h2>
@@ -638,7 +726,9 @@ export function ChainProgrammaticExample() {
 
   return (
     <section style={sectionStyle}>
-      <span style={{ ...labelStyle, backgroundColor: "#ede9fe", color: "#6d28d9" }}>
+      <span
+        style={{ ...labelStyle, backgroundColor: "#ede9fe", color: "#6d28d9" }}
+      >
         chain
       </span>
       <h2 style={{ margin: "0 0 0.5rem" }}>Chain — programmatic control</h2>
@@ -649,14 +739,37 @@ export function ChainProgrammaticExample() {
         reactive and re-renders when the state changes.
       </p>
 
-      <div style={{ display: "flex", gap: "0.75rem", marginBottom: "1rem", flexWrap: "wrap", alignItems: "center" }}>
-        <button style={btnStyle(currentChainState === "looping")} onClick={() => { goToChainState("looping"); }}>
+      <div
+        style={{
+          display: "flex",
+          gap: "0.75rem",
+          marginBottom: "1rem",
+          flexWrap: "wrap",
+          alignItems: "center",
+        }}
+      >
+        <button
+          style={btnStyle(currentChainState === "looping")}
+          onClick={() => {
+            goToChainState("looping");
+          }}
+        >
           Loop
         </button>
-        <button style={btnStyle(currentChainState === "playing")} onClick={() => { goToChainState("playing"); }}>
+        <button
+          style={btnStyle(currentChainState === "playing")}
+          onClick={() => {
+            goToChainState("playing");
+          }}
+        >
           Play once
         </button>
-        <button style={btnStyle(currentChainState === "idle")} onClick={() => { goToChainState("idle"); }}>
+        <button
+          style={btnStyle(currentChainState === "idle")}
+          onClick={() => {
+            goToChainState("idle");
+          }}
+        >
           Idle
         </button>
         <span style={{ color: "#64748b", fontSize: "0.85rem" }}>
@@ -711,7 +824,9 @@ export function ImperativeHookExample() {
 
   return (
     <section style={sectionStyle}>
-      <span style={{ ...labelStyle, backgroundColor: "#f1f5f9", color: "#475569" }}>
+      <span
+        style={{ ...labelStyle, backgroundColor: "#f1f5f9", color: "#475569" }}
+      >
         imperative
       </span>
       <h2 style={{ margin: "0 0 0.5rem" }}>Standalone hook</h2>
@@ -722,7 +837,14 @@ export function ImperativeHookExample() {
         <code>enable()</code>.
       </p>
 
-      <div style={{ display: "flex", gap: "0.75rem", marginBottom: "1rem", alignItems: "center" }}>
+      <div
+        style={{
+          display: "flex",
+          gap: "0.75rem",
+          marginBottom: "1rem",
+          alignItems: "center",
+        }}
+      >
         <button
           onClick={disable}
           disabled={!isActive}
@@ -737,12 +859,17 @@ export function ImperativeHookExample() {
         >
           Enable
         </button>
-        <span style={{ color: isActive ? "#16a34a" : "#dc2626", fontWeight: 600 }}>
+        <span
+          style={{ color: isActive ? "#16a34a" : "#dc2626", fontWeight: 600 }}
+        >
           {isActive ? "active" : "disabled"}
         </span>
       </div>
 
-      <div style={{ ...animBox, cursor: "pointer" }} ref={lottie.setContainerRef} />
+      <div
+        style={{ ...animBox, cursor: "pointer" }}
+        ref={lottie.setContainerRef}
+      />
 
       <code style={codeStyle}>{`const lottie = useLottie({ src });
 const { isActive, disable, enable } = useLottieInteractivity(lottie, {

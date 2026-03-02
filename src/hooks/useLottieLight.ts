@@ -1,11 +1,12 @@
 import lottieLight from "lottie-web/build/player/lottie_light";
 
-import { LottieVersion } from "../types/enums";
+import {
+  LottieVersion,
+  UseLottieFactoryOptions,
+  UseLottieFactoryResult,
+} from "../types";
 
 import { useLottieFactory } from "./useLottieFactory";
-
-import type { UseLottieFactoryOptions, UseLottieFactoryResult } from "../types/types";
-
 
 /**
  * Hook for rendering Lottie animations using the lottie_light build (SVG-only).
@@ -17,4 +18,5 @@ import type { UseLottieFactoryOptions, UseLottieFactoryResult } from "../types/t
  */
 export const useLottieLight = (
   options: UseLottieFactoryOptions<typeof LottieVersion.light>,
-): UseLottieFactoryResult => useLottieFactory<typeof LottieVersion.light>(lottieLight, options);
+): UseLottieFactoryResult =>
+  useLottieFactory<typeof LottieVersion.light>(lottieLight, options);

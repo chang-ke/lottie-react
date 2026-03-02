@@ -208,8 +208,10 @@ export const processLoadingConfig = (
     // It's a LoadingOverlayConfig
     return {
       component: "component" in loading ? loading.component : undefined,
-      minDisplayTime: "minDisplayTime" in loading ? loading.minDisplayTime ?? 0 : 0,
-      fadeOutTime: "fadeOutTime" in loading ? loading.fadeOutTime ?? 600 : 600,
+      minDisplayTime:
+        "minDisplayTime" in loading ? (loading.minDisplayTime ?? 0) : 0,
+      fadeOutTime:
+        "fadeOutTime" in loading ? (loading.fadeOutTime ?? 600) : 600,
     };
   }
 
@@ -219,28 +221,5 @@ export const processLoadingConfig = (
     component: loading as import("react").ReactNode,
     minDisplayTime: 0,
     fadeOutTime: 600,
-  };
-};
-
-/**
- * Generate CSS custom properties from theme
- */
-export const generateCSSVars = (
-  theme: ResolvedPlayerTheme,
-): Record<string, string> => {
-  return {
-    "--player-primary": theme.colors.primary,
-    "--player-secondary": theme.colors.secondary,
-    "--player-background": theme.colors.background,
-    "--player-background-hover": theme.colors.backgroundHover,
-    "--player-text": theme.colors.text,
-    "--player-border": theme.colors.border,
-    "--player-accent": theme.colors.accent,
-    "--player-height": `${String(theme.sizing.height)}px`,
-    "--player-button-size": `${String(theme.sizing.buttonSize)}px`,
-    "--player-font-size": `${String(theme.sizing.fontSize)}px`,
-    "--player-border-radius": `${String(theme.sizing.borderRadius)}px`,
-    "--player-padding": `${String(theme.spacing.padding)}px`,
-    "--player-gap": `${String(theme.spacing.gap)}px`,
   };
 };

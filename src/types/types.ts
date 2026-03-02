@@ -19,14 +19,13 @@ import {
   LottieVersion,
 } from "./enums";
 
-import type { InteractivityConfig } from "../interactivity/types";
+import type { InteractivityConfig } from "../interactivity";
 import type {
   PlayerElements,
   PlayerOverlays,
   PlayerResponsive,
   PlayerTheme,
 } from "../player/types";
-
 
 /**
  * Shape of the internal listener
@@ -47,7 +46,9 @@ export type LottieSubscriptionAction<T = void> = (event: T) => void;
  * the key here updates automatically.
  */
 export interface LottieSubscriptions {
-  [LottieSubscription.frame]: LottieSubscriptionAction<{ currentFrame: number }>;
+  [LottieSubscription.frame]: LottieSubscriptionAction<{
+    currentFrame: number;
+  }>;
   [LottieSubscription.complete]: LottieSubscriptionAction;
   [LottieSubscription.loopCompleted]: LottieSubscriptionAction;
   [LottieSubscription.ready]: LottieSubscriptionAction;
@@ -55,7 +56,9 @@ export interface LottieSubscriptions {
   [LottieSubscription.pause]: LottieSubscriptionAction;
   [LottieSubscription.stop]: LottieSubscriptionAction;
   [LottieSubscription.failure]: LottieSubscriptionAction;
-  [LottieSubscription.newState]: LottieSubscriptionAction<{ state: LottieState }>;
+  [LottieSubscription.newState]: LottieSubscriptionAction<{
+    state: LottieState;
+  }>;
 }
 
 /**

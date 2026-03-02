@@ -2,7 +2,7 @@ import lottie from "lottie-web";
 
 import { useLottieFactory } from "./useLottieFactory";
 
-import type { UseLottieFactoryOptions, UseLottieFactoryResult } from "../types/types";
+import type { UseLottieFactoryOptions, UseLottieFactoryResult } from "../types";
 
 /**
  * Hook for rendering Lottie animations using the full lottie-web build.
@@ -14,5 +14,4 @@ import type { UseLottieFactoryOptions, UseLottieFactoryResult } from "../types/t
  */
 export const useLottie = (
   options: UseLottieFactoryOptions,
-): UseLottieFactoryResult =>
-  useLottieFactory(lottie, options);
+): UseLottieFactoryResult => useLottieFactory(lottie, options);

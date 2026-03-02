@@ -1,7 +1,11 @@
 import { useEffect, useRef } from "react";
 
-import { LottieSubscription } from "../../types/enums";
-import { ClickConfig, InteractivityActionType, InteractivityTarget } from "../types";
+import { LottieSubscription } from "../../types";
+import {
+  ClickConfig,
+  InteractivityActionType,
+  InteractivityTarget,
+} from "../types";
 import { resolveFrame } from "../utils/resolveFrames";
 
 export const useClickMode = (
@@ -112,6 +116,6 @@ export const useClickMode = (
       }
       container.removeEventListener("click", handleClick);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [target.containerRef.current, target.animationItem, enabled]);
 };
