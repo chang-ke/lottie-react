@@ -1,6 +1,6 @@
 import { RefObject } from "react";
 
-import type { UseLottieFactoryResult } from "../types/types";
+import type { UseLottieFactoryResult } from "../types";
 
 // ─── Enums (const+type pattern, matching project convention) ──────────────────
 
@@ -17,6 +17,8 @@ export type InteractivityMode =
 export const InteractivityActionType = {
   seek: "seek",
   play: "play",
+  /** Play the animation once the first time its visibility range is entered, then never again */
+  playOnce: "playOnce",
   stop: "stop",
   loop: "loop",
   playSegments: "playSegments",
@@ -32,6 +34,10 @@ export const ChainTransitionType = {
   pauseHold: "pauseHold",
   onComplete: "onComplete",
   delay: "delay",
+  /** Stay in this state indefinitely — no automatic advancement */
+  none: "none",
+  /** Cursor X position (0→1) maps to frames — stay in state, cursor controls seeking */
+  cursorSync: "cursorSync",
 } as const;
 export type ChainTransitionType =
   (typeof ChainTransitionType)[keyof typeof ChainTransitionType];
@@ -118,9 +124,12 @@ export interface ChainTransition {
   type: ChainTransitionType;
   /** Target state name. If omitted, advances to next state in array. */
   target?: string;
-  /** For "repeat" type: number of loop completions before advancing */
+  /**
+   * For "repeat": number of loop completions before advancing.
+   * For "click" / "hover": number of interactions required before advancing.
+   */
   count?: number;
-  /** For "delay" type: milliseconds before advancing */
+  /** For "delay": milliseconds before advancing */
   delay?: number;
 }
 
@@ -132,6 +141,11 @@ export interface ChainState {
   /** Loop this state's animation */
   loop?: boolean;
   speed?: number;
+  /**
+   * Always restart the animation from the beginning (frame 0 / frames[0])
+   * when entering this state, even if it was previously playing mid-way.
+   */
+  forceFlag?: boolean;
 }
 
 export interface ChainConfig {

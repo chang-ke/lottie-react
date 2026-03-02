@@ -69,6 +69,9 @@ export const useScrollMode = (
     // Boxed so TypeScript's flow analysis doesn't narrow it to always-false
     const visibility = { current: false };
 
+    // Track which playOnce actions have already fired (keyed by action index)
+    const playOnceFired: boolean[] = [];
+
     const handleScroll = () => {
       const { animationItem } = target;
       if (!animationItem) return;
@@ -76,11 +79,29 @@ export const useScrollMode = (
       const progress = computeScrollProgress(container, scrollEl);
       const { actions } = configRef.current;
 
-      for (const action of actions) {
+      for (let i = 0; i < actions.length; i++) {
+        const action = actions[i];
         const [visMin, visMax] = action.visibility;
         if (progress < visMin || progress > visMax) continue;
 
-        if (action.type === InteractivityActionType.seek) {
+        if (action.type === InteractivityActionType.playOnce) {
+          if (!playOnceFired[i]) {
+            playOnceFired[i] = true;
+            const frames = action.frames;
+            if (frames) {
+              animationItem.playSegments(
+                [
+                  resolveFrame(frames[0], animationItem),
+                  resolveFrame(frames[1], animationItem),
+                ],
+                true,
+              );
+            } else {
+              animationItem.goToAndPlay(0, true);
+            }
+          }
+          break;
+        } else if (action.type === InteractivityActionType.seek) {
           const frames = action.frames ?? [0, animationItem.totalFrames];
           const frame = Math.round(
             mapRange(progress, action.visibility, [

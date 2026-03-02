@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { LottieSubscription } from "../../types/enums";
+import { LottieSubscription } from "../../types";
 import {
   ChainConfig,
   ChainState,
@@ -48,7 +48,9 @@ export const useChainMode = (
     if (!state) return;
 
     // Tear down previous state listeners
-    cleanupRef.current.forEach((fn) => { fn(); });
+    cleanupRef.current.forEach((fn) => {
+      fn();
+    });
     cleanupRef.current = [];
 
     setCurrentChainState(stateName);
@@ -58,6 +60,13 @@ export const useChainMode = (
 
     // Apply animation action
     const frames = state.frames;
+
+    // forceFlag: always restart from start frame on enter
+    if (state.forceFlag) {
+      const startFrame = frames ? resolveFrame(frames[0], animationItem) : 0;
+      animationItem.goToAndStop(startFrame, true);
+    }
+
     if (state.type === InteractivityActionType.seek && frames) {
       animationItem.goToAndStop(resolveFrame(frames[0], animationItem), true);
     } else if (state.type === InteractivityActionType.play) {
@@ -112,16 +121,28 @@ export const useChainMode = (
       cleanupRef.current.push(unsub);
     } else if (transition.type === ChainTransitionType.click) {
       if (container) {
-        container.addEventListener("click", advance);
+        const required = transition.count ?? 1;
+        let clicks = 0;
+        const onClick = () => {
+          clicks += 1;
+          if (clicks >= required) advance();
+        };
+        container.addEventListener("click", onClick);
         cleanupRef.current.push(() => {
-          container.removeEventListener("click", advance);
+          container.removeEventListener("click", onClick);
         });
       }
     } else if (transition.type === ChainTransitionType.hover) {
       if (container) {
-        container.addEventListener("mouseenter", advance);
+        const required = transition.count ?? 1;
+        let hovers = 0;
+        const onEnter = () => {
+          hovers += 1;
+          if (hovers >= required) advance();
+        };
+        container.addEventListener("mouseenter", onEnter);
         cleanupRef.current.push(() => {
-          container.removeEventListener("mouseenter", advance);
+          container.removeEventListener("mouseenter", onEnter);
         });
       }
     } else if (transition.type === ChainTransitionType.repeat) {
@@ -134,8 +155,12 @@ export const useChainMode = (
       cleanupRef.current.push(unsub);
     } else if (transition.type === ChainTransitionType.hold) {
       if (container) {
-        const onDown = () => { play(); };
-        const onUp = () => { pause(); };
+        const onDown = () => {
+          play();
+        };
+        const onUp = () => {
+          pause();
+        };
         container.addEventListener("mousedown", onDown);
         container.addEventListener("mouseup", onUp);
         cleanupRef.current.push(() => {
@@ -145,8 +170,12 @@ export const useChainMode = (
       }
     } else if (transition.type === ChainTransitionType.pauseHold) {
       if (container) {
-        const onDown = () => { pause(); };
-        const onUp = () => { play(); };
+        const onDown = () => {
+          pause();
+        };
+        const onUp = () => {
+          play();
+        };
         container.addEventListener("mousedown", onDown);
         container.addEventListener("mouseup", onUp);
         cleanupRef.current.push(() => {
@@ -154,14 +183,41 @@ export const useChainMode = (
           container.removeEventListener("mouseup", onUp);
         });
       }
+    } else if (transition.type === ChainTransitionType.none) {
+      // Stay in this state indefinitely — no transition listener
+    } else if (transition.type === ChainTransitionType.cursorSync) {
+      // Cursor X position (0→1) maps to frames — seeking within state frames
+      if (container) {
+        const onMove = (e: MouseEvent) => {
+          const rect = container.getBoundingClientRect();
+          const x = Math.min(
+            Math.max((e.clientX - rect.left) / rect.width, 0),
+            1,
+          );
+          const stateFrames = state.frames;
+          const startFrame = stateFrames
+            ? resolveFrame(stateFrames[0], animationItem)
+            : 0;
+          const endFrame = stateFrames
+            ? resolveFrame(stateFrames[1], animationItem)
+            : animationItem.totalFrames - 1;
+          const frame = Math.round(startFrame + x * (endFrame - startFrame));
+          animationItem.goToAndStop(frame, true);
+        };
+        container.addEventListener("mousemove", onMove);
+        cleanupRef.current.push(() => {
+          container.removeEventListener("mousemove", onMove);
+        });
+      }
     } else {
       // ChainTransitionType.delay
       const delay = transition.delay ?? 0;
       const timerId = setTimeout(advance, delay);
-      cleanupRef.current.push(() => { clearTimeout(timerId); });
+      cleanupRef.current.push(() => {
+        clearTimeout(timerId);
+      });
     }
-  // No deps — reads everything via refs (targetRef, configRef, enterStateRef)
-   
+    // No deps — reads everything via refs (targetRef, configRef, enterStateRef)
   }, []);
 
   // Always keep the ref in sync with the latest function
@@ -176,10 +232,11 @@ export const useChainMode = (
     if (initial) enterStateRef.current(initial);
 
     return () => {
-      cleanupRef.current.forEach((fn) => { fn(); });
+      cleanupRef.current.forEach((fn) => {
+        fn();
+      });
       cleanupRef.current = [];
     };
-   
   }, [target.animationItem, enabled]);
 
   const goToChainState = useCallback(
