@@ -1,6 +1,10 @@
 import { useEffect, useRef } from "react";
 
-import { InteractivityActionType, InteractivityTarget, ScrollConfig } from "../types";
+import {
+  InteractivityActionType,
+  InteractivityTarget,
+  ScrollConfig,
+} from "../types";
 import { mapRange } from "../utils/mapRange";
 import { resolveFrame } from "../utils/resolveFrames";
 
@@ -162,7 +166,7 @@ export const useScrollMode = (
         scrollEl.removeEventListener("scroll", handleScroll);
       }
     };
-  // containerRef.current and animationItem are the meaningful deps here
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // containerRef.current and animationItem are the meaningful deps here
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [target.containerRef.current, target.animationItem, enabled]);
 };

@@ -25,8 +25,12 @@ export const useLottieInteractivity = (
 ): UseLottieInteractivityResult => {
   const [isActive, setIsActive] = useState(true);
 
-  const enable = useCallback(() => { setIsActive(true); }, []);
-  const disable = useCallback(() => { setIsActive(false); }, []);
+  const enable = useCallback(() => {
+    setIsActive(true);
+  }, []);
+  const disable = useCallback(() => {
+    setIsActive(false);
+  }, []);
 
   // Each mode hook is always called (Rules of Hooks), but only activated
   // when the mode matches and isActive is true.
@@ -39,19 +43,25 @@ export const useLottieInteractivity = (
 
   useScrollMode(
     target,
-    config.mode === InteractivityMode.scroll ? config : { mode: InteractivityMode.scroll, actions: [] },
+    config.mode === InteractivityMode.scroll
+      ? config
+      : { mode: InteractivityMode.scroll, actions: [] },
     isScroll,
   );
 
   useCursorMode(
     target,
-    config.mode === InteractivityMode.cursor ? config : { mode: InteractivityMode.cursor, actions: [] },
+    config.mode === InteractivityMode.cursor
+      ? config
+      : { mode: InteractivityMode.cursor, actions: [] },
     isCursor,
   );
 
   useHoverMode(
     target,
-    config.mode === InteractivityMode.hover ? config : { mode: InteractivityMode.hover },
+    config.mode === InteractivityMode.hover
+      ? config
+      : { mode: InteractivityMode.hover },
     isHover,
   );
 
@@ -59,7 +69,10 @@ export const useLottieInteractivity = (
     target,
     config.mode === InteractivityMode.click
       ? config
-      : { mode: InteractivityMode.click, type: InteractivityMode.click as never },
+      : {
+          mode: InteractivityMode.click,
+          type: InteractivityMode.click as never,
+        },
     isClick,
   );
 

@@ -17,7 +17,9 @@ describe("useStateWithPrevious", () => {
       useStateWithPrevious({ initialState: "loading" }),
     );
 
-    act(() => { result.current.setState("playing"); });
+    act(() => {
+      result.current.setState("playing");
+    });
 
     expect(result.current.state).toBe("playing");
     expect(result.current.previousState).toBe("loading");
@@ -28,8 +30,12 @@ describe("useStateWithPrevious", () => {
       useStateWithPrevious({ initialState: "loading" }),
     );
 
-    act(() => { result.current.setState("playing"); });
-    act(() => { result.current.setState("paused"); });
+    act(() => {
+      result.current.setState("playing");
+    });
+    act(() => {
+      result.current.setState("paused");
+    });
 
     expect(result.current.state).toBe("paused");
     expect(result.current.previousState).toBe("playing");
@@ -40,7 +46,9 @@ describe("useStateWithPrevious", () => {
       useStateWithPrevious({ initialState: 0 }),
     );
 
-    act(() => { result.current.setState((prev) => prev + 1); });
+    act(() => {
+      result.current.setState((prev) => prev + 1);
+    });
 
     expect(result.current.state).toBe(1);
     expect(result.current.previousState).toBe(0);
@@ -51,7 +59,9 @@ describe("useStateWithPrevious", () => {
       useStateWithPrevious({ initialState: "stable" }),
     );
 
-    act(() => { result.current.setState("stable"); });
+    act(() => {
+      result.current.setState("stable");
+    });
 
     // State did not change, so previousState stays undefined
     expect(result.current.state).toBe("stable");
@@ -67,7 +77,9 @@ describe("useStateWithPrevious", () => {
     // Clear any initial mount call before testing transitions
     onChange.mockClear();
 
-    act(() => { result.current.setState("playing"); });
+    act(() => {
+      result.current.setState("playing");
+    });
 
     expect(onChange).toHaveBeenCalledWith("loading", "playing");
   });
@@ -87,7 +99,9 @@ describe("useStateWithPrevious", () => {
 
     rerender({ cb: second });
 
-    act(() => { result.current.setState("b"); });
+    act(() => {
+      result.current.setState("b");
+    });
 
     // The transition should use the latest callback (second), not first
     expect(first).not.toHaveBeenCalled();

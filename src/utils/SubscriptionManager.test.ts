@@ -59,7 +59,9 @@ describe("SubscriptionManager", () => {
 
   it("notify for an unregistered type is a no-op", () => {
     const mgr = new SubscriptionManager<TestSubs>();
-    expect(() => { mgr.notify("ready", undefined); }).not.toThrow();
+    expect(() => {
+      mgr.notify("ready", undefined);
+    }).not.toThrow();
   });
 
   it("does not call a handler registered for a different type", () => {
@@ -90,7 +92,10 @@ describe("SubscriptionManager", () => {
     const frameHandler = vi.fn();
     const readyHandler = vi.fn();
 
-    const unsub = mgr.addSubscriptions({ frame: frameHandler, ready: readyHandler });
+    const unsub = mgr.addSubscriptions({
+      frame: frameHandler,
+      ready: readyHandler,
+    });
     unsub();
     mgr.notify("frame", { currentFrame: 1 });
     mgr.notify("ready", undefined);
@@ -102,6 +107,8 @@ describe("SubscriptionManager", () => {
   it("addSubscriptions(undefined) returns a no-op unsubscribe", () => {
     const mgr = new SubscriptionManager<TestSubs>();
     const unsub = mgr.addSubscriptions(undefined);
-    expect(() => { unsub(); }).not.toThrow();
+    expect(() => {
+      unsub();
+    }).not.toThrow();
   });
 });

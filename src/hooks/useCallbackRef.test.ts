@@ -21,7 +21,9 @@ describe("useCallbackRef", () => {
   });
 
   it("setRef is referentially stable across re-renders", () => {
-    const { result, rerender } = renderHook(() => useCallbackRef<HTMLDivElement>());
+    const { result, rerender } = renderHook(() =>
+      useCallbackRef<HTMLDivElement>(),
+    );
     const firstSetRef = result.current.setRef;
 
     rerender();
@@ -33,9 +35,13 @@ describe("useCallbackRef", () => {
     const { result } = renderHook(() => useCallbackRef<HTMLDivElement>());
     const el = document.createElement("div");
 
-    act(() => { result.current.setRef(el); });
+    act(() => {
+      result.current.setRef(el);
+    });
     // setRef is typed as RefCallback<T | null> and accepts null per React's RefCallback contract
-    act(() => { result.current.setRef(null); });
+    act(() => {
+      result.current.setRef(null);
+    });
 
     expect(result.current.ref.current).toBeNull();
   });

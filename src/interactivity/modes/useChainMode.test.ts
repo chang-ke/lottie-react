@@ -28,16 +28,20 @@ const createTarget = (
   animationItem: MockAnimationItem,
 ): TargetSetup => {
   const listeners = new Map<string, ((...args: never[]) => void)[]>();
-  const subscribe = vi.fn().mockImplementation(
-    (event: string, cb: (...args: never[]) => void) => {
+  const subscribe = vi
+    .fn()
+    .mockImplementation((event: string, cb: (...args: never[]) => void) => {
       if (!listeners.has(event)) listeners.set(event, []);
       listeners.get(event)?.push(cb);
       return () => {
         const arr = listeners.get(event);
-        if (arr) listeners.set(event, arr.filter((fn) => fn !== cb));
+        if (arr)
+          listeners.set(
+            event,
+            arr.filter((fn) => fn !== cb),
+          );
       };
-    },
-  );
+    });
 
   const target: InteractivityTarget = {
     containerRef: { current: container } as React.RefObject<HTMLDivElement>,
@@ -51,7 +55,9 @@ const createTarget = (
   };
 
   const fireSubscription = (event: string) => {
-    listeners.get(event)?.forEach((cb) => { cb(); });
+    listeners.get(event)?.forEach((cb) => {
+      cb();
+    });
   };
 
   return { target, fireSubscription };
@@ -60,7 +66,13 @@ const createTarget = (
 // Config helpers
 const onCompleteConfig = (name = "state1"): ChainConfig => ({
   mode: InteractivityMode.chain,
-  states: [{ name, type: InteractivityActionType.play, transition: { type: ChainTransitionType.onComplete } }],
+  states: [
+    {
+      name,
+      type: InteractivityActionType.play,
+      transition: { type: ChainTransitionType.onComplete },
+    },
+  ],
 });
 
 // ── Module-level fixtures ─────────────────────────────────────────────────────
@@ -85,14 +97,18 @@ afterEach(() => {
 
 describe("useChainMode — disabled", () => {
   it("does not enter any state when disabled=false", () => {
-    renderHook(() => { useChainMode(target, onCompleteConfig(), false); });
+    renderHook(() => {
+      useChainMode(target, onCompleteConfig(), false);
+    });
     expect(target.play).not.toHaveBeenCalled();
   });
 });
 
 describe("useChainMode — initial state", () => {
   it("enters the first state on mount", () => {
-    renderHook(() => { useChainMode(target, onCompleteConfig(), true); });
+    renderHook(() => {
+      useChainMode(target, onCompleteConfig(), true);
+    });
     expect(target.play).toHaveBeenCalled();
   });
 
@@ -100,12 +116,22 @@ describe("useChainMode — initial state", () => {
     const config: ChainConfig = {
       mode: InteractivityMode.chain,
       states: [
-        { name: "first", type: InteractivityActionType.stop, transition: { type: ChainTransitionType.none } },
-        { name: "second", type: InteractivityActionType.play, transition: { type: ChainTransitionType.none } },
+        {
+          name: "first",
+          type: InteractivityActionType.stop,
+          transition: { type: ChainTransitionType.none },
+        },
+        {
+          name: "second",
+          type: InteractivityActionType.play,
+          transition: { type: ChainTransitionType.none },
+        },
       ],
       initialState: "second",
     };
-    renderHook(() => { useChainMode(target, config, true); });
+    renderHook(() => {
+      useChainMode(target, config, true);
+    });
     expect(target.play).toHaveBeenCalled();
     expect(target.stop).not.toHaveBeenCalled();
   });
@@ -114,14 +140,24 @@ describe("useChainMode — initial state", () => {
     const config: ChainConfig = {
       mode: InteractivityMode.chain,
       states: [
-        { name: "a", type: InteractivityActionType.play, transition: { type: ChainTransitionType.none } },
-        { name: "b", type: InteractivityActionType.stop, transition: { type: ChainTransitionType.none } },
+        {
+          name: "a",
+          type: InteractivityActionType.play,
+          transition: { type: ChainTransitionType.none },
+        },
+        {
+          name: "b",
+          type: InteractivityActionType.stop,
+          transition: { type: ChainTransitionType.none },
+        },
       ],
     };
     const { result } = renderHook(() => useChainMode(target, config, true));
     expect(result.current.currentChainState).toBe("a");
 
-    act(() => { result.current.goToChainState("b"); });
+    act(() => {
+      result.current.goToChainState("b");
+    });
     expect(result.current.currentChainState).toBe("b");
   });
 });
@@ -130,36 +166,70 @@ describe("useChainMode — action types", () => {
   it("calls stop() for stop action type", () => {
     const config: ChainConfig = {
       mode: InteractivityMode.chain,
-      states: [{ name: "s", type: InteractivityActionType.stop, transition: { type: ChainTransitionType.none } }],
+      states: [
+        {
+          name: "s",
+          type: InteractivityActionType.stop,
+          transition: { type: ChainTransitionType.none },
+        },
+      ],
     };
-    renderHook(() => { useChainMode(target, config, true); });
+    renderHook(() => {
+      useChainMode(target, config, true);
+    });
     expect(target.stop).toHaveBeenCalled();
   });
 
   it("calls goToAndStop for seek action type", () => {
     const config: ChainConfig = {
       mode: InteractivityMode.chain,
-      states: [{ name: "s", type: InteractivityActionType.seek, frames: [10, 50], transition: { type: ChainTransitionType.none } }],
+      states: [
+        {
+          name: "s",
+          type: InteractivityActionType.seek,
+          frames: [10, 50],
+          transition: { type: ChainTransitionType.none },
+        },
+      ],
     };
-    renderHook(() => { useChainMode(target, config, true); });
+    renderHook(() => {
+      useChainMode(target, config, true);
+    });
     expect(animItem.goToAndStop).toHaveBeenCalledWith(10, true);
   });
 
   it("calls playSegments for play action with frames", () => {
     const config: ChainConfig = {
       mode: InteractivityMode.chain,
-      states: [{ name: "s", type: InteractivityActionType.play, frames: [0, 50], transition: { type: ChainTransitionType.none } }],
+      states: [
+        {
+          name: "s",
+          type: InteractivityActionType.play,
+          frames: [0, 50],
+          transition: { type: ChainTransitionType.none },
+        },
+      ],
     };
-    renderHook(() => { useChainMode(target, config, true); });
+    renderHook(() => {
+      useChainMode(target, config, true);
+    });
     expect(animItem.playSegments).toHaveBeenCalledWith([0, 50], true);
   });
 
   it("sets loop=true for loop action type", () => {
     const config: ChainConfig = {
       mode: InteractivityMode.chain,
-      states: [{ name: "s", type: InteractivityActionType.loop, transition: { type: ChainTransitionType.none } }],
+      states: [
+        {
+          name: "s",
+          type: InteractivityActionType.loop,
+          transition: { type: ChainTransitionType.none },
+        },
+      ],
     };
-    renderHook(() => { useChainMode(target, config, true); });
+    renderHook(() => {
+      useChainMode(target, config, true);
+    });
     expect(animItem.loop).toBe(true);
     expect(target.play).toHaveBeenCalled();
   });
@@ -167,18 +237,37 @@ describe("useChainMode — action types", () => {
   it("applies setSpeed when speed is set on state", () => {
     const config: ChainConfig = {
       mode: InteractivityMode.chain,
-      states: [{ name: "s", type: InteractivityActionType.play, speed: 2, transition: { type: ChainTransitionType.none } }],
+      states: [
+        {
+          name: "s",
+          type: InteractivityActionType.play,
+          speed: 2,
+          transition: { type: ChainTransitionType.none },
+        },
+      ],
     };
-    renderHook(() => { useChainMode(target, config, true); });
+    renderHook(() => {
+      useChainMode(target, config, true);
+    });
     expect(animItem.setSpeed).toHaveBeenCalledWith(2);
   });
 
   it("calls goToAndStop with start frame when forceFlag is set", () => {
     const config: ChainConfig = {
       mode: InteractivityMode.chain,
-      states: [{ name: "s", type: InteractivityActionType.play, frames: [20, 80], forceFlag: true, transition: { type: ChainTransitionType.none } }],
+      states: [
+        {
+          name: "s",
+          type: InteractivityActionType.play,
+          frames: [20, 80],
+          forceFlag: true,
+          transition: { type: ChainTransitionType.none },
+        },
+      ],
     };
-    renderHook(() => { useChainMode(target, config, true); });
+    renderHook(() => {
+      useChainMode(target, config, true);
+    });
     expect(animItem.goToAndStop).toHaveBeenCalledWith(20, true);
   });
 });
@@ -188,14 +277,24 @@ describe("useChainMode — transition: onComplete", () => {
     const config: ChainConfig = {
       mode: InteractivityMode.chain,
       states: [
-        { name: "a", type: InteractivityActionType.play, transition: { type: ChainTransitionType.onComplete } },
-        { name: "b", type: InteractivityActionType.stop, transition: { type: ChainTransitionType.none } },
+        {
+          name: "a",
+          type: InteractivityActionType.play,
+          transition: { type: ChainTransitionType.onComplete },
+        },
+        {
+          name: "b",
+          type: InteractivityActionType.stop,
+          transition: { type: ChainTransitionType.none },
+        },
       ],
     };
     const { result } = renderHook(() => useChainMode(target, config, true));
     expect(result.current.currentChainState).toBe("a");
 
-    act(() => { fireSubscription(LottieSubscription.complete); });
+    act(() => {
+      fireSubscription(LottieSubscription.complete);
+    });
 
     expect(result.current.currentChainState).toBe("b");
     expect(target.stop).toHaveBeenCalled();
@@ -207,13 +306,23 @@ describe("useChainMode — transition: click", () => {
     const config: ChainConfig = {
       mode: InteractivityMode.chain,
       states: [
-        { name: "a", type: InteractivityActionType.play, transition: { type: ChainTransitionType.click } },
-        { name: "b", type: InteractivityActionType.stop, transition: { type: ChainTransitionType.none } },
+        {
+          name: "a",
+          type: InteractivityActionType.play,
+          transition: { type: ChainTransitionType.click },
+        },
+        {
+          name: "b",
+          type: InteractivityActionType.stop,
+          transition: { type: ChainTransitionType.none },
+        },
       ],
     };
     const { result } = renderHook(() => useChainMode(target, config, true));
 
-    act(() => { container.dispatchEvent(new MouseEvent("click", { bubbles: true })); });
+    act(() => {
+      container.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    });
 
     expect(result.current.currentChainState).toBe("b");
   });
@@ -222,16 +331,28 @@ describe("useChainMode — transition: click", () => {
     const config: ChainConfig = {
       mode: InteractivityMode.chain,
       states: [
-        { name: "a", type: InteractivityActionType.play, transition: { type: ChainTransitionType.click, count: 2 } },
-        { name: "b", type: InteractivityActionType.stop, transition: { type: ChainTransitionType.none } },
+        {
+          name: "a",
+          type: InteractivityActionType.play,
+          transition: { type: ChainTransitionType.click, count: 2 },
+        },
+        {
+          name: "b",
+          type: InteractivityActionType.stop,
+          transition: { type: ChainTransitionType.none },
+        },
       ],
     };
     const { result } = renderHook(() => useChainMode(target, config, true));
 
-    act(() => { container.dispatchEvent(new MouseEvent("click", { bubbles: true })); });
+    act(() => {
+      container.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    });
     expect(result.current.currentChainState).toBe("a"); // not yet
 
-    act(() => { container.dispatchEvent(new MouseEvent("click", { bubbles: true })); });
+    act(() => {
+      container.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    });
     expect(result.current.currentChainState).toBe("b");
   });
 });
@@ -241,13 +362,23 @@ describe("useChainMode — transition: hover", () => {
     const config: ChainConfig = {
       mode: InteractivityMode.chain,
       states: [
-        { name: "a", type: InteractivityActionType.play, transition: { type: ChainTransitionType.hover } },
-        { name: "b", type: InteractivityActionType.stop, transition: { type: ChainTransitionType.none } },
+        {
+          name: "a",
+          type: InteractivityActionType.play,
+          transition: { type: ChainTransitionType.hover },
+        },
+        {
+          name: "b",
+          type: InteractivityActionType.stop,
+          transition: { type: ChainTransitionType.none },
+        },
       ],
     };
     const { result } = renderHook(() => useChainMode(target, config, true));
 
-    act(() => { container.dispatchEvent(new MouseEvent("mouseenter", { bubbles: true })); });
+    act(() => {
+      container.dispatchEvent(new MouseEvent("mouseenter", { bubbles: true }));
+    });
 
     expect(result.current.currentChainState).toBe("b");
   });
@@ -258,14 +389,24 @@ describe("useChainMode — transition: delay", () => {
     const config: ChainConfig = {
       mode: InteractivityMode.chain,
       states: [
-        { name: "a", type: InteractivityActionType.play, transition: { type: ChainTransitionType.delay, delay: 500 } },
-        { name: "b", type: InteractivityActionType.stop, transition: { type: ChainTransitionType.none } },
+        {
+          name: "a",
+          type: InteractivityActionType.play,
+          transition: { type: ChainTransitionType.delay, delay: 500 },
+        },
+        {
+          name: "b",
+          type: InteractivityActionType.stop,
+          transition: { type: ChainTransitionType.none },
+        },
       ],
     };
     const { result } = renderHook(() => useChainMode(target, config, true));
     expect(result.current.currentChainState).toBe("a");
 
-    act(() => { vi.advanceTimersByTime(500); });
+    act(() => {
+      vi.advanceTimersByTime(500);
+    });
     expect(result.current.currentChainState).toBe("b");
   });
 });
@@ -275,16 +416,28 @@ describe("useChainMode — transition: repeat", () => {
     const config: ChainConfig = {
       mode: InteractivityMode.chain,
       states: [
-        { name: "a", type: InteractivityActionType.loop, transition: { type: ChainTransitionType.repeat, count: 2 } },
-        { name: "b", type: InteractivityActionType.stop, transition: { type: ChainTransitionType.none } },
+        {
+          name: "a",
+          type: InteractivityActionType.loop,
+          transition: { type: ChainTransitionType.repeat, count: 2 },
+        },
+        {
+          name: "b",
+          type: InteractivityActionType.stop,
+          transition: { type: ChainTransitionType.none },
+        },
       ],
     };
     const { result } = renderHook(() => useChainMode(target, config, true));
 
-    act(() => { fireSubscription(LottieSubscription.loopCompleted); });
+    act(() => {
+      fireSubscription(LottieSubscription.loopCompleted);
+    });
     expect(result.current.currentChainState).toBe("a"); // not yet
 
-    act(() => { fireSubscription(LottieSubscription.loopCompleted); });
+    act(() => {
+      fireSubscription(LottieSubscription.loopCompleted);
+    });
     expect(result.current.currentChainState).toBe("b");
   });
 });
@@ -294,15 +447,25 @@ describe("useChainMode — transition: hold", () => {
     const config: ChainConfig = {
       mode: InteractivityMode.chain,
       states: [
-        { name: "a", type: InteractivityActionType.play, transition: { type: ChainTransitionType.hold } },
+        {
+          name: "a",
+          type: InteractivityActionType.play,
+          transition: { type: ChainTransitionType.hold },
+        },
       ],
     };
-    renderHook(() => { useChainMode(target, config, true); });
+    renderHook(() => {
+      useChainMode(target, config, true);
+    });
 
-    act(() => { container.dispatchEvent(new MouseEvent("mousedown", { bubbles: true })); });
+    act(() => {
+      container.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+    });
     expect(target.play).toHaveBeenCalled();
 
-    act(() => { container.dispatchEvent(new MouseEvent("mouseup", { bubbles: true })); });
+    act(() => {
+      container.dispatchEvent(new MouseEvent("mouseup", { bubbles: true }));
+    });
     expect(target.pause).toHaveBeenCalled();
   });
 });
@@ -312,16 +475,26 @@ describe("useChainMode — transition: pauseHold", () => {
     const config: ChainConfig = {
       mode: InteractivityMode.chain,
       states: [
-        { name: "a", type: InteractivityActionType.play, transition: { type: ChainTransitionType.pauseHold } },
+        {
+          name: "a",
+          type: InteractivityActionType.play,
+          transition: { type: ChainTransitionType.pauseHold },
+        },
       ],
     };
-    renderHook(() => { useChainMode(target, config, true); });
+    renderHook(() => {
+      useChainMode(target, config, true);
+    });
     vi.mocked(target.play).mockClear();
 
-    act(() => { container.dispatchEvent(new MouseEvent("mousedown", { bubbles: true })); });
+    act(() => {
+      container.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+    });
     expect(target.pause).toHaveBeenCalled();
 
-    act(() => { container.dispatchEvent(new MouseEvent("mouseup", { bubbles: true })); });
+    act(() => {
+      container.dispatchEvent(new MouseEvent("mouseup", { bubbles: true }));
+    });
     expect(target.play).toHaveBeenCalled();
   });
 });
@@ -331,18 +504,38 @@ describe("useChainMode — transition: cursorSync", () => {
     const config: ChainConfig = {
       mode: InteractivityMode.chain,
       states: [
-        { name: "a", type: InteractivityActionType.seek, frames: [0, 100], transition: { type: ChainTransitionType.cursorSync } },
+        {
+          name: "a",
+          type: InteractivityActionType.seek,
+          frames: [0, 100],
+          transition: { type: ChainTransitionType.cursorSync },
+        },
       ],
     };
-    renderHook(() => { useChainMode(target, config, true); });
+    renderHook(() => {
+      useChainMode(target, config, true);
+    });
 
     vi.spyOn(container, "getBoundingClientRect").mockReturnValue({
-      left: 0, top: 0, width: 200, height: 100,
-      right: 200, bottom: 100, x: 0, y: 0, toJSON: vi.fn(),
+      left: 0,
+      top: 0,
+      width: 200,
+      height: 100,
+      right: 200,
+      bottom: 100,
+      x: 0,
+      y: 0,
+      toJSON: vi.fn(),
     });
 
     act(() => {
-      container.dispatchEvent(new MouseEvent("mousemove", { clientX: 100, clientY: 50, bubbles: true }));
+      container.dispatchEvent(
+        new MouseEvent("mousemove", {
+          clientX: 100,
+          clientY: 50,
+          bubbles: true,
+        }),
+      );
     });
 
     // x=100 of width=200 → normalized x=0.5 → frame = 0 + 0.5*(100-0) = 50
@@ -355,12 +548,22 @@ describe("useChainMode — transition: none", () => {
     const config: ChainConfig = {
       mode: InteractivityMode.chain,
       states: [
-        { name: "a", type: InteractivityActionType.play, transition: { type: ChainTransitionType.none } },
-        { name: "b", type: InteractivityActionType.stop, transition: { type: ChainTransitionType.none } },
+        {
+          name: "a",
+          type: InteractivityActionType.play,
+          transition: { type: ChainTransitionType.none },
+        },
+        {
+          name: "b",
+          type: InteractivityActionType.stop,
+          transition: { type: ChainTransitionType.none },
+        },
       ],
     };
     const { result } = renderHook(() => useChainMode(target, config, true));
-    act(() => { vi.runAllTimers(); });
+    act(() => {
+      vi.runAllTimers();
+    });
     expect(result.current.currentChainState).toBe("a");
   });
 });
@@ -371,17 +574,29 @@ describe("useChainMode — loop wrap", () => {
       mode: InteractivityMode.chain,
       loop: true,
       states: [
-        { name: "a", type: InteractivityActionType.play, transition: { type: ChainTransitionType.onComplete } },
-        { name: "b", type: InteractivityActionType.play, transition: { type: ChainTransitionType.onComplete } },
+        {
+          name: "a",
+          type: InteractivityActionType.play,
+          transition: { type: ChainTransitionType.onComplete },
+        },
+        {
+          name: "b",
+          type: InteractivityActionType.play,
+          transition: { type: ChainTransitionType.onComplete },
+        },
       ],
     };
     const { result } = renderHook(() => useChainMode(target, config, true));
     expect(result.current.currentChainState).toBe("a");
 
-    act(() => { fireSubscription(LottieSubscription.complete); }); // a → b
+    act(() => {
+      fireSubscription(LottieSubscription.complete);
+    }); // a → b
     expect(result.current.currentChainState).toBe("b");
 
-    act(() => { fireSubscription(LottieSubscription.complete); }); // b → a (loop)
+    act(() => {
+      fireSubscription(LottieSubscription.complete);
+    }); // b → a (loop)
     expect(result.current.currentChainState).toBe("a");
   });
 });
@@ -391,14 +606,28 @@ describe("useChainMode — transition target", () => {
     const config: ChainConfig = {
       mode: InteractivityMode.chain,
       states: [
-        { name: "a", type: InteractivityActionType.play, transition: { type: ChainTransitionType.onComplete, target: "c" } },
-        { name: "b", type: InteractivityActionType.play, transition: { type: ChainTransitionType.none } },
-        { name: "c", type: InteractivityActionType.stop, transition: { type: ChainTransitionType.none } },
+        {
+          name: "a",
+          type: InteractivityActionType.play,
+          transition: { type: ChainTransitionType.onComplete, target: "c" },
+        },
+        {
+          name: "b",
+          type: InteractivityActionType.play,
+          transition: { type: ChainTransitionType.none },
+        },
+        {
+          name: "c",
+          type: InteractivityActionType.stop,
+          transition: { type: ChainTransitionType.none },
+        },
       ],
     };
     const { result } = renderHook(() => useChainMode(target, config, true));
 
-    act(() => { fireSubscription(LottieSubscription.complete); });
+    act(() => {
+      fireSubscription(LottieSubscription.complete);
+    });
 
     expect(result.current.currentChainState).toBe("c");
   });
@@ -409,15 +638,27 @@ describe("useChainMode — cleanup on unmount", () => {
     const config: ChainConfig = {
       mode: InteractivityMode.chain,
       states: [
-        { name: "a", type: InteractivityActionType.play, transition: { type: ChainTransitionType.click } },
-        { name: "b", type: InteractivityActionType.stop, transition: { type: ChainTransitionType.none } },
+        {
+          name: "a",
+          type: InteractivityActionType.play,
+          transition: { type: ChainTransitionType.click },
+        },
+        {
+          name: "b",
+          type: InteractivityActionType.stop,
+          transition: { type: ChainTransitionType.none },
+        },
       ],
     };
-    const { result, unmount } = renderHook(() => useChainMode(target, config, true));
+    const { result, unmount } = renderHook(() =>
+      useChainMode(target, config, true),
+    );
 
     unmount();
 
-    act(() => { container.dispatchEvent(new MouseEvent("click", { bubbles: true })); });
+    act(() => {
+      container.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    });
     expect(result.current.currentChainState).toBe("a");
   });
 
@@ -425,14 +666,26 @@ describe("useChainMode — cleanup on unmount", () => {
     const config: ChainConfig = {
       mode: InteractivityMode.chain,
       states: [
-        { name: "a", type: InteractivityActionType.play, transition: { type: ChainTransitionType.delay, delay: 500 } },
-        { name: "b", type: InteractivityActionType.stop, transition: { type: ChainTransitionType.none } },
+        {
+          name: "a",
+          type: InteractivityActionType.play,
+          transition: { type: ChainTransitionType.delay, delay: 500 },
+        },
+        {
+          name: "b",
+          type: InteractivityActionType.stop,
+          transition: { type: ChainTransitionType.none },
+        },
       ],
     };
-    const { result, unmount } = renderHook(() => useChainMode(target, config, true));
+    const { result, unmount } = renderHook(() =>
+      useChainMode(target, config, true),
+    );
 
     unmount();
-    act(() => { vi.advanceTimersByTime(600); });
+    act(() => {
+      vi.advanceTimersByTime(600);
+    });
 
     expect(result.current.currentChainState).toBe("a");
   });
@@ -443,13 +696,23 @@ describe("useChainMode — goToChainState disabled", () => {
     const config: ChainConfig = {
       mode: InteractivityMode.chain,
       states: [
-        { name: "a", type: InteractivityActionType.play, transition: { type: ChainTransitionType.none } },
-        { name: "b", type: InteractivityActionType.stop, transition: { type: ChainTransitionType.none } },
+        {
+          name: "a",
+          type: InteractivityActionType.play,
+          transition: { type: ChainTransitionType.none },
+        },
+        {
+          name: "b",
+          type: InteractivityActionType.stop,
+          transition: { type: ChainTransitionType.none },
+        },
       ],
     };
     const { result } = renderHook(() => useChainMode(target, config, false));
 
-    act(() => { result.current.goToChainState("b"); });
+    act(() => {
+      result.current.goToChainState("b");
+    });
     expect(target.stop).not.toHaveBeenCalled();
   });
 });

@@ -37,8 +37,8 @@
   ],
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\"",
+    "format": "prettier --write \"src/**/*.ts\"",
     "lint:check": "eslint .",
     "lint": "eslint . --fix",
     "lint:inspect": "eslint --inspect-config",

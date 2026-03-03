@@ -59,7 +59,9 @@ export interface MockAnimationItem {
   getDuration: Mock<(inFrames?: boolean) => number>;
   triggerEvent: Mock<(name: string, args: unknown) => void>;
   includeLayers: Mock<(data: unknown) => void>;
-  addEventListener: Mock<(name: string, cb: (p: unknown) => void) => () => void>;
+  addEventListener: Mock<
+    (name: string, cb: (p: unknown) => void) => () => void
+  >;
   removeEventListener: Mock<(name: string, cb?: (p: unknown) => void) => void>;
 
   // ── Test helper ─────────────────────────────────────────────────────────────
@@ -118,23 +120,27 @@ export const createMockAnimationItem = (
     getDuration: vi.fn<(inFrames?: boolean) => number>().mockReturnValue(3.33),
     triggerEvent: vi.fn(),
     includeLayers: vi.fn(),
-    addEventListener: vi.fn<(name: string, cb: (p: unknown) => void) => () => void>().mockImplementation(
-      (name: string, cb: (p: unknown) => void) => {
+    addEventListener: vi
+      .fn<(name: string, cb: (p: unknown) => void) => () => void>()
+      .mockImplementation((name: string, cb: (p: unknown) => void) => {
         if (!listeners.has(name)) listeners.set(name, new Set());
         listeners.get(name)?.add(cb);
-        return () => { listeners.get(name)?.delete(cb); };
-      },
-    ),
-    removeEventListener: vi.fn().mockImplementation(
-      (name: string, cb?: (p: unknown) => void) => {
+        return () => {
+          listeners.get(name)?.delete(cb);
+        };
+      }),
+    removeEventListener: vi
+      .fn()
+      .mockImplementation((name: string, cb?: (p: unknown) => void) => {
         if (cb) listeners.get(name)?.delete(cb);
         else listeners.delete(name);
-      },
-    ),
+      }),
     _fireEvent: (name: string, payload?: unknown) => {
-      listeners.get(name)?.forEach((cb) => { cb(payload); });
+      listeners.get(name)?.forEach((cb) => {
+        cb(payload);
+      });
     },
-    ...overrides as Partial<MockAnimationItem>,
+    ...(overrides as Partial<MockAnimationItem>),
   };
 };
 
@@ -163,7 +169,9 @@ export interface MockLottiePlayer {
 export const createMockLottie = (
   mockItem: MockAnimationItem,
 ): MockLottiePlayer => ({
-  loadAnimation: vi.fn<(params: unknown) => MockAnimationItem>().mockReturnValue(mockItem),
+  loadAnimation: vi
+    .fn<(params: unknown) => MockAnimationItem>()
+    .mockReturnValue(mockItem),
   play: vi.fn(),
   pause: vi.fn(),
   stop: vi.fn(),

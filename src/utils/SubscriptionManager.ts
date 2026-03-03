@@ -54,13 +54,15 @@ export class SubscriptionManager<Subscriptions> {
     for (const key in subscriptions) {
       const handler = subscriptions[key as keyof Subscriptions];
       if (handler !== undefined) {
-        unsubscribers.push(
-          this.subscribe(key as keyof Subscriptions, handler),
-        );
+        unsubscribers.push(this.subscribe(key as keyof Subscriptions, handler));
       }
     }
 
-    return () => { unsubscribers.forEach((fn) => { fn(); }); };
+    return () => {
+      unsubscribers.forEach((fn) => {
+        fn();
+      });
+    };
   };
 
   /**
@@ -70,8 +72,8 @@ export class SubscriptionManager<Subscriptions> {
     type: Type,
     payload: Subscriptions[Type] extends (arg: infer P) => void ? P : never,
   ): void => {
-    this.listeners
-      .get(String(type))
-      ?.forEach((handler) => { handler(payload as unknown); });
+    this.listeners.get(String(type))?.forEach((handler) => {
+      handler(payload as unknown);
+    });
   };
 }

@@ -4,7 +4,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { MockIntersectionObserver } from "../test/mocks/intersectionObserver";
 import { createMockAnimationItem } from "../test/mocks/lottie";
 
-import { ChainTransitionType, InteractivityActionType, InteractivityMode, InteractivityTarget } from "./types";
+import {
+  ChainTransitionType,
+  InteractivityActionType,
+  InteractivityMode,
+  InteractivityTarget,
+} from "./types";
 import { useLottieInteractivity } from "./useLottieInteractivity";
 
 const createTarget = (container: HTMLDivElement): InteractivityTarget => ({
@@ -46,7 +51,9 @@ describe("useLottieInteractivity", () => {
     const { result } = renderHook(() =>
       useLottieInteractivity(target, HOVER_CONFIG),
     );
-    act(() => { result.current.disable(); });
+    act(() => {
+      result.current.disable();
+    });
     expect(result.current.isActive).toBe(false);
   });
 
@@ -54,8 +61,12 @@ describe("useLottieInteractivity", () => {
     const { result } = renderHook(() =>
       useLottieInteractivity(target, HOVER_CONFIG),
     );
-    act(() => { result.current.disable(); });
-    act(() => { result.current.enable(); });
+    act(() => {
+      result.current.disable();
+    });
+    act(() => {
+      result.current.enable();
+    });
     expect(result.current.isActive).toBe(true);
   });
 
@@ -63,7 +74,9 @@ describe("useLottieInteractivity", () => {
     const { result } = renderHook(() =>
       useLottieInteractivity(target, HOVER_CONFIG),
     );
-    act(() => { result.current.disable(); });
+    act(() => {
+      result.current.disable();
+    });
     act(() => {
       container.dispatchEvent(new Event("mouseenter", { bubbles: true }));
     });
@@ -71,7 +84,10 @@ describe("useLottieInteractivity", () => {
   });
 
   it("activates scroll mode when config.mode is scroll (covers isScroll true branch)", () => {
-    const scrollConfig = { mode: InteractivityMode.scroll, actions: [] as never[] };
+    const scrollConfig = {
+      mode: InteractivityMode.scroll,
+      actions: [] as never[],
+    };
     const { result } = renderHook(() =>
       useLottieInteractivity(target, scrollConfig),
     );
@@ -79,7 +95,10 @@ describe("useLottieInteractivity", () => {
   });
 
   it("activates cursor mode when config.mode is cursor (covers isCursor true branch)", () => {
-    const cursorConfig = { mode: InteractivityMode.cursor, actions: [] as never[] };
+    const cursorConfig = {
+      mode: InteractivityMode.cursor,
+      actions: [] as never[],
+    };
     const { result } = renderHook(() =>
       useLottieInteractivity(target, cursorConfig),
     );
@@ -87,7 +106,10 @@ describe("useLottieInteractivity", () => {
   });
 
   it("activates click mode when config.mode is click (covers isClick true branch)", () => {
-    const clickConfig = { mode: InteractivityMode.click, type: InteractivityActionType.play };
+    const clickConfig = {
+      mode: InteractivityMode.click,
+      type: InteractivityActionType.play,
+    };
     const { result } = renderHook(() =>
       useLottieInteractivity(target, clickConfig),
     );

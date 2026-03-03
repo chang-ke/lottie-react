@@ -27,9 +27,8 @@ export const resolveFrame = (
   }
 
   // Named marker lookup
-  const markers = (
-    animationItem as unknown as { markers?: LottieMarker[] }
-  ).markers;
+  const markers = (animationItem as unknown as { markers?: LottieMarker[] })
+    .markers;
   if (markers) {
     const marker = markers.find((m) => m.payload?.name === specifier);
     if (marker != null) return marker.time;

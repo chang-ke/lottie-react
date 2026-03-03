@@ -25,7 +25,8 @@ export const LottieSubscription = {
   frame: "frame",
   newState: "new_state",
 } as const;
-export type LottieSubscription = (typeof LottieSubscription)[keyof typeof LottieSubscription];
+export type LottieSubscription =
+  (typeof LottieSubscription)[keyof typeof LottieSubscription];
 
 /**
  * Animation build versions — full (all renderers) and light (SVG-only)
@@ -44,7 +45,8 @@ export const LottieRenderer = {
   html: "html",
   canvas: "canvas",
 } as const;
-export type LottieRenderer = (typeof LottieRenderer)[keyof typeof LottieRenderer];
+export type LottieRenderer =
+  (typeof LottieRenderer)[keyof typeof LottieRenderer];
 
 /**
  * Playback direction

@@ -42,13 +42,20 @@ describe("useFade", () => {
 
   it("minimumDisplayTime delays hiding after shouldShow→false", () => {
     const { result, rerender } = renderHook(
-      ({ show }) => useFade({ shouldShow: show, minimumDisplayTime: 500, fadeOutTime: null }),
+      ({ show }) =>
+        useFade({
+          shouldShow: show,
+          minimumDisplayTime: 500,
+          fadeOutTime: null,
+        }),
       { initialProps: { show: true } },
     );
     rerender({ show: false });
     // Not yet hidden — minimum display time hasn't elapsed
     expect(result.current.isVisible).toBe(true);
-    act(() => { vi.advanceTimersByTime(500); });
+    act(() => {
+      vi.advanceTimersByTime(500);
+    });
     expect(result.current.isVisible).toBe(false);
   });
 
@@ -72,7 +79,9 @@ describe("useFade", () => {
     );
     rerender({ show: false });
     act(() => {
-      result.current.fadeProps.onAnimationEnd({ animationName: "player-overlay-fade-out" });
+      result.current.fadeProps.onAnimationEnd({
+        animationName: "player-overlay-fade-out",
+      });
     });
     expect(result.current.isVisible).toBe(false);
   });
@@ -84,7 +93,9 @@ describe("useFade", () => {
     );
     rerender({ show: false });
     act(() => {
-      result.current.fadeProps.onAnimationEnd({ animationName: "other-animation" });
+      result.current.fadeProps.onAnimationEnd({
+        animationName: "other-animation",
+      });
     });
     expect(result.current.isVisible).toBe(true);
   });

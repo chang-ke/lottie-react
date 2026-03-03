@@ -2,13 +2,20 @@ import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { createMockAnimationItem } from "../../test/mocks/lottie";
-import { InteractivityActionType, InteractivityMode, InteractivityTarget } from "../types";
+import {
+  InteractivityActionType,
+  InteractivityMode,
+  InteractivityTarget,
+} from "../types";
 
 import { useClickMode } from "./useClickMode";
 
 import type { MockAnimationItem } from "../../test/mocks/lottie";
 
-const createTarget = (container: HTMLDivElement, animationItem: MockAnimationItem): InteractivityTarget => ({
+const createTarget = (
+  container: HTMLDivElement,
+  animationItem: MockAnimationItem,
+): InteractivityTarget => ({
   containerRef: { current: container } as React.RefObject<HTMLDivElement>,
   animationItem,
   play: vi.fn(),
@@ -38,7 +45,11 @@ const click = () => {
 describe("useClickMode", () => {
   it("does not attach listener when disabled", () => {
     renderHook(() => {
-      useClickMode(target, { mode: InteractivityMode.click, type: InteractivityActionType.play }, false);
+      useClickMode(
+        target,
+        { mode: InteractivityMode.click, type: InteractivityActionType.play },
+        false,
+      );
     });
     click();
     expect(target.play).not.toHaveBeenCalled();
@@ -46,7 +57,11 @@ describe("useClickMode", () => {
 
   it("click with type=play calls play()", () => {
     renderHook(() => {
-      useClickMode(target, { mode: InteractivityMode.click, type: InteractivityActionType.play }, true);
+      useClickMode(
+        target,
+        { mode: InteractivityMode.click, type: InteractivityActionType.play },
+        true,
+      );
     });
     click();
     expect(target.play).toHaveBeenCalledOnce();
@@ -54,7 +69,11 @@ describe("useClickMode", () => {
 
   it("click with type=stop calls stop()", () => {
     renderHook(() => {
-      useClickMode(target, { mode: InteractivityMode.click, type: InteractivityActionType.stop }, true);
+      useClickMode(
+        target,
+        { mode: InteractivityMode.click, type: InteractivityActionType.stop },
+        true,
+      );
     });
     click();
     expect(target.stop).toHaveBeenCalledOnce();
@@ -64,7 +83,11 @@ describe("useClickMode", () => {
     renderHook(() => {
       useClickMode(
         target,
-        { mode: InteractivityMode.click, type: InteractivityActionType.play, toggle: true },
+        {
+          mode: InteractivityMode.click,
+          type: InteractivityActionType.play,
+          toggle: true,
+        },
         true,
       );
     });
@@ -84,7 +107,11 @@ describe("useClickMode", () => {
     renderHook(() => {
       useClickMode(
         target,
-        { mode: InteractivityMode.click, type: InteractivityActionType.play, count: 1 },
+        {
+          mode: InteractivityMode.click,
+          type: InteractivityActionType.play,
+          count: 1,
+        },
         true,
       );
     });
@@ -95,7 +122,10 @@ describe("useClickMode", () => {
     // Simulate complete event firing by calling the subscriber's callback
     const subscribeCalls = vi.mocked(target.subscribe).mock.calls;
     const completeCallback = subscribeCalls.at(0)?.[1];
-    if (completeCallback) act(() => { completeCallback(undefined as never); });
+    if (completeCallback)
+      act(() => {
+        completeCallback(undefined as never);
+      });
 
     // Now count = 1 = count limit, next click should be ignored
     vi.mocked(target.play).mockClear();
@@ -107,7 +137,11 @@ describe("useClickMode", () => {
     renderHook(() => {
       useClickMode(
         target,
-        { mode: InteractivityMode.click, type: InteractivityActionType.seek, frames: [10, 50] },
+        {
+          mode: InteractivityMode.click,
+          type: InteractivityActionType.seek,
+          frames: [10, 50],
+        },
         true,
       );
     });
@@ -119,7 +153,11 @@ describe("useClickMode", () => {
     renderHook(() => {
       useClickMode(
         target,
-        { mode: InteractivityMode.click, type: InteractivityActionType.playSegments, frames: [5, 30] },
+        {
+          mode: InteractivityMode.click,
+          type: InteractivityActionType.playSegments,
+          frames: [5, 30],
+        },
         true,
       );
     });
@@ -134,7 +172,11 @@ describe("useClickMode", () => {
     renderHook(() => {
       useClickMode(
         target,
-        { mode: InteractivityMode.click, type: InteractivityActionType.playSegments, frames: [5, 30] },
+        {
+          mode: InteractivityMode.click,
+          type: InteractivityActionType.playSegments,
+          frames: [5, 30],
+        },
         true,
       );
     });
@@ -143,7 +185,9 @@ describe("useClickMode", () => {
     // Simulate the frame event reaching endFrame
     const subscribeCalls = vi.mocked(target.subscribe).mock.calls;
     const frameCallback = subscribeCalls.at(0)?.[1];
-    act(() => { frameCallback?.({ currentFrame: 30 } as never); });
+    act(() => {
+      frameCallback?.({ currentFrame: 30 } as never);
+    });
 
     expect(animItem.goToAndStop).toHaveBeenCalledWith(30, true);
     expect(unsub).toHaveBeenCalled(); // unsubscribed after reaching end
@@ -151,7 +195,11 @@ describe("useClickMode", () => {
 
   it("removes listener on unmount", () => {
     const { unmount } = renderHook(() => {
-      useClickMode(target, { mode: InteractivityMode.click, type: InteractivityActionType.play }, true);
+      useClickMode(
+        target,
+        { mode: InteractivityMode.click, type: InteractivityActionType.play },
+        true,
+      );
     });
     unmount();
     click();
@@ -165,7 +213,11 @@ describe("useClickMode", () => {
     const { unmount } = renderHook(() => {
       useClickMode(
         target,
-        { mode: InteractivityMode.click, type: InteractivityActionType.play, count: 2 },
+        {
+          mode: InteractivityMode.click,
+          type: InteractivityActionType.play,
+          count: 2,
+        },
         true,
       );
     });

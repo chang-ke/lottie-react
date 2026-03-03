@@ -39,7 +39,9 @@ describe("useLottie", () => {
 
   it("calls loadAnimation after container is attached", () => {
     const { result } = renderHook(() => useLottie({ src: { v: "5.0" } }));
-    act(() => { result.current.setContainerRef(document.createElement("div")); });
+    act(() => {
+      result.current.setContainerRef(document.createElement("div"));
+    });
     expect(loadAnimationMock).toHaveBeenCalled();
   });
 

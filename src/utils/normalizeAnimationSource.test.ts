@@ -4,7 +4,9 @@ import normalizeAnimationSource from "./normalizeAnimationSource";
 
 describe("normalizeAnimationSource", () => {
   it("returns { path } for a string URL", () => {
-    expect(normalizeAnimationSource("animation.json")).toEqual({ path: "animation.json" });
+    expect(normalizeAnimationSource("animation.json")).toEqual({
+      path: "animation.json",
+    });
   });
 
   it("trims whitespace from string URLs", () => {
@@ -43,7 +45,9 @@ describe("normalizeAnimationSource", () => {
   });
 
   it("accepts .lottie extension URLs", () => {
-    expect(normalizeAnimationSource("animation.lottie")).toEqual({ path: "animation.lottie" });
+    expect(normalizeAnimationSource("animation.lottie")).toEqual({
+      path: "animation.lottie",
+    });
   });
 
   it("accepts URLs with query strings", () => {

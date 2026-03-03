@@ -1,4 +1,10 @@
-import { CSSProperties, useCallback, useEffect, useReducer, useRef } from "react";
+import {
+  CSSProperties,
+  useCallback,
+  useEffect,
+  useReducer,
+  useRef,
+} from "react";
 
 interface UseFadeProps {
   shouldShow: boolean;

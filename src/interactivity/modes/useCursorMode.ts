@@ -1,6 +1,10 @@
 import { useEffect, useRef } from "react";
 
-import { CursorConfig, InteractivityActionType, InteractivityTarget } from "../types";
+import {
+  CursorConfig,
+  InteractivityActionType,
+  InteractivityTarget,
+} from "../types";
 import { mapRange } from "../utils/mapRange";
 import { resolveFrame } from "../utils/resolveFrames";
 
@@ -74,8 +78,14 @@ export const useCursorMode = (
       const touch = e.touches.item(0);
       if (touch == null) return;
       const rect = container.getBoundingClientRect();
-      const x = Math.min(Math.max((touch.clientX - rect.left) / rect.width, 0), 1);
-      const y = Math.min(Math.max((touch.clientY - rect.top) / rect.height, 0), 1);
+      const x = Math.min(
+        Math.max((touch.clientX - rect.left) / rect.width, 0),
+        1,
+      );
+      const y = Math.min(
+        Math.max((touch.clientY - rect.top) / rect.height, 0),
+        1,
+      );
       scheduleUpdate(x, y);
     };
 
@@ -98,6 +108,6 @@ export const useCursorMode = (
       container.removeEventListener("mouseleave", handleLeave);
       container.removeEventListener("touchend", handleLeave);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [target.containerRef.current, target.animationItem, enabled]);
 };

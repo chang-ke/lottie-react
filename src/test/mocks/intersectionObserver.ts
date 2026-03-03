@@ -16,7 +16,8 @@ export class MockIntersectionObserver {
 
   static getLastOrFail(): MockIntersectionObserver {
     const instance = MockIntersectionObserver._instances.at(-1);
-    if (!instance) throw new Error("No MockIntersectionObserver instances created");
+    if (!instance)
+      throw new Error("No MockIntersectionObserver instances created");
     return instance;
   }
 
@@ -43,6 +44,8 @@ export class MockIntersectionObserver {
   }
 
   trigger(el: Element, isIntersecting: boolean) {
-    this.callback([{ target: el, isIntersecting, intersectionRatio: isIntersecting ? 1 : 0 }]);
+    this.callback([
+      { target: el, isIntersecting, intersectionRatio: isIntersecting ? 1 : 0 },
+    ]);
   }
 }

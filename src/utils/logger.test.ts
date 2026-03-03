@@ -59,7 +59,11 @@ describe("createLogger", () => {
 
     it("forwards extra arguments after the message", () => {
       createLogger(true).log("msg", { extra: 1 }, "more");
-      expect(console.log).toHaveBeenCalledWith("[lottie-react] msg", { extra: 1 }, "more");
+      expect(console.log).toHaveBeenCalledWith(
+        "[lottie-react] msg",
+        { extra: 1 },
+        "more",
+      );
     });
 
     it("uses only the prefix when message is omitted", () => {

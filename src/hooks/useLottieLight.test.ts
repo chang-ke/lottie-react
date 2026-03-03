@@ -37,7 +37,9 @@ describe("useLottieLight", () => {
 
   it("calls loadAnimation on the light build after container is attached", () => {
     const { result } = renderHook(() => useLottieLight({ src: { v: "5.0" } }));
-    act(() => { result.current.setContainerRef(document.createElement("div")); });
+    act(() => {
+      result.current.setContainerRef(document.createElement("div"));
+    });
     expect(loadAnimationMock).toHaveBeenCalled();
   });
 

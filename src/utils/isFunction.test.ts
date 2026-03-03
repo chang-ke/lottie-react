@@ -5,8 +5,18 @@ import isFunction from "./isFunction";
 describe("isFunction", () => {
   it("returns true for a function", () => {
     expect(isFunction(() => undefined)).toBe(true);
-    expect(isFunction(function named() { return undefined; })).toBe(true);
-    expect(isFunction(class Foo { value = 1; })).toBe(true);
+    expect(
+      isFunction(function named() {
+        return undefined;
+      }),
+    ).toBe(true);
+    expect(
+      isFunction(
+        class Foo {
+          value = 1;
+        },
+      ),
+    ).toBe(true);
   });
 
   it("returns false for non-function values", () => {

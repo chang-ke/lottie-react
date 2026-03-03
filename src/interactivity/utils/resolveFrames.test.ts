@@ -7,8 +7,7 @@ import type { AnimationItem } from "lottie-web";
 const makeItem = (
   totalFrames = 100,
   markers: { payload?: { name?: string }; time: number }[] = [],
-): AnimationItem =>
-  ({ totalFrames, markers }) as unknown as AnimationItem;
+): AnimationItem => ({ totalFrames, markers }) as unknown as AnimationItem;
 
 describe("resolveFrame", () => {
   it("returns a number specifier as-is", () => {

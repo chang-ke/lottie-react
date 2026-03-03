@@ -1,2 +1,7 @@
 export { Player } from "./Player";
-export type { PlayerState, PlayerSubscriptions, PlayerActions, PlayerProps } from "./types";
+export type {
+  PlayerState,
+  PlayerSubscriptions,
+  PlayerActions,
+  PlayerProps,
+} from "./types";

@@ -20,7 +20,9 @@ describe("mergeTheme", () => {
     const result = mergeTheme({ colors: { primary: "#f00" } });
     expect(result.colors.primary).toBe("#f00");
     expect(result.colors.accent).toBe(DEFAULT_PLAYER_THEME.colors.accent);
-    expect(result.colors.background).toBe(DEFAULT_PLAYER_THEME.colors.background);
+    expect(result.colors.background).toBe(
+      DEFAULT_PLAYER_THEME.colors.background,
+    );
   });
 
   it("overrides only specified sizing keys", () => {
@@ -88,13 +90,17 @@ describe("getButtonColors", () => {
   });
 
   it("returns dimmed colors when disabled", () => {
-    const { backgroundColor, iconColor } = getButtonColors(theme, { disabled: true });
+    const { backgroundColor, iconColor } = getButtonColors(theme, {
+      disabled: true,
+    });
     expect(backgroundColor).toContain("20");
     expect(iconColor).toContain("30");
   });
 
   it("returns accent-tinted background when active", () => {
-    const { backgroundColor, iconColor } = getButtonColors(theme, { isActive: true });
+    const { backgroundColor, iconColor } = getButtonColors(theme, {
+      isActive: true,
+    });
     expect(backgroundColor).toBe(`${theme.colors.accent}40`);
     expect(iconColor).toBe(theme.colors.accent);
   });
@@ -129,7 +135,10 @@ describe("processLoadingConfig", () => {
   });
 
   it("returns default config for true", () => {
-    expect(processLoadingConfig(true)).toEqual({ minDisplayTime: 0, fadeOutTime: 600 });
+    expect(processLoadingConfig(true)).toEqual({
+      minDisplayTime: 0,
+      fadeOutTime: 600,
+    });
   });
 
   it("returns passed config object with defaults for missing keys", () => {
@@ -142,7 +151,13 @@ describe("processLoadingConfig", () => {
 
   it("returns full config when all keys are provided", () => {
     const comp = createElement("div");
-    expect(processLoadingConfig({ component: comp, minDisplayTime: 500, fadeOutTime: 200 })).toEqual({
+    expect(
+      processLoadingConfig({
+        component: comp,
+        minDisplayTime: 500,
+        fadeOutTime: 200,
+      }),
+    ).toEqual({
       component: comp,
       minDisplayTime: 500,
       fadeOutTime: 200,
